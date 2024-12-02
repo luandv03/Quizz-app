@@ -1,3 +1,8 @@
+## Git rules
+- Khi làm việc hãy checkout nhánh mới từ nhánh main và làm việc trên nhánh đó
+> git checkout -b branch_name <br/>
+- Chỉ được push code lên nhánh **khác** nhánh main, sau đó tạo Pull Request vào nhánh main
+
 ## Install essential dependencies 
 > sudo apt-get update <br/>
 > sudo apt-get install libmysqlclient-dev libcjson-dev
