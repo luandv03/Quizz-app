@@ -8,7 +8,7 @@
 ## Hướng dẫn chạy backend
 Đầu tiên để chạy được backend chúng ta phải setup database:
 - Ở đây chúng ta sử dụng MySQL
-- Điều chỉnh các tham số đến database trong file /backend/src/db/connect-db.c như hình dưới đây
+- Điều chỉnh các tham số đến database trong file /backend/src/db/connect-db.c va backend/src/cli_migrate.c như hình dưới đây
 ![alt text](<Screenshot from 2024-12-02 19-54-40.png>)
 - THứ tự các tham số: DB_HOST, DB_USERNAME, DB_PASS, DB_NAME (các tham số này tuỳ chúng ta tạo trong MySQL)
   
