@@ -1,0 +1,7 @@
+[requires]
+cjson/1.7.14
+libmysqlclient/8.0.25
+
+[generators]
+CMakeDeps
+CMakeToolchain
