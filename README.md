@@ -1,10 +1,6 @@
 ## Install essential dependencies 
-> sudo apt-get update
-<br>
+> sudo apt-get update <br/>
 > sudo apt-get install libmysqlclient-dev libcjson-dev
-
-
-
 
 ## Fix makefile with error missing seperate
 > perl -pi -e 's/^  */\t/' Makefile
@@ -18,8 +14,7 @@
   
 - Sau khi setup xong database thì chúng ta sẽ cần chạy migration để tự động tạo các tables trong mysql
 
-> make
-<br>
+> make <br/>
 > make migrate
 
 - Để chạy server chúng ta sử dụng lệnh
