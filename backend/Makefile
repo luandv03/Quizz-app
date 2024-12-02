@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -I/usr/include/mysql -I/usr/include/cjson
+CFLAGS = -Wall -I/usr/include/mysql -I/usr/include/cjson -I include
 
 # Linker flags
 LDFLAGS = -L/usr/lib -lmysqlclient -lcjson
@@ -16,6 +16,11 @@ OBJS = $(SRCS:.c=.o)
 # Executable name
 TARGET = server
 
+# Migration files
+MIGRATION_SRCS = src/cli_migrate.c
+MIGRATION_OBJS = $(MIGRATION_SRCS:.c=.o) src/db/connect-db.o
+MIGRATION_TARGET = src/cli_migrate
+
 # Default target
 all: $(TARGET)
 
@@ -27,9 +32,24 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Compile the migration tool
+$(MIGRATION_TARGET): $(MIGRATION_OBJS)
+	$(CC) $(MIGRATION_OBJS) -o $(MIGRATION_TARGET) $(LDFLAGS)
+
+# Run the migrations
+migrate: $(MIGRATION_TARGET)
+	@if [ -z "$(wildcard src/migrations/*.sql)" ]; then \
+	echo "No migration files found in the migrations directory."; \
+	else \
+	for file in src/migrations/*.sql; do \
+	echo "Running migration $$file"; \
+	./$(MIGRATION_TARGET) $$file; \
+	done; \
+	fi
+
 # Clean up the build files
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) $(MIGRATION_OBJS) $(MIGRATION_TARGET)
 
 # Run the server
 run: $(TARGET)

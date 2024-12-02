@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mysql/mysql.h>
-#include "include/connect-db.h"
+#include "db/connect-db.h"
 
 void run_migration(MYSQL *conn, const char *filename) {
     FILE *file = fopen(filename, "r");
