@@ -6,9 +6,12 @@ CFLAGS = -Wall -I/usr/local/mysql/include -I/opt/homebrew/opt/cjson/include -I i
 
 # /libmysqlclient.24.dylib
 # Linker flags
+# ERR[: Library not loaded: @rpath/libmysqlclient.24.dylib] : sudo ln -s /usr/local/mysql/lib/libmysqlclient.24.dylib /user/local/lib/libmysqlclient.24.dylib
+# install_name_tool -add_rpath /usr/local/mysql/lib src/cli_migrate
 LDFLAGS =  -L/usr/local/mysql/lib -lmysqlclient  -L/opt/homebrew/opt/cjson/lib -lcjson
 
 # Source files
+
 SRCS = src/main.c src/db/connect-db.c src/services/service.c src/controllers/controller.c src/routes/routes.c
 
 # Object files
@@ -24,7 +27,7 @@ MIGRATION_TARGET = src/cli_migrate
 
 # Default target
 all: $(TARGET)
-
+	install_name_tool -add_rpath /usr/local/mysql/lib $(TARGET)
 # Link the object files to create the executable
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
@@ -36,7 +39,7 @@ $(TARGET): $(OBJS)
 # Compile the migration tool
 $(MIGRATION_TARGET): $(MIGRATION_OBJS)
 	$(CC) $(MIGRATION_OBJS) -o $(MIGRATION_TARGET) $(LDFLAGS)
-
+	install_name_tool -add_rpath /usr/local/mysql/lib $(MIGRATION_TARGET)
 # Run the migrations
 migrate: $(MIGRATION_TARGET)
 	@if [ -z "$(wildcard src/migrations/*.sql)" ]; then \
@@ -55,5 +58,6 @@ clean:
 # Run the server
 run: $(TARGET)
 	./$(TARGET)
+	install_name_tool -add_rpath /usr/local/mysql/lib $(TARGET)
 
 .PHONY: all clean run
