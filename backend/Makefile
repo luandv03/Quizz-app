@@ -2,10 +2,11 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -I/usr/include/mysql -I/usr/include/cjson -I include
+CFLAGS = -Wall -I/usr/local/mysql/include -I/opt/homebrew/opt/cjson/include -I include
 
+# /libmysqlclient.24.dylib
 # Linker flags
-LDFLAGS = -L/usr/lib -lmysqlclient -lcjson
+LDFLAGS =  -L/usr/local/mysql/lib -lmysqlclient  -L/opt/homebrew/opt/cjson/lib -lcjson
 
 # Source files
 SRCS = src/main.c src/db/connect-db.c src/services/service.c src/controllers/controller.c src/routes/routes.c
