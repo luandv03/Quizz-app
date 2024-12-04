@@ -8,7 +8,7 @@ CFLAGS = -Wall -I/usr/include/mysql -I/usr/include/cjson -I include
 LDFLAGS = -L/usr/lib -lmysqlclient -lcjson
 
 # Source files
-SRCS = src/main.c src/db/connect-db.c src/services/service.c src/controllers/controller.c src/routes/routes.c
+SRCS = src/main.c src/db/connect-db.c src/services/service.c src/controllers/controller.c src/routes/routes.c src/utils/mysql_utils.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)
