@@ -82,7 +82,7 @@ int login(const char *email, const char *password)
 
     int num_rows = mysql_num_rows(res);
 
-    print_mysql_result(res);
+    // print_mysql_result(res);
 
     mysql_free_result(res);
 
