@@ -1,4 +1,4 @@
-## Git rules
+## Git rules (Important)
 - Khi làm việc hãy checkout nhánh mới từ nhánh main và làm việc trên nhánh đó
 > git checkout -b branch_name <br/>
 - Chỉ được push code lên nhánh **khác** nhánh main, sau đó tạo Pull Request vào nhánh main
@@ -24,3 +24,9 @@
 
 - Để chạy server chúng ta sử dụng lệnh
 >  make run
+
+## Cách test API server 
+1. Cài netcat (Ubuntu)
+> sudo apt-get install netcat
+2. Sử dụng netcat để gửi 1 TCP request (Dưới đây là ví dụ test 1 API signup)
+> echo -e "POST /signup\nContent-Type: application/json\n\n{\"email\":\"test@example.com\",\"password\":\"password123\",\"username\":\"testuser\"}" | nc localhost 8080
