@@ -24,3 +24,9 @@
 
 - Để chạy server chúng ta sử dụng lệnh
 >  make run
+
+## Cách test API server 
+1. Cài netcat (Ubuntu)
+> sudo apt-get install netcat
+2. Sử dụng netcat để gửi 1 TCP request (Dưới đây là ví dụ test 1 API signup)
+> echo -e "POST /signup\nContent-Type: application/json\n\n{\"email\":\"test@example.com\",\"password\":\"password123\",\"username\":\"testuser\"}" | nc localhost 8080
