@@ -134,3 +134,40 @@ void handle_get_room_list(int client_socket, ControlMessage *msg)
         free(result);
     }
 }
+
+void handle_user_enter_room(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 2);
+
+    char user_id[256] = "", room_id[256] = "";
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "user_id") == 0)
+        {
+            strncpy(user_id, pairs[i].value, sizeof(user_id) - 1);
+        }
+        else if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            strncpy(room_id, pairs[i].value, sizeof(room_id) - 1);
+        }
+    }
+
+    int result = user_enter_room(atoi(user_id), atoi(room_id));
+    char response[2048];
+    char timestamp[50];
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (result == 0)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION USER_ENTER_ROOM_FAILURE %s\n{\"message\": \"Failed to enter room\"}", timestamp);
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION USER_ENTER_ROOM_SUCCESS %s\n{\"message\": \"Success\"}", timestamp);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+}
