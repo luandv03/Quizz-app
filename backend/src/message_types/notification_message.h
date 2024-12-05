@@ -9,7 +9,7 @@
 // Struct Definition
 typedef struct
 {
-    char noti_type[50];
+    char type[50];
     char timestamp[50];
     char body[1024];
 } NotificationMessage;

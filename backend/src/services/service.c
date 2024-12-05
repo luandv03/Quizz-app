@@ -62,6 +62,7 @@ int signup(const char *email, const char *password, const char *username)
 
 int login(const char *email, const char *password)
 {
+    int user_id;
     MYSQL *conn = get_db_connection();
     char query[256];
     snprintf(query, sizeof(query), "SELECT * FROM user WHERE gmail='%s' AND pass='%s'", email, password);
@@ -81,10 +82,18 @@ int login(const char *email, const char *password)
     }
 
     int num_rows = mysql_num_rows(res);
+    if (num_rows > 0)
+    {
+        MYSQL_ROW row = mysql_fetch_row(res);
+        user_id = atoi(row[0]); // Assuming the first column is the user id
+    }
+    else
+    {
+        user_id = -1;
+    }
 
     // print_mysql_result(res);
-
     mysql_free_result(res);
 
-    return num_rows > 0;
+    return user_id;
 }

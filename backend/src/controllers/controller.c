@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 void handle_request(int client_socket)
 {
@@ -25,20 +26,26 @@ void handle_request(int client_socket)
 void handle_login(int client_socket, ControlMessage *msg)
 {
     char email[256], password[256];
-    printf("msg->body: %s\n", msg->body);
+    // printf("msg->body: %s\n", msg->body);
     sscanf(msg->body, "%s %s", email, password);
 
-    int result = login(email, password);
-    if (result)
+    int user_id = login(email, password);
+    char response[2048];
+    char timestamp[50];
+
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (user_id != -1)
     {
-        const char *response = "{\"message\": \"Login successful\"}";
-        write(client_socket, response, strlen(response));
+        snprintf(response, sizeof(response), "NOTIFICATION LOGIN_SUCCESS%s\n%d", timestamp, user_id);
     }
     else
     {
-        const char *response = "{\"error\": \"Login failed\"}";
-        write(client_socket, response, strlen(response));
+        snprintf(response, sizeof(response), "NOTIFICATION LOGIN_FAILURE %s\nUser not found or wrong password", timestamp);
     }
+
+    write(client_socket, response, strlen(response));
     close(client_socket);
 }
 
