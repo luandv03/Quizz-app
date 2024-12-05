@@ -45,11 +45,12 @@ char *fetch_questions_json()
     return json_string;
 }
 
-int signup(const char *email, const char *password, const char *username)
+int signup(const char *email, const char *password, const char *username, const char *dob)
 {
     MYSQL *conn = get_db_connection();
     char query[256];
-    snprintf(query, sizeof(query), "INSERT INTO users (email, password, username) VALUES ('%s', '%s', '%s')", email, password, username);
+    snprintf(query, sizeof(query), "INSERT INTO user (email, pass, name, dob) VALUES ('%s', '%s', '%s', '%s')", email, password, username, dob);
+    // printf("Query: %s\n", query);
 
     if (mysql_query(conn, query))
     {
@@ -65,7 +66,7 @@ int login(const char *email, const char *password)
     int user_id;
     MYSQL *conn = get_db_connection();
     char query[256];
-    snprintf(query, sizeof(query), "SELECT * FROM user WHERE gmail='%s' AND pass='%s'", email, password);
+    snprintf(query, sizeof(query), "SELECT * FROM user WHERE email='%s' AND pass='%s'", email, password);
     // printf("Query: %s\n", query);
 
     if (mysql_query(conn, query))
