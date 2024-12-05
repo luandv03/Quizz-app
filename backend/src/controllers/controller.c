@@ -1,5 +1,5 @@
 #include "controller.h"
-#include "../message_types/index.h"
+#include "../data_structures/index.h"
 #include "../services/service.h"
 #include "../utils/json_utils.h"
 #include <stdlib.h>
@@ -51,7 +51,7 @@ void handle_login(int client_socket, ControlMessage *msg)
 
     if (user_id != -1)
     {
-        snprintf(response, sizeof(response), "NOTIFICATION LOGIN_SUCCESS%s\n{\"user_id\": \"%d\"}", timestamp, user_id);
+        snprintf(response, sizeof(response), "NOTIFICATION LOGIN_SUCCESS%s\n{\"user_id\": %d}", timestamp, user_id);
     }
     // {\" \": \" \"}
     else
@@ -100,13 +100,37 @@ void handle_signup(int client_socket, ControlMessage *msg)
 
     if (result)
     {
-        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_SUCCESS", timestamp, email, username);
+        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_SUCCESS");
     }
     else
     {
-        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_FAILURE", timestamp, email, username);
+        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_FAILURE");
     }
 
     write(client_socket, response, strlen(response));
     close(client_socket);
+}
+
+void handle_get_room_list(int client_socket, ControlMessage *msg)
+{
+    char response[8192];
+    memset(response, 0, sizeof(response));
+
+    char *result = get_all_room();
+    if (result == NULL)
+    {
+        snprintf(response, sizeof(response), "DATA ALL_ROOM\n{\"data\": []}");
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA ALL_ROOM\n{\"data\": %s}", result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+
+    if (result != NULL)
+    {
+        free(result);
+    }
 }

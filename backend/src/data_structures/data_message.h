@@ -5,7 +5,7 @@
 #define ANSWER_SUBMISSION "ANSWER_SUBMISSION"
 #define EXAM_QUESTION "EXAM_QUESTION"
 #define PRACTICE_QUESTION "PRACTICE_QUESTION"
-
+#define ALL_ROOM "ALL_ROOM"
 // Struct Definition
 typedef struct
 {
