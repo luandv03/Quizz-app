@@ -6,7 +6,7 @@
 #define GET_ROOM_LIST "GET_ROOM_LIST"
 #define LOGIN "LOGIN"
 #define SIGN_UP "SIGN_UP"
-
+#define USER_ENTER_ROOM "USER_ENTER_ROOM"
 // Struct Definition
 typedef struct
 {

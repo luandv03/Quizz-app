@@ -184,3 +184,23 @@ char *get_all_room()
 
     return json_string;
 }
+
+int user_enter_room(int user_id, int room_id)
+{
+    MYSQL *conn = get_db_connection();
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return 0;
+    }
+
+    char query[256];
+    snprintf(query, sizeof(query), "INSERT INTO user_in_room (user_id, room_id) VALUES (%d, %d)", user_id, room_id);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    return 1;
+}
