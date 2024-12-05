@@ -11,29 +11,29 @@
 
 void handle_control_message(int socket, ControlMessage *msg)
 {
-    if (strcmp(msg->control_type, LOGIN) == 0)
+    if (strcmp(msg->type, LOGIN) == 0)
     {
         handle_login(socket, msg);
     }
-    else if (strcmp(msg->control_type, GET_ROOM_LIST) == 0)
+    else if (strcmp(msg->type, GET_ROOM_LIST) == 0)
     {
     }
-    else if (strcmp(msg->control_type, CREATE_ROOM) == 0)
+    else if (strcmp(msg->type, CREATE_ROOM) == 0)
     {
     }
 }
 
 void handle_data_message(int socket, DataMessage *msg)
 {
-    if (strcmp(msg->msg_type, ANSWER_SUBMISSION) == 0)
+    if (strcmp(msg->type, ANSWER_SUBMISSION) == 0)
     {
         // Handle ANSWER_SUBMISSION
     }
-    else if (strcmp(msg->msg_type, EXAM_QUESTION) == 0)
+    else if (strcmp(msg->type, EXAM_QUESTION) == 0)
     {
         // Handle EXAM_QUESTION
     }
-    else if (strcmp(msg->msg_type, PRACTICE_QUESTION) == 0)
+    else if (strcmp(msg->type, PRACTICE_QUESTION) == 0)
     {
         // Handle PRACTICE_QUESTION
     }
@@ -41,15 +41,7 @@ void handle_data_message(int socket, DataMessage *msg)
 
 void handle_notification_message(int socket, NotificationMessage *msg)
 {
-    if (strcmp(msg->noti_type, LOGIN_SUCCESS) == 0)
-    {
-        // Handle LOGIN_SUCCESS
-    }
-    else if (strcmp(msg->noti_type, LOGIN_FAILURE) == 0)
-    {
-        // Handle LOGIN_FAILURE
-    }
-    else if (strcmp(msg->noti_type, ERROR_MESSAGE) == 0)
+    if (strcmp(msg->type, ERROR_MESSAGE) == 0)
     {
         // Handle ERROR_MESSAGE
     }
@@ -95,25 +87,25 @@ void setup_routes(int server_fd)
         read(new_socket, buffer, 2048);
         // printf("Received: %s\n", buffer);
 
-        char header_type[50];
-        sscanf(buffer, "%s", header_type);
+        char msg_type[50];
+        sscanf(buffer, "%s", msg_type);
 
-        if (strcmp(header_type, "CONTROL") == 0)
+        if (strcmp(msg_type, "CONTROL") == 0)
         {
             ControlMessage msg;
-            sscanf(buffer, "%s %s %[^\n]", header_type, msg.control_type, msg.body);
+            sscanf(buffer, "%s %s\n%[^\n]", msg_type, msg.type, msg.body);
             handle_control_message(new_socket, &msg);
         }
-        else if (strcmp(header_type, "DATA") == 0)
+        else if (strcmp(msg_type, "DATA") == 0)
         {
             DataMessage msg;
-            sscanf(buffer, "DATA %s %s %d %[^\n]", msg.msg_type, msg.data_type, &msg.data_size, msg.body);
+            sscanf(buffer, "DATA %s %s %d\n%[^\n]", msg.type, msg.data_type, &msg.data_size, msg.body);
             handle_data_message(new_socket, &msg);
         }
-        else if (strcmp(header_type, "NOTIFICATION") == 0)
+        else if (strcmp(msg_type, "NOTIFICATION") == 0)
         {
             NotificationMessage msg;
-            sscanf(buffer, "NOTIFICATION %s %s %[^\n]", msg.noti_type, msg.timestamp, msg.body);
+            sscanf(buffer, "NOTIFICATION %s %s\n%[^\n]", msg.type, msg.timestamp, msg.body);
             handle_notification_message(new_socket, &msg);
         }
 

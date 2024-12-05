@@ -9,7 +9,7 @@
 // Struct Definition
 typedef struct
 {
-    char msg_type[50];
+    char type[50];
     char data_type[50];
     int data_size;
     char body[1024];
