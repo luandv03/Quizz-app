@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cjson/cJSON.h>
+#include "../data_structures/index.h"
 
 char *fetch_questions_json()
 {
@@ -97,4 +98,89 @@ int login(const char *email, const char *password)
     mysql_free_result(res);
 
     return user_id;
+}
+
+char *get_all_room()
+{
+    MYSQL *conn = get_db_connection();
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    const char *query = "SELECT r.id, r.subject, r.description, r.number_of_easy_question, r.number_of_medium_question, r.number_of_hard_question, r.time_limit, r.start, r.end, u.user_id "
+                        "FROM room r LEFT JOIN user_in_room u ON r.id = u.room_id";
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    int num_rows = mysql_num_rows(res);
+
+    if (num_rows == 0)
+    {
+        return NULL;
+    }
+
+    MYSQL_ROW row;
+
+    cJSON *json_array = cJSON_CreateArray();
+    int current_room_id = -1;
+    cJSON *current_room = NULL;
+    cJSON *user_ids = NULL;
+
+    while ((row = mysql_fetch_row(res)))
+    {
+        int room_id = atoi(row[0]);
+        if (room_id != current_room_id)
+        {
+            if (current_room != NULL)
+            {
+                cJSON_AddItemToObject(current_room, "user_ids", user_ids);
+                cJSON_AddItemToArray(json_array, current_room);
+            }
+
+            current_room_id = room_id;
+            current_room = cJSON_CreateObject();
+            user_ids = cJSON_CreateArray();
+
+            cJSON_AddNumberToObject(current_room, "id", room_id);
+            cJSON_AddStringToObject(current_room, "subject", row[1]);
+            cJSON_AddStringToObject(current_room, "description", row[2]);
+            cJSON_AddNumberToObject(current_room, "number_of_easy_question", atoi(row[3]));
+            cJSON_AddNumberToObject(current_room, "number_of_medium_question", atoi(row[4]));
+            cJSON_AddNumberToObject(current_room, "number_of_hard_question", atoi(row[5]));
+            cJSON_AddNumberToObject(current_room, "time_limit", atoi(row[6]));
+            cJSON_AddStringToObject(current_room, "start", row[7]);
+            cJSON_AddStringToObject(current_room, "end", row[8]);
+        }
+
+        if (row[9] != NULL)
+        {
+            cJSON_AddItemToArray(user_ids, cJSON_CreateNumber(atoi(row[9])));
+        }
+    }
+
+    if (current_room != NULL)
+    {
+        cJSON_AddItemToObject(current_room, "user_ids", user_ids);
+        cJSON_AddItemToArray(json_array, current_room);
+    }
+
+    mysql_free_result(res);
+    mysql_close(conn);
+
+    char *json_string = cJSON_Print(json_array);
+    cJSON_Delete(json_array);
+
+    return json_string;
 }

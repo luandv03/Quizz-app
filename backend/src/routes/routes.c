@@ -1,4 +1,4 @@
-#include "../message_types/index.h"
+#include "../data_structures/index.h"
 #include "../controllers/controller.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +21,7 @@ void handle_control_message(int socket, ControlMessage *msg)
     }
     else if (strcmp(msg->type, GET_ROOM_LIST) == 0)
     {
+        handle_get_room_list(socket, msg);
     }
     else if (strcmp(msg->type, CREATE_ROOM) == 0)
     {

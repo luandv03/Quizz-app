@@ -37,3 +37,24 @@ int parse_json(const char *json_str, KeyValuePair *pairs, int max_pairs)
     cJSON_Delete(json);
     return pair_count;
 }
+
+char *convert_to_json(KeyValuePair *pairs, int pair_count)
+{
+    cJSON *json = cJSON_CreateObject();
+    for (int i = 0; i < pair_count; i++)
+    {
+        cJSON_AddStringToObject(json, pairs[i].key, pairs[i].value);
+    }
+
+    char *json_string = cJSON_Print(json);
+    cJSON_Delete(json);
+
+    return json_string;
+}
+
+void add_key_value_pair(KeyValuePair *pairs, int *pair_count, const char *key, const char *value)
+{
+    strncpy(pairs[*pair_count].key, key, sizeof(pairs[*pair_count].key) - 1);
+    strncpy(pairs[*pair_count].value, value, sizeof(pairs[*pair_count].value) - 1);
+    (*pair_count)++;
+}
