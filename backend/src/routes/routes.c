@@ -15,6 +15,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_login(socket, msg);
     }
+    else if (strcmp(msg->type, SIGN_UP) == 0)
+    {
+        handle_signup(socket, msg);
+    }
     else if (strcmp(msg->type, GET_ROOM_LIST) == 0)
     {
     }
@@ -85,27 +89,34 @@ void setup_routes(int server_fd)
         char buffer[2048];
         memset(buffer, 0, sizeof(buffer));
         read(new_socket, buffer, 2048);
-        // printf("Received: %s\n", buffer);
 
-        char msg_type[50];
-        sscanf(buffer, "%s", msg_type);
+        printf("Received:\n%s\n", buffer);
 
-        if (strcmp(msg_type, "CONTROL") == 0)
+        char *msg_type = strtok(buffer, "\n");
+        char *body = msg_type + strlen(msg_type) + 1; // Move the pointer to the position after the newline
+
+        printf("msg_type: %s - body: %s\n", msg_type, body);
+
+        if (strncmp(msg_type, "CONTROL", 7) == 0)
         {
             ControlMessage msg;
-            sscanf(buffer, "%s %s\n%[^\n]", msg_type, msg.type, msg.body);
+            sscanf(msg_type, "CONTROL %s", msg.type);
+            strncpy(msg.body, body, sizeof(msg.body) - 1);
+            printf("msg.type: %s\n", msg.type);
             handle_control_message(new_socket, &msg);
         }
-        else if (strcmp(msg_type, "DATA") == 0)
+        else if (strncmp(msg_type, "DATA", 4) == 0)
         {
             DataMessage msg;
-            sscanf(buffer, "DATA %s %s %d\n%[^\n]", msg.type, msg.data_type, &msg.data_size, msg.body);
+            sscanf(msg_type, "DATA %s %s %d", msg.type, msg.data_type, &msg.data_size);
+            strncpy(msg.body, body, sizeof(msg.body) - 1);
             handle_data_message(new_socket, &msg);
         }
-        else if (strcmp(msg_type, "NOTIFICATION") == 0)
+        else if (strncmp(msg_type, "NOTIFICATION", 12) == 0)
         {
             NotificationMessage msg;
-            sscanf(buffer, "NOTIFICATION %s %s\n%[^\n]", msg.type, msg.timestamp, msg.body);
+            sscanf(msg_type, "NOTIFICATION %s %s", msg.type, msg.timestamp);
+            strncpy(msg.body, body, sizeof(msg.body) - 1);
             handle_notification_message(new_socket, &msg);
         }
 
