@@ -30,10 +30,13 @@ void handle_control_message(int socket, ControlMessage *msg)
     else if (strcmp(msg->type, CREATE_ROOM) == 0)
     {
     }
-    else if (strcmp(msg->type,GET_USER_EXAM_RESULT) == 0)
+    else if (strcmp(msg->type, GET_USER_EXAM_RESULT) == 0)
     {
         handle_get_user_exam_result(socket, msg);
-
+    }
+    else if (strcmp(msg->type, GET_EXAM_RESULT_OF_ROOM) == 0)
+    {
+        handle_get_exam_result_of_room(socket, msg);
     }
 }
 

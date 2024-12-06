@@ -8,6 +8,7 @@
 #define SIGN_UP "SIGN_UP"
 #define USER_ENTER_ROOM "USER_ENTER_ROOM"
 #define GET_USER_EXAM_RESULT "GET_USER_EXAM_RESULT"
+#define GET_EXAM_RESULT_OF_ROOM "GET_EXAM_RESULT_OF_ROOM"
 // Struct Definition
 typedef struct
 {
