@@ -7,5 +7,6 @@ int login(const char *email, const char *password);
 char *get_all_room();
 int user_enter_room(int user_id, int room_id);
 char *get_user_exam_result(int user_id, int room_id);
+char *get_exam_result_of_room(int room_id);
 
 #endif // SERVICE_H

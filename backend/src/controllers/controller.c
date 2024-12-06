@@ -215,3 +215,38 @@ void handle_get_user_exam_result(int client_socket, ControlMessage *msg)
     }
 }
 
+void handle_get_exam_result_of_room(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 1);
+
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    char *result = get_exam_result_of_room(room_id);
+    char response[8192];
+    memset(response, 0, sizeof(response));
+
+    if (result == NULL)
+    {
+        snprintf(response, sizeof(response), "DATA JSON 0 EXAM_RESULT_OF_ROOM\n{\"data\": []}");
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA JSON %ld EXAM_RESULT_OF_ROOM\n{\"data\": %s}", strlen(result), result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+
+    if (result != NULL)
+    {
+        free(result);
+    }
+}
