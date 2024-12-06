@@ -10,6 +10,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    examroomlist.cpp \
     home.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -17,12 +18,15 @@ SOURCES += \
     signup.cpp
 
 HEADERS += \
+    examroomlist.h \
     home.h \
     mainwindow.h \
     signin.h \
     signup.h
 
 FORMS += \
+    examroomlist.ui \
+    formLogin.ui \
     home.ui \
     mainwindow.ui \
     signin.ui \

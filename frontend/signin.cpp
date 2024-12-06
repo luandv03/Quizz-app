@@ -25,16 +25,18 @@ void Signin::on_signinButton_clicked() {
     QJsonDocument doc(json);
     QByteArray data = doc.toJson();
 
-    tcpSocket->connectToHost("localhost", 8080);
-    if (tcpSocket->waitForConnected()) {
-        tcpSocket->write("POST /signin ");
-        tcpSocket->write(data);
-        tcpSocket->flush();
-    }
+    printf("1234\n");
+
+    // tcpSocket->connectToHost("localhost", 8080);
+    // if (tcpSocket->waitForConnected()) {
+    //     tcpSocket->write("POST /signin ");
+    //     tcpSocket->write(data);
+    //     tcpSocket->flush();
+    // }
 }
 
 void Signin::onReadyRead() {
     QByteArray response = tcpSocket->readAll();
     ui->responseLabel->setText(response);
-    emit showHome();
+    emit loginSuccessful();
 }

@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , signupForm(new Signup(this))
     , signinForm(new Signin(this))
     , homeForm(new Home(this))
+    , examRoomListForm(new ExamRoomList(this))
 {
     ui->setupUi(this);
 
@@ -22,9 +23,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(homeForm, &Home::showSignin, this, &MainWindow::showSignin);
     connect(signupForm, &Signup::showHome, this, &MainWindow::showHome);
     connect(signinForm, &Signin::showHome, this, &MainWindow::showHome);
+    // connect(signinForm, &Signin::showExamRoomList, this, &MainWindow::showExamRoomList);
+
 
     // Show the home form initially
     ui->stackedWidget->setCurrentWidget(homeForm);
+
+    // // Show the home form initially
+    // ui->stackedWidget->setCurrentWidget(examRoomListForm);
 }
 
 MainWindow::~MainWindow() {
@@ -42,3 +48,8 @@ void MainWindow::showSignin() {
 void MainWindow::showHome() {
     ui->stackedWidget->setCurrentWidget(homeForm);
 }
+
+void MainWindow::showExamRoomList() {
+    ui->stackedWidget->setCurrentWidget(examRoomListForm);
+}
+

@@ -7,6 +7,7 @@
 #include "signup.h"
 #include "signin.h"
 #include "home.h"
+#include "examroomlist.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,7 @@ private slots:
     void showSignup();
     void showSignin();
     void showHome();
+    void showExamRoomList();
 
 private:
     Ui::MainWindow *ui;
@@ -30,6 +32,7 @@ private:
     Signup *signupForm;
     Signin *signinForm;
     Home *homeForm;
+    ExamRoomList *examRoomListForm;
 };
 
 #endif // MAINWINDOW_H

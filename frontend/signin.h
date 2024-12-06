@@ -17,7 +17,9 @@ public:
     ~Signin();
 
 signals:
+    void loginSuccessful();
     void showHome();
+    void showExamRoomList();
 
 private slots:
     void on_signinButton_clicked();
