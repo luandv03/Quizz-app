@@ -38,6 +38,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_get_exam_result_of_room(socket, msg);
     }
+    else if (strcmp(msg->type, GET_USER_PRACTICE_RESULT) == 0)
+    {
+        handle_get_user_practice_result(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)
