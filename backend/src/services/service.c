@@ -109,7 +109,7 @@ char *get_all_room()
         return NULL;
     }
 
-    const char *query = "SELECT r.id, r.subject, r.description, r.number_of_easy_question, r.number_of_medium_question, r.number_of_hard_question, r.time_limit, r.start, r.end, u.user_id "
+    const char *query = "SELECT r.id, r.subject, r.description, r.number_of_easy_question, r.number_of_medium_question, r.number_of_hard_question, r.time_limit, r.start, r.end, r.status, u.user_id "
                         "FROM room r LEFT JOIN user_in_room u ON r.id = u.room_id";
     if (mysql_query(conn, query))
     {
@@ -162,11 +162,12 @@ char *get_all_room()
             cJSON_AddNumberToObject(current_room, "time_limit", atoi(row[6]));
             cJSON_AddStringToObject(current_room, "start", row[7]);
             cJSON_AddStringToObject(current_room, "end", row[8]);
+            cJSON_AddStringToObject(current_room, "status", row[9]);
         }
 
-        if (row[9] != NULL)
+        if (row[10] != NULL)
         {
-            cJSON_AddItemToArray(user_ids, cJSON_CreateNumber(atoi(row[9])));
+            cJSON_AddItemToArray(user_ids, cJSON_CreateNumber(atoi(row[10])));
         }
     }
 

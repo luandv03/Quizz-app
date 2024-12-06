@@ -119,11 +119,11 @@ void handle_get_room_list(int client_socket, ControlMessage *msg)
     char *result = get_all_room();
     if (result == NULL)
     {
-        snprintf(response, sizeof(response), "DATA ALL_ROOM\n{\"data\": []}");
+        snprintf(response, sizeof(response), "DATA JSON 0 ALL_ROOM\n{\"data\": []}");
     }
     else
     {
-        snprintf(response, sizeof(response), "DATA ALL_ROOM\n{\"data\": %s}", result);
+        snprintf(response, sizeof(response), "DATA JSON %ld ALL_ROOM\n{\"data\": %s}", strlen(result), result);
     }
 
     write(client_socket, response, strlen(response));
