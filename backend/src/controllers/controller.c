@@ -24,7 +24,7 @@ void handle_request(int client_socket)
     close(client_socket);
 }
 
-void handle_login(int client_socket, ControlMessage *msg)
+void  handle_login(int client_socket, ControlMessage *msg)
 {
     KeyValuePair pairs[10];
     int pair_count = parse_json(msg->body, pairs, 2);
@@ -171,3 +171,47 @@ void handle_user_enter_room(int client_socket, ControlMessage *msg)
     write(client_socket, response, strlen(response));
     close(client_socket);
 }
+
+void handle_get_user_exam_result(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 10);
+
+    int user_id = -1;
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "user_id") == 0)
+        {
+
+            user_id = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    char *result = get_user_exam_result(user_id, room_id);
+    printf("Result: %s\n", result);
+    char response[8192];
+    memset(response, 0, sizeof(response));
+
+    if (result == NULL)
+    {
+        snprintf(response, sizeof(response), "DATA JSON 0 USER_EXAM_RESULT\n{\"data\": []}");
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA JSON %ld USER_EXAM_RESULT\n{\"data\": %s}", strlen(result), result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+
+    if (result != NULL)
+    {
+        free(result);
+    }
+}
+
