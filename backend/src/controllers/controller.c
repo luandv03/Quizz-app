@@ -176,14 +176,11 @@ void handle_get_user_exam_result(int client_socket, ControlMessage *msg)
 {
     KeyValuePair pairs[10];
     int pair_count = parse_json(msg->body, pairs, 10);
-    printf("body: %s\n", msg->body);
 
     int user_id = -1;
     int room_id = -1;
-    printf("Pair count: %d\n", pair_count);
     for (int i = 0; i < pair_count; i++)
     {
-        printf("key: %s, value: %s\n", pairs[i].key, pairs[i].value);
         if (strcmp(pairs[i].key, "user_id") == 0)
         {
 
@@ -194,7 +191,6 @@ void handle_get_user_exam_result(int client_socket, ControlMessage *msg)
             room_id = atoi(pairs[i].value);
         }
     }
-    printf("User ID: %d, Room ID: %d\n", user_id, room_id);
 
     char *result = get_user_exam_result(user_id, room_id);
     printf("Result: %s\n", result);

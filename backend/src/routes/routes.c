@@ -32,7 +32,6 @@ void handle_control_message(int socket, ControlMessage *msg)
     }
     else if (strcmp(msg->type,GET_USER_EXAM_RESULT) == 0)
     {
-        printf("route: GET_USER_EXAM_RESULT\n");
         handle_get_user_exam_result(socket, msg);
 
     }
