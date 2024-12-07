@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define PORT 8080
 #define BACKLOG 10
@@ -181,7 +182,7 @@ void *pthread_routine(void *arg) {
     memset(buffer, 0, sizeof(buffer));
     read(new_socket_fd, buffer, 2048);
 
-    printf("Received:\n%s\n", buffer);
+    printf("Received to client %s:%d  : %s\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port),buffer);
 
     char *header = strtok(buffer, "\n");
     char *body = header + strlen(header) + 1; // Move the pointer to the position after the newline
