@@ -205,3 +205,280 @@ int user_enter_room(int user_id, int room_id)
 
     return 1;
 }
+
+char *mysql_time_to_str(MYSQL_TIME *time)
+{
+    char *str = (char *)malloc(20); // Cấp phát bộ nhớ cho chuỗi ngày tháng
+    snprintf(str, 20, "%04d-%02d-%02d %02d:%02d:%02d",
+             time->year, time->month, time->day,
+             time->hour, time->minute, time->second);
+    return str;
+}
+
+char *get_user_exam_result(int user_id, int room_id)
+{
+    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    // Truy vấn SQL lấy tất cả bài thi của người dùng trong phòng thi
+    char query[512];
+    snprintf(query, sizeof(query),
+             "SELECT e.id AS exam_id, e.score, eq.question_id, eq.user_answer, a.id AS answer_id, a.content AS answer "
+             "FROM exam e "
+             "JOIN exam_question eq ON e.id = eq.exam_id "
+             "JOIN answer_of_question a ON eq.user_answer = a.id "
+             "WHERE e.user_id = %d AND e.room_id = %d "
+             "ORDER BY e.id ASC;",
+             user_id, room_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_ROW row;
+
+    // Kiểm tra nếu có dữ liệu trả về từ cơ sở dữ liệu
+    int num_rows = mysql_num_rows(res);
+    if (num_rows == 0)
+    {
+        fprintf(stderr, "No data found for user_id: %d in room_id: %d\n", user_id, room_id);
+        mysql_free_result(res);
+        mysql_close(conn);
+        return NULL;
+    }
+
+    // Khởi tạo mảng JSON cho kết quả thi
+    cJSON *result_json = cJSON_CreateObject();
+    cJSON *exam_results = cJSON_CreateArray();
+
+    int total_questions = 0;
+    int correct_answers = 0;
+    int exam_id = -1; // Khai báo exam_id ở đây
+
+    // Lặp qua các dòng dữ liệu trong kết quả truy vấn
+    cJSON *questions_json = cJSON_CreateArray();
+    cJSON *exam_result = cJSON_CreateObject();
+    cJSON *question_json = cJSON_CreateObject();
+    while ((row = mysql_fetch_row(res)))
+    {
+        if (row == NULL)
+        {
+            continue; // Bỏ qua nếu không có dữ liệu
+        }
+        // reset question_json
+        question_json = cJSON_CreateObject();
+        if (exam_id == -1)
+        {
+            exam_id = atoi(row[0]);
+            exam_result = cJSON_CreateObject();
+            questions_json = cJSON_CreateArray();
+            total_questions = 0;
+            correct_answers = 0;
+        }
+        else if (exam_id != atoi(row[0]))
+        {
+            cJSON_AddNumberToObject(exam_result, "exam_id", exam_id);
+            if (total_questions > 0)
+            {
+                cJSON_AddNumberToObject(exam_result, "score", correct_answers * 100 / total_questions);
+            }
+            cJSON_AddNumberToObject(exam_result, "total_questions", total_questions);
+            cJSON_AddNumberToObject(exam_result, "correct_answers", correct_answers);
+            cJSON_AddItemToObject(exam_result, "questions", questions_json);
+            cJSON_AddItemToArray(exam_results, exam_result);
+            exam_id = atoi(row[0]);
+            exam_result = cJSON_CreateObject();
+            questions_json = cJSON_CreateArray();
+            total_questions = 0;
+            correct_answers = 0;
+        }
+        int question_id = row[2] ? atoi(row[2]) : 0; // Kiểm tra nếu row[2] là NULL
+        int user_answer = row[3] ? atoi(row[3]) : 0;
+        int answer_id = row[4] ? atoi(row[4]) : 0;
+        // Tính số câu đúng
+        if (user_answer == answer_id)
+        {
+            correct_answers++;
+        }
+        total_questions++;
+        cJSON_AddNumberToObject(question_json, "question_id", question_id);
+        cJSON_AddNumberToObject(question_json, "answer_id", answer_id);
+        cJSON_AddNumberToObject(question_json, "user_selected", user_answer);
+        cJSON_AddItemToArray(questions_json, question_json);
+    }
+    if (exam_id != -1)
+    {
+        cJSON_AddNumberToObject(exam_result, "exam_id", exam_id);
+        if (total_questions > 0)
+        {
+            cJSON_AddNumberToObject(exam_result, "score", correct_answers * 100 / total_questions);
+        }
+        cJSON_AddNumberToObject(exam_result, "total_questions", total_questions);
+        cJSON_AddNumberToObject(exam_result, "correct_answers", correct_answers);
+        cJSON_AddItemToObject(exam_result, "questions", questions_json);
+        cJSON_AddItemToArray(exam_results, exam_result);
+    }
+    cJSON_AddItemToObject(result_json, "exam_results", exam_results);
+    char *json_string = cJSON_Print(result_json);
+
+    cJSON_Delete(result_json);
+    mysql_free_result(res);
+    
+
+    return json_string;
+}
+
+char *get_exam_result_of_room(int room_id)
+{
+
+    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    // Truy vấn SQL lấy tất cả bài thi của phòng thi
+    char query[512];
+    snprintf(query, sizeof(query),
+             "SELECT r.id AS room_id, r.subject, u.name, e.score "
+             "FROM exam e "
+             "JOIN user u ON e.user_id = u.id "
+             "JOIN room r ON e.room_id = r.id "
+             "WHERE e.room_id = %d "
+             "ORDER BY e.id ASC;",
+             room_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_ROW row;
+
+    int num_rows = mysql_num_rows(res);
+    if (num_rows == 0)
+    {
+        fprintf(stderr, "No data found for room_id: %d\n", room_id);
+        mysql_free_result(res);
+        mysql_close(conn);
+        return NULL;
+    }
+
+    cJSON *result_json = cJSON_CreateObject();
+    cJSON *exam_results = cJSON_CreateArray();
+
+    // Lặp qua các dòng dữ liệu trong kết quả truy vấn
+    while ((row = mysql_fetch_row(res)))
+    {
+        cJSON *exam_result = cJSON_CreateObject();
+        cJSON_AddNumberToObject(exam_result, "room_id", atoi(row[0]));
+        cJSON_AddStringToObject(exam_result, "subject", row[1]);
+        cJSON_AddStringToObject(exam_result, "username", row[2]);
+        cJSON_AddNumberToObject(exam_result, "score", atoi(row[3]));
+        cJSON_AddItemToArray(exam_results, exam_result);
+    }
+
+    cJSON_AddItemToObject(result_json, "exam_results", exam_results);
+    char *json_string = cJSON_Print(result_json);
+    cJSON_Delete(result_json);
+    mysql_free_result(res);
+    return json_string;
+}
+
+char *get_user_practice_result(int room_id, int user_id)
+{
+    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    // Truy vấn SQL lấy tất cả bài thi của phòng thi và người thi
+    char query[512];
+
+    snprintf(query, sizeof(query),
+             "SELECT u.id, u.name, r.id AS room_id, r.subject, p.start_time, p.end_time, p.score "
+             "FROM practice_session p "
+             "JOIN user u ON p.user_id = u.id "
+             "JOIN room r ON p.room_id = r.id "
+             "WHERE p.room_id = %d AND p.user_id = %d "
+             "ORDER BY p.id ASC;",
+             room_id, user_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_ROW row; // Dòng dữ liệu từ kết quả truy vấn
+    int num_rows = mysql_num_rows(res);
+    if (num_rows == 0)
+    {
+        fprintf(stderr, "No data found for room_id: %d and user_id: %d\n", room_id, user_id);
+        mysql_free_result(res);
+        mysql_close(conn);
+        return NULL;
+    }
+
+    cJSON *result_json = cJSON_CreateObject();
+    cJSON *practice_results = cJSON_CreateArray();
+
+    // Lặp qua các dòng dữ liệu trong kết quả truy vấn
+    while ((row = mysql_fetch_row(res)))
+    {
+        cJSON *practice_result = cJSON_CreateObject();
+
+        cJSON_AddNumberToObject(practice_result, "user_id", atoi(row[0]));
+        cJSON_AddStringToObject(practice_result, "username", row[1]);
+        cJSON_AddNumberToObject(practice_result, "room_id", atoi(row[2]));
+        cJSON_AddStringToObject(practice_result, "subject", row[3]);
+        cJSON_AddStringToObject(practice_result, "start_time", row[4]);
+        cJSON_AddStringToObject(practice_result, "end_time", row[5]);
+        cJSON_AddNumberToObject(practice_result, "score", atoi(row[6]));
+
+        cJSON_AddItemToArray(practice_results, practice_result);
+    }
+
+    cJSON_AddItemToObject(result_json, "practice_results", practice_results);
+    char *json_string = cJSON_Print(result_json);
+    cJSON_Delete(result_json);
+    mysql_free_result(res);
+    return json_string;
+}

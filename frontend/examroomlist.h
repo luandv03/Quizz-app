@@ -6,6 +6,7 @@
 #include <QListWidgetItem>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QTcpSocket>
 
 namespace Ui {
 class ExamRoomList;
@@ -19,6 +20,9 @@ public:
     explicit ExamRoomList(QWidget *parent = nullptr);
     ~ExamRoomList();
 
+signals:
+    void showExamRoomDetail();
+
 private slots:
     void on_searchButton_clicked();
     void on_avatarButton_clicked();
@@ -26,8 +30,10 @@ private slots:
 
 private:
     Ui::ExamRoomList *ui;
+    QTcpSocket *tcpSocket;
     void populateExamRoomList(const QJsonArray &examRooms);
     void createExamRoomItem(const QJsonObject &examRoom);
+    void onReadyRead();
 };
 
 #endif // EXAMROOMLIST_H

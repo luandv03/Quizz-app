@@ -14,15 +14,18 @@
 
 ExamRoomList::ExamRoomList(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ExamRoomList)
+    ui(new Ui::ExamRoomList),
+    tcpSocket(new QTcpSocket(this))
 {
     ui->setupUi(this);
+
+    connect(tcpSocket, &QTcpSocket::readyRead, this, &ExamRoomList::onReadyRead);
 
     // Set up the avatar button dropdown menu
     QMenu *menu = new QMenu(this);
     QAction *examRoomListAction = new QAction("Exam Room List", this);
     QAction *profileAction = new QAction("Profile", this);
-    QAction *practicesAction = new QAction("Practices", this);
+    QAction *practicesAction = new QAction("Logout", this);
 
     menu->addAction(examRoomListAction);
     menu->addAction(profileAction);
@@ -30,44 +33,15 @@ ExamRoomList::ExamRoomList(QWidget *parent) :
 
     ui->avatarButton->setMenu(menu);
 
-    // Example JSON data
-    QString jsonData = R"(
-    {
-        "data": [
-            {
-                "id": 1,
-                "subject": "Math",
-                "description": "Basic math questions",
-                "number_of_easy_question": 10,
-                "number_of_medium_question": 5,
-                "number_of_hard_question": 2,
-                "time_limit": 60,
-                "start": "2023-10-01 10:00:00",
-                "end": "2023-10-01 11:00:00",
-                "user_ids": [1, 2]
-            },
-            {
-                "id": 4,
-                "subject": "Geography",
-                "description": "Geography questions",
-                "number_of_easy_question": 7,
-                "number_of_medium_question": 8,
-                "number_of_hard_question": 6,
-                "time_limit": 70,
-                "start": "2023-10-05 15:00:00",
-                "end": "2023-10-05 16:10:00",
-                "user_ids": []
-            }
-        ]
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL GET_ROOM_LIST\n%1");
+
+    tcpSocket->connectToHost("localhost", 8080);
+    if (tcpSocket->waitForConnected()) {
+        tcpSocket->write(dataString.toUtf8());
+        tcpSocket->flush();
     }
-    )";
 
-    QJsonDocument doc = QJsonDocument::fromJson(jsonData.toUtf8());
-    QJsonObject obj = doc.object();
-    QJsonArray examRooms = obj["data"].toArray();
-
-    // Populate the exam room list
-    populateExamRoomList(examRooms);
 }
 
 ExamRoomList::~ExamRoomList()
@@ -89,7 +63,9 @@ void ExamRoomList::handleJoinButtonClicked(QListWidgetItem *item)
 {
     // Implement join button functionality here
     // For example, you can display a message box with the item text
-    QMessageBox::information(this, "Join Exam Room", "Joining " + item->text());
+    // QMessageBox::information(this, "Join Exam Room", "Joining " + item->text());
+    // Emit signal to show Exam Room Detail UI
+    emit showExamRoomDetail();
 }
 
 void ExamRoomList::populateExamRoomList(const QJsonArray &examRooms)
@@ -147,3 +123,32 @@ void ExamRoomList::createExamRoomItem(const QJsonObject &examRoom)
     });
 }
 
+void ExamRoomList::onReadyRead() {
+    QByteArray response = tcpSocket->readAll();
+    QString responseString(response);
+
+    if (responseString.startsWith("DATA JSON 945 ALL_ROOM")) {
+            qDebug() << "Room List Response:" << responseString;
+
+            // Extract JSON part from the response
+            int jsonStartIndex = responseString.indexOf('{');
+            int jsonEndIndex = responseString.lastIndexOf('}');
+            if (jsonStartIndex != -1 && jsonEndIndex != -1) {
+                QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+                QJsonParseError parseError;
+                QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+                if (parseError.error == QJsonParseError::NoError) {
+                    QJsonObject jsonObj = jsonDoc.object();
+                    QJsonArray roomList = jsonObj["data"].toArray();
+                    populateExamRoomList(roomList);
+                } else {
+                    qDebug() << "JSON Parse Error:" << parseError.errorString();
+                }
+            } else {
+                qDebug() << "Invalid JSON format in response";
+            }
+        } else {
+            qDebug() << "Unknown response from server:" << responseString;
+    }
+
+}

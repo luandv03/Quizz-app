@@ -8,5 +8,8 @@ void handle_signup(int client_socket, ControlMessage *msg);
 void handle_login(int client_socket, ControlMessage *msg);
 void handle_get_room_list(int client_socket, ControlMessage *msg);
 void handle_user_enter_room(int client_socket, ControlMessage *msg);
+void handle_get_user_exam_result(int client_socket, ControlMessage *msg);
+void handle_get_exam_result_of_room(int client_socket, ControlMessage *msg);
+void handle_get_user_practice_result(int client_socket, ControlMessage *msg);
 
 #endif // CONTROLLER_H

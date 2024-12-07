@@ -44,7 +44,10 @@ void Signin::onReadyRead() {
     if (responseString.startsWith("NOTIFICATION LOGIN_FAILURE")) {
         ui->responseLabel->setText("Đăng nhập thất bại");
         ui->responseLabel->setStyleSheet("QLabel { color : red; }");
+        qDebug() << "Login Response:" << responseString;
     } else if (responseString.startsWith("NOTIFICATION LOGIN_SUCCESS")) {
+        qDebug() << "Login Response:" << responseString;
+        
         // Extract JSON part from the response
         int jsonStartIndex = responseString.indexOf('{');
         if (jsonStartIndex != -1) {
