@@ -50,7 +50,7 @@ int signup(const char *email, const char *password, const char *username, const 
 {
     MYSQL *conn = get_db_connection();
     char query[256];
-    snprintf(query, sizeof(query), "INSERT INTO users (email, pass, name, dob) VALUES ('%s', '%s', '%s', '%s')", email, password, username, dob);
+    snprintf(query, sizeof(query), "INSERT INTO user (email, pass, name, dob) VALUES ('%s', '%s', '%s', '%s')", email, password, username, dob);
     // printf("Query: %s\n", query);
 
     if (mysql_query(conn, query))
@@ -67,7 +67,7 @@ int login(const char *email, const char *password)
     int user_id;
     MYSQL *conn = get_db_connection();
     char query[256];
-    snprintf(query, sizeof(query), "SELECT * FROM users WHERE email='%s' AND pass='%s'", email, password);
+    snprintf(query, sizeof(query), "SELECT * FROM user WHERE email='%s' AND pass='%s'", email, password);
     // printf("Query: %s\n", query);
 
     if (mysql_query(conn, query))
@@ -338,7 +338,7 @@ char *get_user_exam_result(int user_id, int room_id)
 
     cJSON_Delete(result_json);
     mysql_free_result(res);
-    mysql_close(conn);
+    
 
     return json_string;
 }
@@ -356,10 +356,10 @@ char *get_exam_result_of_room(int room_id)
     // Truy vấn SQL lấy tất cả bài thi của phòng thi
     char query[512];
     snprintf(query, sizeof(query),
-             "SELECT r.id AS room_id, r.subject, u.username, e.score "
+             "SELECT r.id AS room_id, r.subject, u.name, e.score "
              "FROM exam e "
-             "JOIN users u ON e.user_id = u.id "
-             "JOIN rooms r ON e.room_id = r.id "
+             "JOIN user u ON e.user_id = u.id "
+             "JOIN room r ON e.room_id = r.id "
              "WHERE e.room_id = %d "
              "ORDER BY e.id ASC;",
              room_id);
@@ -408,7 +408,6 @@ char *get_exam_result_of_room(int room_id)
     char *json_string = cJSON_Print(result_json);
     cJSON_Delete(result_json);
     mysql_free_result(res);
-    mysql_close(conn);
     return json_string;
 }
 
@@ -425,10 +424,10 @@ char *get_user_practice_result(int room_id, int user_id)
     char query[512];
 
     snprintf(query, sizeof(query),
-             "SELECT u.id, u.username, r.id AS room_id, r.subject, p.start_time, p.end_time, p.score "
+             "SELECT u.id, u.name, r.id AS room_id, r.subject, p.start_time, p.end_time, p.score "
              "FROM practice_session p "
-             "JOIN users u ON p.user_id = u.id "
-             "JOIN rooms r ON p.room_id = r.id "
+             "JOIN user u ON p.user_id = u.id "
+             "JOIN room r ON p.room_id = r.id "
              "WHERE p.room_id = %d AND p.user_id = %d "
              "ORDER BY p.id ASC;",
              room_id, user_id);
@@ -481,6 +480,5 @@ char *get_user_practice_result(int room_id, int user_id)
     char *json_string = cJSON_Print(result_json);
     cJSON_Delete(result_json);
     mysql_free_result(res);
-    mysql_close(conn);
     return json_string;
 }
