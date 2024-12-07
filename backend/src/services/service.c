@@ -422,34 +422,36 @@ char *get_user_practice_result(int room_id, int user_id)
 
 char *get_room_detail(int room_id)
 {
-    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    MYSQL *conn = get_db_connection();
     if (conn == NULL)
     {
         fprintf(stderr, "Database connection failed.\n");
-        return NULL;
+        return strdup("{\"error\": \"Database connection failed.\"}");
     }
 
-    // Truy vấn SQL lấy thông tin chi tiết của phòng thi
     char query[512];
     snprintf(query, sizeof(query),
              "SELECT r.id, r.subject, r.description, r.number_of_easy_question, r.number_of_medium_question, r.number_of_hard_question, r.time_limit, r.start, r.end, r.status, u.user_id "
              "FROM room r LEFT JOIN user_in_room u ON r.id = u.room_id "
              "WHERE r.id = %d",
              room_id);
-
     if (mysql_query(conn, query))
     {
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        char error_message[256];
+        snprintf(error_message, sizeof(error_message), "{\"error\": \"Query failed. Error: %s\"}", mysql_error(conn));
         mysql_close(conn);
-        return NULL;
+        return strdup(error_message);
     }
 
     MYSQL_RES *res = mysql_store_result(conn);
     if (res == NULL)
     {
         fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        char error_message[256];
+        snprintf(error_message, sizeof(error_message), "{\"error\": \"mysql_store_result() failed. Error: %s\"}", mysql_error(conn));
         mysql_close(conn);
-        return NULL;
+        return strdup(error_message);
     }
 
     MYSQL_ROW row;
@@ -460,9 +462,43 @@ char *get_room_detail(int room_id)
         fprintf(stderr, "No data found for room_id: %d\n", room_id);
         mysql_free_result(res);
         mysql_close(conn);
-        return NULL;
+        char error_message[256];
+        snprintf(error_message, sizeof(error_message), "{\"error\": \"No data found for room id: %d.\"}", room_id);
+        return strdup(error_message);
     }
 
     cJSON *room_json = cJSON_CreateObject();
     cJSON *user_ids = cJSON_CreateArray();
+
+    while ((row = mysql_fetch_row(res)))
+    {
+        if (cJSON_GetObjectItem(room_json, "id") == NULL)
+        {
+            cJSON_AddNumberToObject(room_json, "id", atoi(row[0]));
+            cJSON_AddStringToObject(room_json, "subject", row[1]);
+            cJSON_AddStringToObject(room_json, "description", row[2]);
+            cJSON_AddNumberToObject(room_json, "number_of_easy_question", atoi(row[3]));
+            cJSON_AddNumberToObject(room_json, "number_of_medium_question", atoi(row[4]));
+            cJSON_AddNumberToObject(room_json, "number_of_hard_question", atoi(row[5]));
+            cJSON_AddNumberToObject(room_json, "time_limit", atoi(row[6]));
+            cJSON_AddStringToObject(room_json, "start", row[7]);
+            cJSON_AddStringToObject(room_json, "end", row[8]);
+            cJSON_AddStringToObject(room_json, "status", row[9]);
+        }
+
+        if (row[10] != NULL)
+        {
+            cJSON_AddItemToArray(user_ids, cJSON_CreateNumber(atoi(row[10])));
+        }
+    }
+
+    cJSON_AddItemToObject(room_json, "user_ids", user_ids);
+
+    mysql_free_result(res);
+    mysql_close(conn);
+
+    char *json_string = cJSON_Print(room_json);
+    cJSON_Delete(room_json);
+
+    return json_string;
 }

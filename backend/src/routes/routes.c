@@ -14,7 +14,8 @@
 #define PORT 8080
 #define BACKLOG 10
 
-typedef struct pthread_arg_t {
+typedef struct pthread_arg_t
+{
     int new_socket_fd;
     struct sockaddr_in client_address;
     /* TODO: Put arguments passed to threads here. See lines 116 and 139. */
@@ -58,6 +59,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     else if (strcmp(msg->type, GET_USER_PRACTICE_RESULT) == 0)
     {
         handle_get_user_practice_result(socket, msg);
+    }
+    else if (strcmp(msg->type, GET_ROOM_BY_ID) == 0)
+    {
+        handle_get_room_by_id(socket, msg);
     }
 }
 
@@ -115,25 +120,30 @@ void setup_routes(int server_fd)
     }
 
     /* Assign signal handlers to signals. */
-    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+    {
         perror("signal");
         exit(1);
     }
-    if (signal(SIGTERM, signal_handler) == SIG_ERR) {
+    if (signal(SIGTERM, signal_handler) == SIG_ERR)
+    {
         perror("signal");
         exit(1);
     }
-    if (signal(SIGINT, signal_handler) == SIG_ERR) {
+    if (signal(SIGINT, signal_handler) == SIG_ERR)
+    {
         perror("signal");
         exit(1);
     }
 
     /* Initialise pthread attribute to create detached threads. */
-    if (pthread_attr_init(&pthread_attr) != 0) {
+    if (pthread_attr_init(&pthread_attr) != 0)
+    {
         perror("pthread_attr_init");
         exit(1);
     }
-    if (pthread_attr_setdetachstate(&pthread_attr, PTHREAD_CREATE_DETACHED) != 0) {
+    if (pthread_attr_setdetachstate(&pthread_attr, PTHREAD_CREATE_DETACHED) != 0)
+    {
         perror("pthread_attr_setdetachstate");
         exit(1);
     }
@@ -144,14 +154,15 @@ void setup_routes(int server_fd)
     {
         /* Tạo tham số pthread cho mỗi kết nối đến client. */
         pthread_arg = (pthread_arg_t *)malloc(sizeof *pthread_arg);
-        if (!pthread_arg) {
+        if (!pthread_arg)
+        {
             perror("malloc");
             continue;
         }
 
         /* Chấp nhận kết nối đến client. */
         client_address_len = sizeof pthread_arg->client_address;
-        if ((new_socket = accept(server_fd, (struct sockaddr *)&pthread_arg->client_address, &client_address_len )) < 0)
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&pthread_arg->client_address, &client_address_len)) < 0)
         {
             perror("accept failed");
             close(server_fd);
@@ -162,17 +173,19 @@ void setup_routes(int server_fd)
         pthread_arg->new_socket_fd = new_socket;
 
         /* Tạo luồng để phục vụ kết nối đến client. */
-        if (pthread_create(&pthread, &pthread_attr, pthread_routine, (void *)pthread_arg) != 0) {
+        if (pthread_create(&pthread, &pthread_attr, pthread_routine, (void *)pthread_arg) != 0)
+        {
             perror("pthread_create");
-            free(pthread_arg);  // Giải phóng bộ nhớ nếu không thể tạo luồng
+            free(pthread_arg); // Giải phóng bộ nhớ nếu không thể tạo luồng
             continue;
         }
-       
+
         // Không đóng new_socket ở đây, để nó sẽ được đóng trong pthread_routine.
     }
 }
 
-void *pthread_routine(void *arg) {
+void *pthread_routine(void *arg)
+{
     pthread_arg_t *pthread_arg = (pthread_arg_t *)arg;
     int new_socket_fd = pthread_arg->new_socket_fd;
     struct sockaddr_in client_address = pthread_arg->client_address;
@@ -182,7 +195,7 @@ void *pthread_routine(void *arg) {
     memset(buffer, 0, sizeof(buffer));
     read(new_socket_fd, buffer, 2048);
 
-    printf("Received to client %s:%d  : %s\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port),buffer);
+    printf("Received to client %s:%d  : %s\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), buffer);
 
     char *header = strtok(buffer, "\n");
     char *body = header + strlen(header) + 1; // Move the pointer to the position after the newline
@@ -219,7 +232,8 @@ void *pthread_routine(void *arg) {
     return NULL;
 }
 
-void signal_handler(int signal_number) {
+void signal_handler(int signal_number)
+{
     /* TODO: Put exit cleanup code here. */
     exit(0);
 }
