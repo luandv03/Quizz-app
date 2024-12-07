@@ -215,6 +215,7 @@ char *mysql_time_to_str(MYSQL_TIME *time)
     return str;
 }
 
+
 char *get_user_exam_result(int user_id, int room_id)
 {
     MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
@@ -223,17 +224,19 @@ char *get_user_exam_result(int user_id, int room_id)
         fprintf(stderr, "Database connection failed.\n");
         return NULL;
     }
-
     // Truy vấn SQL lấy tất cả bài thi của người dùng trong phòng thi
     char query[512];
     snprintf(query, sizeof(query),
-             "SELECT e.id AS exam_id, e.score, eq.question_id, eq.user_answer, a.id AS answer_id, a.content AS answer "
-             "FROM exam e "
-             "JOIN exam_question eq ON e.id = eq.exam_id "
-             "JOIN answer_of_question a ON eq.user_answer = a.id "
-             "WHERE e.user_id = %d AND e.room_id = %d "
-             "ORDER BY e.id ASC;",
-             user_id, room_id);
+        "SELECT e.id AS exam_id, "
+        "COUNT(DISTINCT eq.question_id) AS total_questions, "
+        "COUNT(DISTINCT CASE WHEN eq.user_answer IS NOT NULL THEN eq.question_id END) AS answered_questions, "
+        "COUNT(DISTINCT CASE WHEN a.is_true = 1 AND eq.user_answer = a.id THEN eq.question_id END) AS correct_answers "
+        "FROM  exam e "
+        " JOIN  exam_question eq ON e.id = eq.exam_id "
+        "LEFT JOIN answer_of_question a ON eq.user_answer = a.id "
+        "WHERE e.user_id = %d AND e.room_id = %d "
+        "GROUP BY e.id "
+        "ORDER BY e.id ASC; ", user_id, room_id);
 
     if (mysql_query(conn, query))
     {
@@ -249,9 +252,7 @@ char *get_user_exam_result(int user_id, int room_id)
         mysql_close(conn);
         return NULL;
     }
-
     MYSQL_ROW row;
-
     // Kiểm tra nếu có dữ liệu trả về từ cơ sở dữ liệu
     int num_rows = mysql_num_rows(res);
     if (num_rows == 0)
@@ -265,73 +266,20 @@ char *get_user_exam_result(int user_id, int room_id)
     // Khởi tạo mảng JSON cho kết quả thi
     cJSON *result_json = cJSON_CreateObject();
     cJSON *exam_results = cJSON_CreateArray();
-
-    int total_questions = 0;
-    int correct_answers = 0;
-    int exam_id = -1; // Khai báo exam_id ở đây
-
-    // Lặp qua các dòng dữ liệu trong kết quả truy vấn
-    cJSON *questions_json = cJSON_CreateArray();
     cJSON *exam_result = cJSON_CreateObject();
-    cJSON *question_json = cJSON_CreateObject();
     while ((row = mysql_fetch_row(res)))
     {
         if (row == NULL)
         {
             continue; // Bỏ qua nếu không có dữ liệu
         }
-        // reset question_json
-        question_json = cJSON_CreateObject();
-        if (exam_id == -1)
-        {
-            exam_id = atoi(row[0]);
-            exam_result = cJSON_CreateObject();
-            questions_json = cJSON_CreateArray();
-            total_questions = 0;
-            correct_answers = 0;
-        }
-        else if (exam_id != atoi(row[0]))
-        {
-            cJSON_AddNumberToObject(exam_result, "exam_id", exam_id);
-            if (total_questions > 0)
-            {
-                cJSON_AddNumberToObject(exam_result, "score", correct_answers * 100 / total_questions);
-            }
-            cJSON_AddNumberToObject(exam_result, "total_questions", total_questions);
-            cJSON_AddNumberToObject(exam_result, "correct_answers", correct_answers);
-            cJSON_AddItemToObject(exam_result, "questions", questions_json);
-            cJSON_AddItemToArray(exam_results, exam_result);
-            exam_id = atoi(row[0]);
-            exam_result = cJSON_CreateObject();
-            questions_json = cJSON_CreateArray();
-            total_questions = 0;
-            correct_answers = 0;
-        }
-        int question_id = row[2] ? atoi(row[2]) : 0; // Kiểm tra nếu row[2] là NULL
-        int user_answer = row[3] ? atoi(row[3]) : 0;
-        int answer_id = row[4] ? atoi(row[4]) : 0;
-        // Tính số câu đúng
-        if (user_answer == answer_id)
-        {
-            correct_answers++;
-        }
-        total_questions++;
-        cJSON_AddNumberToObject(question_json, "question_id", question_id);
-        cJSON_AddNumberToObject(question_json, "answer_id", answer_id);
-        cJSON_AddNumberToObject(question_json, "user_selected", user_answer);
-        cJSON_AddItemToArray(questions_json, question_json);
-    }
-    if (exam_id != -1)
-    {
-        cJSON_AddNumberToObject(exam_result, "exam_id", exam_id);
-        if (total_questions > 0)
-        {
-            cJSON_AddNumberToObject(exam_result, "score", correct_answers * 100 / total_questions);
-        }
-        cJSON_AddNumberToObject(exam_result, "total_questions", total_questions);
-        cJSON_AddNumberToObject(exam_result, "correct_answers", correct_answers);
-        cJSON_AddItemToObject(exam_result, "questions", questions_json);
+        cJSON_AddNumberToObject(exam_result, "exam_id", atoi(row[0]));
+        cJSON_AddNumberToObject(exam_result, "score", atoi(row[3])*100.0/atoi(row[2]));
+        cJSON_AddNumberToObject(exam_result, "total_questions", atoi(row[1]));
+        cJSON_AddNumberToObject(exam_result, "answered_questions", atoi(row[2]));
+        cJSON_AddNumberToObject(exam_result, "correct_answers", atoi(row[3]));
         cJSON_AddItemToArray(exam_results, exam_result);
+    
     }
     cJSON_AddItemToObject(result_json, "exam_results", exam_results);
     char *json_string = cJSON_Print(result_json);
