@@ -1,6 +1,7 @@
 // frontend/sources/mainwindow.cpp
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , signupForm(new Signup(this))
     , signinForm(new Signin(this))
     , homeForm(new Home(this))
+    , examRoomListForm(new ExamRoomList(this))
 {
     ui->setupUi(this);
 
@@ -16,15 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->addWidget(homeForm);
     ui->stackedWidget->addWidget(signupForm);
     ui->stackedWidget->addWidget(signinForm);
+    ui->stackedWidget->addWidget(examRoomListForm);
 
     // Connect signals to slots
-    connect(homeForm, &Home::showSignup, this, &MainWindow::showSignup);
-    connect(homeForm, &Home::showSignin, this, &MainWindow::showSignin);
-    connect(signupForm, &Signup::showHome, this, &MainWindow::showHome);
-    connect(signinForm, &Signin::showHome, this, &MainWindow::showHome);
+    connect(signinForm->findChild<QPushButton *>("signinButton"), &QPushButton::clicked,
+            this, &MainWindow::showExamRoomList);
 
-    // Show the home form initially
-    ui->stackedWidget->setCurrentWidget(homeForm);
+    // Show the signin form initially
+    ui->stackedWidget->setCurrentWidget(signinForm);
 }
 
 MainWindow::~MainWindow() {
@@ -42,3 +43,8 @@ void MainWindow::showSignin() {
 void MainWindow::showHome() {
     ui->stackedWidget->setCurrentWidget(homeForm);
 }
+
+void MainWindow::showExamRoomList() {
+    ui->stackedWidget->setCurrentWidget(examRoomListForm);
+}
+
