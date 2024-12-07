@@ -11,5 +11,6 @@ void handle_user_enter_room(int client_socket, ControlMessage *msg);
 void handle_get_user_exam_result(int client_socket, ControlMessage *msg);
 void handle_get_exam_result_of_room(int client_socket, ControlMessage *msg);
 void handle_get_user_practice_result(int client_socket, ControlMessage *msg);
+void handle_get_room_by_id(int client_socket, ControlMessage *msg);
 
 #endif // CONTROLLER_H
