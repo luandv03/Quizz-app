@@ -206,16 +206,6 @@ int user_enter_room(int user_id, int room_id)
     return 1;
 }
 
-char *mysql_time_to_str(MYSQL_TIME *time)
-{
-    char *str = (char *)malloc(20); // Cấp phát bộ nhớ cho chuỗi ngày tháng
-    snprintf(str, 20, "%04d-%02d-%02d %02d:%02d:%02d",
-             time->year, time->month, time->day,
-             time->hour, time->minute, time->second);
-    return str;
-}
-
-
 char *get_user_exam_result(int user_id, int room_id)
 {
     MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
@@ -227,16 +217,17 @@ char *get_user_exam_result(int user_id, int room_id)
     // Truy vấn SQL lấy tất cả bài thi của người dùng trong phòng thi
     char query[512];
     snprintf(query, sizeof(query),
-        "SELECT e.id AS exam_id, "
-        "COUNT(DISTINCT eq.question_id) AS total_questions, "
-        "COUNT(DISTINCT CASE WHEN eq.user_answer IS NOT NULL THEN eq.question_id END) AS answered_questions, "
-        "COUNT(DISTINCT CASE WHEN a.is_true = 1 AND eq.user_answer = a.id THEN eq.question_id END) AS correct_answers "
-        "FROM  exam e "
-        " JOIN  exam_question eq ON e.id = eq.exam_id "
-        "LEFT JOIN answer_of_question a ON eq.user_answer = a.id "
-        "WHERE e.user_id = %d AND e.room_id = %d "
-        "GROUP BY e.id "
-        "ORDER BY e.id ASC; ", user_id, room_id);
+             "SELECT e.id AS exam_id, "
+             "COUNT(DISTINCT eq.question_id) AS total_questions, "
+             "COUNT(DISTINCT CASE WHEN eq.user_answer IS NOT NULL THEN eq.question_id END) AS answered_questions, "
+             "COUNT(DISTINCT CASE WHEN a.is_true = 1 AND eq.user_answer = a.id THEN eq.question_id END) AS correct_answers "
+             "FROM  exam e "
+             " JOIN  exam_question eq ON e.id = eq.exam_id "
+             "LEFT JOIN answer_of_question a ON eq.user_answer = a.id "
+             "WHERE e.user_id = %d AND e.room_id = %d "
+             "GROUP BY e.id "
+             "ORDER BY e.id ASC; ",
+             user_id, room_id);
 
     if (mysql_query(conn, query))
     {
@@ -274,19 +265,17 @@ char *get_user_exam_result(int user_id, int room_id)
             continue; // Bỏ qua nếu không có dữ liệu
         }
         cJSON_AddNumberToObject(exam_result, "exam_id", atoi(row[0]));
-        cJSON_AddNumberToObject(exam_result, "score", atoi(row[3])*100.0/atoi(row[2]));
+        cJSON_AddNumberToObject(exam_result, "score", atoi(row[3]) * 100.0 / atoi(row[2]));
         cJSON_AddNumberToObject(exam_result, "total_questions", atoi(row[1]));
         cJSON_AddNumberToObject(exam_result, "answered_questions", atoi(row[2]));
         cJSON_AddNumberToObject(exam_result, "correct_answers", atoi(row[3]));
         cJSON_AddItemToArray(exam_results, exam_result);
-    
     }
     cJSON_AddItemToObject(result_json, "exam_results", exam_results);
     char *json_string = cJSON_Print(result_json);
 
     cJSON_Delete(result_json);
     mysql_free_result(res);
-    
 
     return json_string;
 }
@@ -429,4 +418,51 @@ char *get_user_practice_result(int room_id, int user_id)
     cJSON_Delete(result_json);
     mysql_free_result(res);
     return json_string;
+}
+
+char *get_room_detail(int room_id)
+{
+    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    // Truy vấn SQL lấy thông tin chi tiết của phòng thi
+    char query[512];
+    snprintf(query, sizeof(query),
+             "SELECT r.id, r.subject, r.description, r.number_of_easy_question, r.number_of_medium_question, r.number_of_hard_question, r.time_limit, r.start, r.end, r.status, u.user_id "
+             "FROM room r LEFT JOIN user_in_room u ON r.id = u.room_id "
+             "WHERE r.id = %d",
+             room_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        mysql_close(conn);
+        return NULL;
+    }
+
+    MYSQL_ROW row;
+
+    int num_rows = mysql_num_rows(res);
+    if (num_rows == 0)
+    {
+        fprintf(stderr, "No data found for room_id: %d\n", room_id);
+        mysql_free_result(res);
+        mysql_close(conn);
+        return NULL;
+    }
+
+    cJSON *room_json = cJSON_CreateObject();
+    cJSON *user_ids = cJSON_CreateArray();
 }
