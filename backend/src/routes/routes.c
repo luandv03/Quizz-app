@@ -64,6 +64,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_get_room_by_id(socket, msg);
     }
+    else if (strcmp(msg->type, START_EXAM) == 0)
+    {
+        handle_start_exam(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)

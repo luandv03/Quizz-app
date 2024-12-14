@@ -51,7 +51,7 @@ void handle_login(int client_socket, ControlMessage *msg)
 
     if (user_id != -1)
     {
-        snprintf(response, sizeof(response), "NOTIFICATION LOGIN_SUCCESS%s\n{\"user_id\": %d}", timestamp, user_id);
+        snprintf(response, sizeof(response), "NOTIFICATION LOGIN_SUCCESS %s\n{\"user_id\": %d}", timestamp, user_id);
     }
     // {\" \": \" \"}
     else
@@ -100,11 +100,11 @@ void handle_signup(int client_socket, ControlMessage *msg)
 
     if (result)
     {
-        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_SUCCESS");
+        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_SUCCESS %s", timestamp);
     }
     else
     {
-        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_FAILURE");
+        snprintf(response, sizeof(response), "NOTIFICATION SIGN_UP_FAILURE %s", timestamp);
     }
 
     write(client_socket, response, strlen(response));
@@ -329,4 +329,40 @@ void handle_get_room_by_id(int client_socket, ControlMessage *msg)
     {
         free(result);
     }
+}
+
+void handle_start_exam(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 1);
+
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    int result = start_exam(room_id);
+
+    char response[1024];
+    char timestamp[50];
+    memset(response, 0, sizeof(response));
+
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (result == 0)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION START_EXAM_FAIL %s", timestamp);
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION START_EXAM_SUCCESS %s", timestamp);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
 }

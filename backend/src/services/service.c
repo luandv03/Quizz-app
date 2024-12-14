@@ -489,3 +489,85 @@ char *get_room_detail(int room_id)
 
     return json_string;
 }
+
+int start_exam(int room_id)
+{
+    MYSQL *conn = get_db_connection();
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return 0;
+    }
+
+    // Get the number of questions from the room table
+    char query[256];
+    snprintf(query, sizeof(query), "SELECT number_of_easy_question, number_of_medium_question, number_of_hard_question FROM room WHERE id = %d", room_id);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    MYSQL_ROW row = mysql_fetch_row(res);
+    if (row == NULL)
+    {
+        fprintf(stderr, "No room found with id: %d\n", room_id);
+        mysql_free_result(res);
+        return 0;
+    }
+
+    int easyQuestions = atoi(row[0]);
+    int mediumQuestions = atoi(row[1]);
+    int hardQuestions = atoi(row[2]);
+    mysql_free_result(res);
+
+    printf("%d %d %d\n", easyQuestions, mediumQuestions, hardQuestions);
+
+    // Get all users in the room
+    snprintf(query, sizeof(query), "SELECT user_id FROM user_in_room WHERE room_id = %d", room_id);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    while ((row = mysql_fetch_row(res)))
+    {
+        int user_id = atoi(row[0]);
+
+        // Create an exam session for the user
+        snprintf(query, sizeof(query), "INSERT INTO exam (user_id, room_id, start_time, end_time, score) VALUES (%d, %d, NOW(), NULL, NULL)", user_id, room_id);
+        if (mysql_query(conn, query))
+        {
+            fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+            return 0;
+        }
+
+        int exam_id = mysql_insert_id(conn);
+
+        printf("exam_id: %d\n", exam_id);
+
+        // To-do
+
+        // get ramdom question
+        // insert into exam_question
+    }
+
+    mysql_free_result(res);
+
+    return 1;
+}
