@@ -1,6 +1,7 @@
 #include "room_service.h"
 #include "../../db/connect-db.h"
 #include "../../utils/mysql_utils.h"
+#include "../../utils/random_array_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -295,7 +296,52 @@ int start_exam(int room_id)
     int hardQuestions = atoi(row[2]);
     mysql_free_result(res);
 
-    printf("%d %d %d\n", easyQuestions, mediumQuestions, hardQuestions);
+    // Room question
+
+    snprintf(query, sizeof(query), "SELECT id, difficulty FROM question WHERE room_id = %d", room_id);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    MYSQL_RES *question_res = mysql_store_result(conn);
+    if (question_res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    int num_questions = mysql_num_rows(question_res);
+    MYSQL_ROW question_row;
+
+    int *easy_question_ids = malloc(num_questions * sizeof(int));
+    int *medium_question_ids = malloc(num_questions * sizeof(int));
+    int *hard_question_ids = malloc(num_questions * sizeof(int));
+
+    int easy_count = 0, medium_count = 0, hard_count = 0;
+
+    while ((question_row = mysql_fetch_row(question_res)))
+    {
+        int question_id = atoi(question_row[0]);
+        int difficulty = atoi(question_row[1]);
+
+        if (difficulty == 1)
+        {
+            easy_question_ids[easy_count++] = question_id;
+        }
+        else if (difficulty == 2)
+        {
+            medium_question_ids[medium_count++] = question_id;
+        }
+        else if (difficulty == 3)
+        {
+            hard_question_ids[hard_count++] = question_id;
+        }
+    }
+    mysql_free_result(question_res);
+
+    //
 
     // Get all users in the room
     snprintf(query, sizeof(query), "SELECT user_id FROM user_in_room WHERE room_id = %d", room_id);
@@ -326,13 +372,52 @@ int start_exam(int room_id)
 
         int exam_id = mysql_insert_id(conn);
 
-        printf("exam_id: %d\n", exam_id);
+        // printf("user_id: %d\n", user_id);
+        // printf("exam_id: %d\n", exam_id);
 
-        // To-do
+        int *random_easy_questions = getRandomSubset(easy_question_ids, easy_count, easyQuestions);
+        int *random_medium_questions = getRandomSubset(medium_question_ids, medium_count, mediumQuestions);
+        int *random_hard_questions = getRandomSubset(hard_question_ids, hard_count, hardQuestions);
 
-        // get ramdom question
-        // insert into exam_question
+        // Insert selected questions into exam_question table
+        for (int i = 0; i < easyQuestions && i < easy_count; i++)
+        {
+            snprintf(query, sizeof(query), "INSERT INTO exam_question (exam_id, question_id) VALUES (%d, %d)", exam_id, random_easy_questions[i]);
+            if (mysql_query(conn, query))
+            {
+                fprintf(stderr, "Query failed 1. Error: %s\n", mysql_error(conn));
+                return 0;
+            }
+        }
+
+        for (int i = 0; i < mediumQuestions && i < medium_count; i++)
+        {
+            snprintf(query, sizeof(query), "INSERT INTO exam_question (exam_id, question_id) VALUES (%d, %d)", exam_id, random_medium_questions[i]);
+            if (mysql_query(conn, query))
+            {
+                fprintf(stderr, "Query failed 2. Error: %s\n", mysql_error(conn));
+                return 0;
+            }
+        }
+
+        for (int i = 0; i < hardQuestions && i < hard_count; i++)
+        {
+            snprintf(query, sizeof(query), "INSERT INTO exam_question (exam_id, question_id) VALUES (%d, %d)", exam_id, random_hard_questions[i]);
+            if (mysql_query(conn, query))
+            {
+                fprintf(stderr, "Query failed 3. Error: %s\n", mysql_error(conn));
+                return 0;
+            }
+        }
+
+        free(random_easy_questions);
+        free(random_medium_questions);
+        free(random_hard_questions);
     }
+
+    free(easy_question_ids);
+    free(medium_question_ids);
+    free(hard_question_ids);
 
     mysql_free_result(res);
 
