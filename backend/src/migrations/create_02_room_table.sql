@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS room (
     number_of_hard_question INT NOT NULL,
     time_limit INT NOT NULL,
     start DATETIME NOT NULL,
-    end DATETIME NOT NULL
+    end DATETIME NOT NULL,
+    status ENUM('Not started', 'Ongoing', 'Finished') NOT NULL DEFAULT 'Not started'
 );
