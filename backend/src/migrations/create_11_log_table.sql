@@ -1,0 +1,6 @@
+
+CREATE TABLE IF NOT EXISTS log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    log_content VARCHAR(255) NOT NULL,
+    log_time DATETIME NOT NULL
+);
