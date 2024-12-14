@@ -178,7 +178,6 @@ char *get_all_room()
     }
 
     mysql_free_result(res);
-    mysql_close(conn);
 
     char *json_string = cJSON_Print(json_array);
     cJSON_Delete(json_array);
@@ -232,7 +231,6 @@ char *get_user_exam_result(int user_id, int room_id)
     if (mysql_query(conn, query))
     {
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return NULL;
     }
 
@@ -240,7 +238,6 @@ char *get_user_exam_result(int user_id, int room_id)
     if (res == NULL)
     {
         fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return NULL;
     }
     MYSQL_ROW row;
@@ -250,7 +247,6 @@ char *get_user_exam_result(int user_id, int room_id)
     {
         fprintf(stderr, "No data found for user_id: %d in room_id: %d\n", user_id, room_id);
         mysql_free_result(res);
-        mysql_close(conn);
         return NULL;
     }
 
@@ -304,7 +300,6 @@ char *get_exam_result_of_room(int room_id)
     if (mysql_query(conn, query))
     {
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return NULL;
     }
 
@@ -312,7 +307,7 @@ char *get_exam_result_of_room(int room_id)
     if (res == NULL)
     {
         fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
+
         return NULL;
     }
 
@@ -323,7 +318,6 @@ char *get_exam_result_of_room(int room_id)
     {
         fprintf(stderr, "No data found for room_id: %d\n", room_id);
         mysql_free_result(res);
-        mysql_close(conn);
         return NULL;
     }
 
@@ -372,7 +366,6 @@ char *get_user_practice_result(int room_id, int user_id)
     if (mysql_query(conn, query))
     {
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return NULL;
     }
 
@@ -380,7 +373,6 @@ char *get_user_practice_result(int room_id, int user_id)
     if (res == NULL)
     {
         fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return NULL;
     }
 
@@ -390,7 +382,6 @@ char *get_user_practice_result(int room_id, int user_id)
     {
         fprintf(stderr, "No data found for room_id: %d and user_id: %d\n", room_id, user_id);
         mysql_free_result(res);
-        mysql_close(conn);
         return NULL;
     }
 
@@ -440,7 +431,6 @@ char *get_room_detail(int room_id)
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
         char error_message[256];
         snprintf(error_message, sizeof(error_message), "{\"error\": \"Query failed. Error: %s\"}", mysql_error(conn));
-        mysql_close(conn);
         return strdup(error_message);
     }
 
@@ -450,7 +440,6 @@ char *get_room_detail(int room_id)
         fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
         char error_message[256];
         snprintf(error_message, sizeof(error_message), "{\"error\": \"mysql_store_result() failed. Error: %s\"}", mysql_error(conn));
-        mysql_close(conn);
         return strdup(error_message);
     }
 
@@ -461,7 +450,6 @@ char *get_room_detail(int room_id)
     {
         fprintf(stderr, "No data found for room_id: %d\n", room_id);
         mysql_free_result(res);
-        mysql_close(conn);
         char error_message[256];
         snprintf(error_message, sizeof(error_message), "{\"error\": \"No data found for room id: %d.\"}", room_id);
         return strdup(error_message);
@@ -495,7 +483,6 @@ char *get_room_detail(int room_id)
     cJSON_AddItemToObject(room_json, "user_ids", user_ids);
 
     mysql_free_result(res);
-    mysql_close(conn);
 
     char *json_string = cJSON_Print(room_json);
     cJSON_Delete(room_json);
