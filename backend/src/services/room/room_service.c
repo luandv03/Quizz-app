@@ -421,5 +421,13 @@ int start_exam(int room_id)
 
     mysql_free_result(res);
 
+    // Update room status to 'Ongoing'
+    snprintf(query, sizeof(query), "UPDATE room SET status = 'Ongoing' WHERE id = %d", room_id);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Failed to update room status. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
     return 1;
 }
