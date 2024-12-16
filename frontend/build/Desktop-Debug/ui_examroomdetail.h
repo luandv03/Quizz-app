@@ -13,6 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
@@ -65,6 +66,11 @@ public:
     QPushButton *backExamDetailWidget;
     QWidget *tabDiscussion;
     QVBoxLayout *verticalLayout_3;
+    QListWidget *discussionListWidget;
+    QLabel *placeholderLabel;
+    QHBoxLayout *horizontalLayout_commentInput;
+    QLineEdit *commentLineEdit;
+    QPushButton *submitCommentButton;
 
     void setupUi(QWidget *ExamRoomDetail)
     {
@@ -226,6 +232,31 @@ public:
         tabDiscussion->setObjectName("tabDiscussion");
         verticalLayout_3 = new QVBoxLayout(tabDiscussion);
         verticalLayout_3->setObjectName("verticalLayout_3");
+        discussionListWidget = new QListWidget(tabDiscussion);
+        discussionListWidget->setObjectName("discussionListWidget");
+        sizePolicy.setHeightForWidth(discussionListWidget->sizePolicy().hasHeightForWidth());
+        discussionListWidget->setSizePolicy(sizePolicy);
+        placeholderLabel = new QLabel(discussionListWidget);
+        placeholderLabel->setObjectName("placeholderLabel");
+        placeholderLabel->setAlignment(Qt::AlignCenter);
+
+        verticalLayout_3->addWidget(discussionListWidget);
+
+        horizontalLayout_commentInput = new QHBoxLayout();
+        horizontalLayout_commentInput->setObjectName("horizontalLayout_commentInput");
+        commentLineEdit = new QLineEdit(tabDiscussion);
+        commentLineEdit->setObjectName("commentLineEdit");
+
+        horizontalLayout_commentInput->addWidget(commentLineEdit);
+
+        submitCommentButton = new QPushButton(tabDiscussion);
+        submitCommentButton->setObjectName("submitCommentButton");
+
+        horizontalLayout_commentInput->addWidget(submitCommentButton);
+
+
+        verticalLayout_3->addLayout(horizontalLayout_commentInput);
+
         tabWidget->addTab(tabDiscussion, QString());
 
         verticalLayout->addWidget(tabWidget);
@@ -269,6 +300,9 @@ public:
         label_26->setText(QCoreApplication::translate("ExamRoomDetail", "30", nullptr));
         backExamDetailWidget->setText(QCoreApplication::translate("ExamRoomDetail", "Quay l\341\272\241i", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabDetail), QCoreApplication::translate("ExamRoomDetail", "Detail", nullptr));
+        placeholderLabel->setText(QCoreApplication::translate("ExamRoomDetail", "No comments yet. Be the first to comment!", nullptr));
+        commentLineEdit->setPlaceholderText(QCoreApplication::translate("ExamRoomDetail", "Type your comment here...", nullptr));
+        submitCommentButton->setText(QCoreApplication::translate("ExamRoomDetail", "Submit", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabDiscussion), QCoreApplication::translate("ExamRoomDetail", "Discussion", nullptr));
     } // retranslateUi
 
