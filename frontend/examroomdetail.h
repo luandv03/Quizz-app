@@ -30,6 +30,7 @@ private:
     void createQuestionItem(const QJsonObject &questionObj);
     void updateCountdown();
     void disableSendButtons(QWidget *widget);
+    void viewExamResult();
 };
 
 #endif // EXAMROOMDETAIL_H
