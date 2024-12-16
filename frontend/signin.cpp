@@ -3,6 +3,8 @@
 #include "ui_signin.h"
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonParseError>
+#include <QDateTime>
 
 Signin::Signin(QWidget *parent)
     : QWidget(parent)
@@ -23,18 +25,44 @@ void Signin::on_signinButton_clicked() {
     json["password"] = ui->passwordLineEdit->text();
 
     QJsonDocument doc(json);
-    QByteArray data = doc.toJson();
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL LOGIN\n%1").arg(QString(jsonData));
 
     tcpSocket->connectToHost("localhost", 8080);
     if (tcpSocket->waitForConnected()) {
-        tcpSocket->write("POST /signin ");
-        tcpSocket->write(data);
+        tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();
     }
 }
 
 void Signin::onReadyRead() {
     QByteArray response = tcpSocket->readAll();
-    ui->responseLabel->setText(response);
-    emit showHome();
+    QString responseString(response);
+
+    if (responseString.startsWith("NOTIFICATION LOGIN_FAILURE")) {
+        ui->responseLabel->setText("Đăng nhập thất bại");
+        ui->responseLabel->setStyleSheet("QLabel { color : red; }");
+        qDebug() << "Login Response:" << responseString;
+    } else if (responseString.startsWith("NOTIFICATION LOGIN_SUCCESS")) {
+        qDebug() << "Login Response:" << responseString;
+        
+        // Extract JSON part from the response
+        int jsonStartIndex = responseString.indexOf('{');
+        if (jsonStartIndex != -1) {
+            QString jsonString = responseString.mid(jsonStartIndex);
+            QJsonParseError parseError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                QJsonObject jsonObj = jsonDoc.object();
+                int userId = jsonObj["user_id"].toInt();
+                // Handle the user ID if needed
+                emit showExamRoomList();
+            }
+        }
+    } else {
+        ui->responseLabel->setText("Unknown response from server");
+        ui->responseLabel->setStyleSheet("QLabel { color : orange; }");
+    }
 }

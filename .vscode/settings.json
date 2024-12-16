@@ -1,13 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "*.py": "python",
-        "stdlib.h": "c",
-        "connect-db.h": "c",
-        "stdio.h": "c",
-        "mysql.h": "c",
-        "string.h": "c",
-        "inet.h": "c",
-        "cjson.h": "c"
+        "*.tcc": "cpp",
+        "ostream": "cpp"
     }
 }

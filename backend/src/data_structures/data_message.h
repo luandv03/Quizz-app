@@ -5,11 +5,11 @@
 #define ANSWER_SUBMISSION "ANSWER_SUBMISSION"
 #define EXAM_QUESTION "EXAM_QUESTION"
 #define PRACTICE_QUESTION "PRACTICE_QUESTION"
-
+#define ALL_ROOM "ALL_ROOM"
 // Struct Definition
 typedef struct
 {
-    char msg_type[50];
+    char type[50];
     char data_type[50];
     int data_size;
     char body[1024];

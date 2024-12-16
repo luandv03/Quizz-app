@@ -1,0 +1,23 @@
+#ifndef CONTROL_MESSAGE_H
+#define CONTROL_MESSAGE_H
+
+// Control Types
+#define CREATE_ROOM "CREATE_ROOM"
+#define GET_ROOM_LIST "GET_ROOM_LIST"
+#define LOGIN "LOGIN"
+#define SIGN_UP "SIGN_UP"
+#define USER_ENTER_ROOM "USER_ENTER_ROOM"
+#define GET_USER_EXAM_RESULT "GET_USER_EXAM_RESULT"
+#define GET_EXAM_RESULT_OF_ROOM "GET_EXAM_RESULT_OF_ROOM"
+#define GET_USER_PRACTICE_RESULT "GET_USER_PRACTICE_RESULT"
+#define GET_ROOM_BY_ID "GET_ROOM_BY_ID"
+#define START_EXAM "START_EXAM"
+
+// Struct Definition
+typedef struct
+{
+    char type[50];
+    char body[1024];
+} ControlMessage;
+
+#endif // CONTROL_MESSAGE_H

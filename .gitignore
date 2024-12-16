@@ -1,15 +1,3 @@
-backend/Makefile
+.vscode/
 .vscode/c_cpp_properties.json
 .vscode/settings.json
-*.o
-*.exe
-c_cpp_properties.json
-settings.json
-frontend/.qtcreator
-frontend/build
-
-backend/server
-frontend/frontend.pro.user.16aff8c
-frontend/frontend.pro.user
-backend/server
-backend/Makefile

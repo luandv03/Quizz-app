@@ -1,10 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "../message_types/index.h"
-
-void handle_request(int client_socket);
-void handle_signup(int client_socket, const char *email, const char *password, const char *username);
-void handle_login(int client_socket, ControlMessage *msg);
+#include "auth/auth_controller.h"
+#include "room/room_controller.h"
+#include "user/user_controller.h"
 
 #endif // CONTROLLER_H

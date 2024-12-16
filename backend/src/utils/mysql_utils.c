@@ -38,3 +38,12 @@ void print_mysql_result(MYSQL_RES *res)
         printf("\n");
     }
 }
+
+char *mysql_time_to_str(MYSQL_TIME *time)
+{
+    char *str = (char *)malloc(20); // Cấp phát bộ nhớ cho chuỗi ngày tháng
+    snprintf(str, 20, "%04d-%02d-%02d %02d:%02d:%02d",
+             time->year, time->month, time->day,
+             time->hour, time->minute, time->second);
+    return str;
+}

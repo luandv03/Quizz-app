@@ -11,8 +11,7 @@ CFLAGS = -Wall -I/usr/local/mysql/include -I/opt/homebrew/opt/cjson/include -I i
 LDFLAGS =  -L/usr/local/mysql/lib -lmysqlclient  -L/opt/homebrew/opt/cjson/lib -lcjson
 
 # Source files
-
-SRCS = src/main.c src/db/connect-db.c src/services/service.c src/controllers/controller.c src/routes/routes.c
+SRCS = $(wildcard src/**/*.c) $(wildcard src/**/**/*.c) src/main.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)

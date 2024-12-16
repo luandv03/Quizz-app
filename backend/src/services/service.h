@@ -1,8 +1,8 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 
-char *fetch_questions_json();
-int signup(const char *email, const char *password, const char *username);
-int login(const char *email, const char *password);
+#include "./auth/auth_service.h"
+#include "./room/room_service.h"
+#include "./user/user_service.h"
 
 #endif // SERVICE_H
