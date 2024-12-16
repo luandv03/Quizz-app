@@ -363,7 +363,7 @@ int start_exam(int room_id)
         int user_id = atoi(row[0]);
 
         // Create an exam session for the user
-        snprintf(query, sizeof(query), "INSERT INTO exam (user_id, room_id, start_time, end_time, score) VALUES (%d, %d, NOW(), NULL, NULL)", user_id, room_id);
+        snprintf(query, sizeof(query), "INSERT INTO exam (user_id, room_id, start_time, end_time, score) VALUES (%d, %d, NOW(), NULL, 0)", user_id, room_id);
         if (mysql_query(conn, query))
         {
             fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));

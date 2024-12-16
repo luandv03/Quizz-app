@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS exam (
     room_id INT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME,
-    score INT,
+    score INT NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (room_id) REFERENCES room(id)
 );
