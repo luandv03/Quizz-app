@@ -21,6 +21,11 @@ MIGRATION_SRCS = src/cli_migrate.c
 MIGRATION_OBJS = $(MIGRATION_SRCS:.c=.o) src/db/connect-db.o
 MIGRATION_TARGET = src/cli_migrate
 
+# Seed files
+SEED_SRCS = src/cli_seed.c
+SEED_OBJS = $(SEED_SRCS:.c=.o) src/db/connect-db.o
+SEED_TARGET = src/cli_seed
+
 # Default target
 all: $(TARGET)
 
@@ -36,6 +41,10 @@ $(TARGET): $(OBJS)
 $(MIGRATION_TARGET): $(MIGRATION_OBJS)
 	$(CC) $(MIGRATION_OBJS) -o $(MIGRATION_TARGET) $(LDFLAGS)
 
+# Compile the seed tool
+$(SEED_TARGET): $(SEED_OBJS)
+	$(CC) $(SEED_OBJS) -o $(SEED_TARGET) $(LDFLAGS)
+
 # Run the migrations
 migrate: $(MIGRATION_TARGET)
 	@if [ -z "$(wildcard src/migrations/*.sql)" ]; then \
@@ -44,6 +53,17 @@ migrate: $(MIGRATION_TARGET)
 	for file in src/migrations/*.sql; do \
 	echo "Running migration $$file"; \
 	./$(MIGRATION_TARGET) $$file; \
+	done; \
+	fi
+
+# Run seeds
+seed: $(SEED_TARGET)
+	@if [ -z "$(wildcard src/seeder/*.sql)" ]; then \
+	echo "No seed files found in the seeder directory."; \
+	else \
+	for file in src/seeder/*.sql; do \
+	echo "Running seeder $$file"; \
+	./$(SEED_TARGET) $$file; \
 	done; \
 	fi
 

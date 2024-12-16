@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mysql/mysql.h>
 #include "db/connect-db.h"
 
@@ -20,14 +21,28 @@ void run_migration(MYSQL *conn, const char *filename)
     fread(query, 1, length, file);
     query[length] = '\0';
 
-    if (mysql_query(conn, query))
+    char *stmt = strtok(query, ";");
+    while (stmt != NULL)
     {
-        fprintf(stderr, "Migration failed. Error: %s\n", mysql_error(conn));
+        // Skip empty statements
+        while (*stmt == ' ' || *stmt == '\n' || *stmt == '\t')
+        {
+            stmt++;
+        }
+        if (*stmt != '\0')
+        {
+            if (mysql_query(conn, stmt))
+            {
+                fprintf(stderr, "Seed failed. Error: %s\n", mysql_error(conn));
+                free(query);
+                fclose(file);
+                return;
+            }
+        }
+        stmt = strtok(NULL, ";");
     }
-    else
-    {
-        printf("Migration %s executed successfully.\n", filename);
-    }
+
+    printf("Seed %s executed successfully.\n", filename);
 
     free(query);
     fclose(file);

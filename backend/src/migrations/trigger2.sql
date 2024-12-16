@@ -3,8 +3,8 @@ TRIGGER `update_exam_score_after_update`
 AFTER UPDATE ON `exam_question` 
 FOR EACH ROW 
 BEGIN
-    DECLARE old_score INT;
-    DECLARE new_score INT;
+    DECLARE old_score DECIMAL(5,2);
+    DECLARE new_score DECIMAL(5,2);
     DECLARE correct_answer INT;
     DECLARE total_questions INT;
 
@@ -33,7 +33,7 @@ BEGIN
         IF NEW.user_answer <> correct_answer THEN
             -- Đáp án mới sai => Trừ điểm
             UPDATE exam
-            SET score = score - 1/total_questions
+            SET score = score - 100/total_questions
             WHERE id = NEW.exam_id;
         END IF;
     ELSE
@@ -41,14 +41,8 @@ BEGIN
         IF NEW.user_answer = correct_answer THEN
             -- Đáp án mới đúng => Cộng điểm
             UPDATE exam
-            SET score = score + 1/total_questions
+            SET score = score + 100/total_questions
             WHERE id = NEW.exam_id;
         END IF;
     END IF;
-
-    -- Lấy điểm số sau khi cập nhật
-    SELECT score 
-    INTO new_score
-    FROM exam
-    WHERE id = NEW.exam_id;
 END;

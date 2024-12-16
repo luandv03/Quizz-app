@@ -22,7 +22,7 @@ BEGIN
     IF NEW.user_answer = correct_answer THEN
         -- Cập nhật điểm số của bài thi
         UPDATE exam
-        SET score = score + 1/total_questions
+        SET score = score + 100/total_questions
         WHERE id = NEW.exam_id;
     END IF;
 END
