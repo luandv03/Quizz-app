@@ -467,7 +467,46 @@
       <attribute name="title">
        <string>Discussion</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3"/>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <!-- Discussion comments area -->
+       <item>
+        <widget class="QListWidget" name="discussionListWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <widget class="QLabel" name="placeholderLabel">
+            <property name="text">
+                <string>No comments yet. Be the first to comment!</string>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignCenter</set>
+            </property>
+         </widget>
+        </widget>
+       </item>
+       <!-- Input box and submit button -->
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_commentInput">
+         <item>
+          <widget class="QLineEdit" name="commentLineEdit">
+           <property name="placeholderText">
+            <string>Type your comment here...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="submitCommentButton">
+           <property name="text">
+            <string>Submit</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
