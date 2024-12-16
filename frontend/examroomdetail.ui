@@ -14,7 +14,7 @@
    <string>Exam Room Detail</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
+   <item>
     <widget class="QWidget" name="header" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -27,7 +27,7 @@
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -50,35 +50,176 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabDetail">
       <attribute name="title">
        <string>Detail</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QLabel" name="labelDetail">
-         <property name="text">
-          <string>Exam Room Detail</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QWidget" name="examDetailWidget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>780</width>
+         <height>165</height>
+        </rect>
+       </property>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>0</y>
+          <width>760</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Thi cuoi ky Lap tring mang</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="startExamButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>201</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>I am ready to start exam</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>231</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Thống kết quả làm bài</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="viewExamResultBTn">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>140</y>
+          <width>201</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Xem</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>71</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Time limit:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>30</y>
+          <width>81</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>30 minutes</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="startExamWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>12000</width>
+         <height>800</height>
+        </rect>
+       </property>
+       <property name="visible">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_startExam">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_endExam">
+          <item>
+           <widget class="QPushButton" name="endMyExamBtn">
+            <property name="maximumSize">
+             <size>
+              <width>150</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>End My Exam</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="timerLabel">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>01:30:00</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="questionListWidget">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabDiscussion">
       <attribute name="title">
        <string>Discussion</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="labelDiscussion">
-         <property name="text">
-          <string>Discussion UI</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <layout class="QVBoxLayout" name="verticalLayout_3"/>
      </widget>
     </widget>
    </item>
