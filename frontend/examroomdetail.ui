@@ -477,14 +477,14 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <widget class="QLabel" name="placeholderLabel">
+         <!-- <widget class="QLabel" name="placeholderLabel">
             <property name="text">
                 <string>No comments yet. Be the first to comment!</string>
             </property>
             <property name="alignment">
                 <set>Qt::AlignCenter</set>
             </property>
-         </widget>
+         </widget> -->
         </widget>
        </item>
        <!-- Input box and submit button -->
@@ -501,6 +501,9 @@
           <widget class="QPushButton" name="submitCommentButton">
            <property name="text">
             <string>Submit</string>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
            </property>
           </widget>
          </item>

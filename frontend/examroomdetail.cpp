@@ -17,7 +17,8 @@
 
 ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ExamRoomDetail)
+    ui(new Ui::ExamRoomDetail),
+    tcpSocket(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -231,11 +232,52 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
         ui->examDetailWidget->show();
         ui->examResultWidget->hide();
     });
+
+    // connet to handle logic comment
+    connect(ui->submitCommentButton, &QPushButton::clicked, this, &ExamRoomDetail::on_submitCommentButton_clicked);
+    connect(tcpSocket, &QTcpSocket::readyRead, this, &ExamRoomDetail::onReadyRead);
+    // Connect to TCP server
+    tcpSocket->connectToHost("localhost", 12345);
+
+    // Example JSON string for comments
+    QString commentsJsonString = R"(
+    {
+        "comments": [
+            {
+                "id": 1,
+                "content": "Bai thi hom nay kho qua aaaaa :<<<<",
+                "sender_id": 1,
+                "sender_name": "Dinh Van Luan",
+                "time_send": "2024-12-16 10:20:00"
+            },
+            {
+                "id": 2,
+                "content": "De rac qua uaaa :<<<<",
+                "sender_id": 2,
+                "sender_name": "Nguyen Duc Phu",
+                "time_send": "2024-12-16 11:20:00"
+            },
+            {
+                "id": 3,
+                "content": "De nay cho cho no lam maaaa :<<<<",
+                "sender_id": 3,
+                "sender_name": "Hoang Hai PHong",
+                "time_send": "2024-12-16 11:30:00"
+            }
+        ]
+    }
+    )";
+
+    QJsonDocument commentsDoc = QJsonDocument::fromJson(commentsJsonString.toUtf8());
+    QJsonArray commentsArray = commentsDoc.object()["comments"].toArray();
+    updateCommentList(commentsArray);
 }
 
 ExamRoomDetail::~ExamRoomDetail()
 {
     delete ui;
+    tcpSocket->close();
+    delete tcpSocket;
 }
 
 void ExamRoomDetail::displayQuestions(const QJsonArray &questionsArray)
@@ -353,3 +395,145 @@ void ExamRoomDetail::viewExamResult()
     ui->examResultWidget->show();
 }
 
+// handle logic comment
+void ExamRoomDetail::on_submitCommentButton_clicked()
+{
+    qDebug() << "commented";
+    QString comment = ui->commentLineEdit->text();
+    if (!comment.isEmpty()) {
+        QJsonObject commentObj;
+        commentObj["type"] = "comment";
+        commentObj["content"] = comment;
+        commentObj["sender_name"] = "Dinh Van Luan"; // Replace with actual sender name
+        commentObj["time_send"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+
+        createComment("Dinh Van Luan", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"), comment);
+
+        QJsonDocument doc(commentObj);
+        QString message = doc.toJson(QJsonDocument::Compact);
+
+        tcpSocket->write(message.toUtf8());
+        ui->commentLineEdit->clear();
+    }
+}
+
+void ExamRoomDetail::onReadyRead()
+{
+    QByteArray data = tcpSocket->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonObject obj = doc.object();
+
+    qDebug() << "comment:::" << obj["content"].toString();
+
+    if (obj["type"] == "comment") {
+        QString comment = obj["content"].toString();
+        QString senderName = obj["sender_name"].toString();
+        QString timeSend = obj["time_send"].toString();
+
+        createComment(senderName, timeSend, comment);
+
+        // // Tạo QWidget chứa thông tin bình luận
+        // QWidget *commentWidget = new QWidget();
+        // QVBoxLayout *mainLayout = new QVBoxLayout(commentWidget);
+
+        // // Tạo layout cho sender_name và time_send (nằm cùng hàng)
+        // QHBoxLayout *headerLayout = new QHBoxLayout();
+        // QLabel *senderLabel = new QLabel(senderName);
+        // senderLabel->setStyleSheet("font-weight: bold;");
+        // QLabel *timeLabel = new QLabel(timeSend);
+        // headerLayout->addWidget(senderLabel);
+        // headerLayout->addWidget(timeLabel);
+
+        // // Tạo phần content với border và tự động xuống dòng
+        // QLabel *contentLabel = new QLabel(comment);
+        // contentLabel->setWordWrap(true); // Cho phép xuống dòng
+        // contentLabel->setStyleSheet("border: 1px solid black; padding: 5px;");
+
+        // // Thêm các phần vào layout chính
+        // mainLayout->addLayout(headerLayout);
+        // mainLayout->addWidget(contentLabel);
+
+        // // Thiết lập layout cho commentWidget
+        // commentWidget->setLayout(mainLayout);
+
+        // // Thêm commentWidget vào danh sách (QListWidget)
+        // ui->discussionListWidget->addItem(new QListWidgetItem());
+        // ui->discussionListWidget->item(ui->discussionListWidget->count() - 1)->setSizeHint(commentWidget->sizeHint());
+        // ui->discussionListWidget->setItemWidget(ui->discussionListWidget->item(ui->discussionListWidget->count() - 1), commentWidget);
+    }
+}
+
+void ExamRoomDetail::updateCommentList(const QJsonArray &commentsArray)
+{
+    // ui->discussionListWidget->clear();
+    qDebug() << "Updating comments. Number of comments:" << commentsArray.size();
+
+    foreach (const QJsonValue &value, commentsArray) {
+        QJsonObject commentObj = value.toObject();
+        QString comment = commentObj["content"].toString();
+        QString senderName = commentObj["sender_name"].toString();
+        QString timeSend = commentObj["time_send"].toString();
+
+        createComment(senderName, timeSend, comment);
+
+        // // Tạo QWidget chứa thông tin bình luận
+        // QWidget *commentWidget = new QWidget();
+        // QVBoxLayout *mainLayout = new QVBoxLayout(commentWidget);
+
+        // // Tạo layout cho sender_name và time_send (nằm cùng hàng)
+        // QHBoxLayout *headerLayout = new QHBoxLayout();
+        // QLabel *senderLabel = new QLabel(senderName);
+        // senderLabel->setStyleSheet("font-weight: bold;");
+        // QLabel *timeLabel = new QLabel(timeSend);
+        // headerLayout->addWidget(senderLabel);
+        // headerLayout->addWidget(timeLabel);
+
+        // // Tạo phần content với border và tự động xuống dòng
+        // QLabel *contentLabel = new QLabel(comment);
+        // contentLabel->setWordWrap(true); // Cho phép xuống dòng
+        // contentLabel->setStyleSheet("border: 1px solid black; padding: 5px;");
+
+        // // Thêm các phần vào layout chính
+        // mainLayout->addLayout(headerLayout);
+        // mainLayout->addWidget(contentLabel);
+
+        // // Thiết lập layout cho commentWidget
+        // commentWidget->setLayout(mainLayout);
+
+        // // Thêm commentWidget vào danh sách (QListWidget)
+        // ui->discussionListWidget->addItem(new QListWidgetItem());
+        // ui->discussionListWidget->item(ui->discussionListWidget->count() - 1)->setSizeHint(commentWidget->sizeHint());
+        // ui->discussionListWidget->setItemWidget(ui->discussionListWidget->item(ui->discussionListWidget->count() - 1), commentWidget);
+    }
+}
+
+void ExamRoomDetail::createComment(const QString &senderName, const QString &timeSend, const QString &comment) {
+    // Tạo QWidget chứa thông tin bình luận
+    QWidget *commentWidget = new QWidget();
+    QVBoxLayout *mainLayout = new QVBoxLayout(commentWidget);
+
+    // Tạo layout cho sender_name và time_send (nằm cùng hàng)
+    QHBoxLayout *headerLayout = new QHBoxLayout();
+    QLabel *senderLabel = new QLabel(senderName);
+    senderLabel->setStyleSheet("font-weight: bold;");
+    QLabel *timeLabel = new QLabel(timeSend);
+    headerLayout->addWidget(senderLabel);
+    headerLayout->addWidget(timeLabel);
+
+    // Tạo phần content với border và tự động xuống dòng
+    QLabel *contentLabel = new QLabel(comment);
+    contentLabel->setWordWrap(true); // Cho phép xuống dòng
+    contentLabel->setStyleSheet("border: 1px solid black; padding: 5px;");
+
+    // Thêm các phần vào layout chính
+    mainLayout->addLayout(headerLayout);
+    mainLayout->addWidget(contentLabel);
+
+    // Thiết lập layout cho commentWidget
+    commentWidget->setLayout(mainLayout);
+
+    // Thêm commentWidget vào danh sách (QListWidget)
+    ui->discussionListWidget->addItem(new QListWidgetItem());
+    ui->discussionListWidget->item(ui->discussionListWidget->count() - 1)->setSizeHint(commentWidget->sizeHint());
+    ui->discussionListWidget->setItemWidget(ui->discussionListWidget->item(ui->discussionListWidget->count() - 1), commentWidget);
+}
