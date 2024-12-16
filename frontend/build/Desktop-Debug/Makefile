@@ -955,6 +955,17 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qinputmethod.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qlocale.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qguiapplication_platform.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QLabel \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlabel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qframe.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qpicture.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtextdocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTimer \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qbasictimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTime \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qdatetime.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qcalendar.h \
 		moc_predefs.h \
 		/home/Qt/6.8.0/gcc_64/libexec/moc
 	/home/Qt/6.8.0/gcc_64/libexec/moc $(DEFINES) --include /home/dinh.van.luan@sun-asterisk.com/Documents/networking/quizz-app/frontend/build/Desktop-Debug/moc_predefs.h -I/home/Qt/6.8.0/gcc_64/mkspecs/linux-g++ -I/home/dinh.van.luan@sun-asterisk.com/Documents/networking/quizz-app/frontend -I/home/Qt/6.8.0/gcc_64/include -I/home/Qt/6.8.0/gcc_64/include/QtWidgets -I/home/Qt/6.8.0/gcc_64/include/QtGui -I/home/Qt/6.8.0/gcc_64/include/QtNetwork -I/home/Qt/6.8.0/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../examroomdetail.h -o moc_examroomdetail.cpp
@@ -1613,6 +1624,14 @@ moc_mainwindow.cpp: ../../mainwindow.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonObject \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonobject.h \
 		../../examroomdetail.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QLabel \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlabel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qpicture.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtextdocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTimer \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qbasictimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTime \
 		moc_predefs.h \
 		/home/Qt/6.8.0/gcc_64/libexec/moc
 	/home/Qt/6.8.0/gcc_64/libexec/moc $(DEFINES) --include /home/dinh.van.luan@sun-asterisk.com/Documents/networking/quizz-app/frontend/build/Desktop-Debug/moc_predefs.h -I/home/Qt/6.8.0/gcc_64/mkspecs/linux-g++ -I/home/dinh.van.luan@sun-asterisk.com/Documents/networking/quizz-app/frontend -I/home/Qt/6.8.0/gcc_64/include -I/home/Qt/6.8.0/gcc_64/include/QtWidgets -I/home/Qt/6.8.0/gcc_64/include/QtGui -I/home/Qt/6.8.0/gcc_64/include/QtNetwork -I/home/Qt/6.8.0/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../mainwindow.h -o moc_mainwindow.cpp
@@ -2247,7 +2266,57 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qinputmethod.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qlocale.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qguiapplication_platform.h \
-		ui_examroomdetail.h
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QLabel \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlabel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qframe.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qpicture.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtextdocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTimer \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qbasictimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTime \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qdatetime.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qcalendar.h \
+		ui_examroomdetail.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QMenu \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qmenu.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/QAction \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonDocument \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsondocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonvalue.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qcborvalue.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qcborcommon.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qregularexpression.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/quuid.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonObject \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonobject.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonParseError \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QFile \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qfile.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qfiledevice.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QDebug \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonArray \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonarray.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QListWidgetItem \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlistwidget.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlistview.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qvalidator.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qslider.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qstyle.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QRadioButton \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qradiobutton.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractbutton.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o examroomdetail.o ../../examroomdetail.cpp
 
 examroomlist.o: ../../examroomlist.cpp ../../examroomlist.h \
@@ -2925,7 +2994,15 @@ main.o: ../../main.cpp /home/Qt/6.8.0/gcc_64/include/QtWidgets/QApplication \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/quuid.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonObject \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonobject.h \
-		../../examroomdetail.h
+		../../examroomdetail.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QLabel \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlabel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qpicture.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtextdocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTimer \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qbasictimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTime
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
 
 mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
@@ -3160,6 +3237,14 @@ mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonObject \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonobject.h \
 		../../examroomdetail.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QLabel \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qlabel.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qpicture.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtextdocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTimer \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qbasictimer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QTime \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../../mainwindow.cpp
 

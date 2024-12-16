@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(signinForm, &Signin::showHome, this, &MainWindow::showHome);
     connect(signinForm, &Signin::showExamRoomList, this, &MainWindow::showExamRoomList);
     connect(examRoomListForm, &ExamRoomList::showExamRoomDetail, this, &MainWindow::showExamRoomDetail);
+    connect(examRoomDetailForm, &ExamRoomDetail::showExamRoomList, this, &MainWindow::showExamRoomList);
 
     // Connect signals to slots
     // connect(signinForm->findChild<QPushButton *>("signinButton"), &QPushButton::clicked,
