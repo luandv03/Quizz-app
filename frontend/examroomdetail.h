@@ -2,6 +2,7 @@
 #ifndef EXAMROOMDETAIL_H
 #define EXAMROOMDETAIL_H
 
+#include <QTcpSocket>
 #include <QWidget>
 #include <QLabel>
 #include <QTimer>
@@ -24,6 +25,7 @@ signals:
 
 private:
     Ui::ExamRoomDetail *ui;
+    QTcpSocket *tcpSocket;
     QTimer *countdownTimer;     // Bộ đếm thời gian
     QTime remainingTime;        // Thời gian còn lại
     void displayQuestions(const QJsonArray &questionsArray);
@@ -31,6 +33,12 @@ private:
     void updateCountdown();
     void disableSendButtons(QWidget *widget);
     void viewExamResult();
+
+    // handle logic comment
+    void on_submitCommentButton_clicked();
+    void onReadyRead();
+    void updateCommentList(const QJsonArray &commentsArray);
+    void createComment(const QString &senderName, const QString &timeSend, const QString &comment);
 };
 
 #endif // EXAMROOMDETAIL_H

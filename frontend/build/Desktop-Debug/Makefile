@@ -767,10 +767,9 @@ compiler_moc_header_make_all: moc_examroomdetail.cpp moc_examroomlist.cpp moc_ho
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_examroomdetail.cpp moc_examroomlist.cpp moc_home.cpp moc_mainwindow.cpp moc_signin.cpp moc_signup.cpp
 moc_examroomdetail.cpp: ../../examroomdetail.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QWidget \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qwidget.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/QTcpSocket \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtcpsocket.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qglobal.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qtversionchecks.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qtconfiginclude.h \
@@ -816,27 +815,22 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qtresource.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qttranslation.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qversiontagging.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qtgui-config.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiexports.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgets-config.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsexports.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qwindowdefs.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qnamespace.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtnetworkexports.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qabstractsocket.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qhostaddress.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qpair.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qstring.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qchar.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcompare.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcomparehelpers.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/q20type_traits.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qtmetamacros.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qfunctionaltools_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qobject.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qstring.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qchar.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringview.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qbytearray.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qrefcount.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qnamespace.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtmetamacros.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qarraydata.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qpair.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qarraydatapointer.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qarraydataops.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcontainertools_impl.h \
@@ -855,8 +849,15 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringbuilder.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringconverter.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringconverter_base.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qlist.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevice.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qobject.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qlist.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qiterator.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qbytearraylist.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringlist.h \
@@ -866,7 +867,6 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qscopedpointer.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qmetatype.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qdatastream.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevicebase.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qfloat16.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qmath.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qiterable.h \
@@ -876,8 +876,28 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qscopeguard.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qobject_impl.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qbindingstorage.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qmargins.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qdebug.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtextstream.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qmap.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qset.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qhash.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qvariant.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/q23utility.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QWidget \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qwidget.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtgui-config.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiexports.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qmargins.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qaction.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qkeysequence.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qicon.h \
@@ -889,7 +909,6 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qcolor.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qrgb.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qrgba64.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qimage.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qpixelformat.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qtransform.h \
@@ -898,17 +917,6 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qspan.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/q20iterator.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qline.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qvariant.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qdebug.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qtextstream.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qcontiguouscache.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qmap.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qset.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qhash.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qpalette.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qbrush.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qfont.h \
@@ -919,7 +927,6 @@ moc_examroomdetail.cpp: ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qcursor.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qbitmap.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qevent.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevice.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qurl.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qeventpoint.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qvector2d.h \
@@ -2078,10 +2085,9 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 ####### Compile
 
 examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QWidget \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qwidget.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/QTcpSocket \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtcpsocket.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qglobal.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qtversionchecks.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qtconfiginclude.h \
@@ -2127,27 +2133,22 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qtresource.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qttranslation.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qversiontagging.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qtgui-config.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiexports.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgets-config.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsexports.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/qwindowdefs.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qnamespace.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qtnetworkexports.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qabstractsocket.h \
+		/home/Qt/6.8.0/gcc_64/include/QtNetwork/qhostaddress.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qpair.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qstring.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qchar.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcompare.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcomparehelpers.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/q20type_traits.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qtmetamacros.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qfunctionaltools_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qobject.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qstring.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qchar.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringview.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qbytearray.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qrefcount.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qnamespace.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtmetamacros.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qarraydata.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qpair.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qarraydatapointer.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qarraydataops.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcontainertools_impl.h \
@@ -2166,8 +2167,15 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringbuilder.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringconverter.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringconverter_base.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qlist.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevice.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qobject.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qlist.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qiterator.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qbytearraylist.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qstringlist.h \
@@ -2177,7 +2185,6 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qscopedpointer.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qmetatype.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qdatastream.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevicebase.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qfloat16.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qmath.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qiterable.h \
@@ -2187,8 +2194,28 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qscopeguard.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qobject_impl.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qbindingstorage.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qmargins.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qdebug.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qtextstream.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qmap.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qset.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qhash.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qvariant.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/q23utility.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QWidget \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qwidget.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtgui-config.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qtguiexports.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qmargins.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qaction.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qkeysequence.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qicon.h \
@@ -2200,7 +2227,6 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qcolor.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qrgb.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qrgba64.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qimage.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qpixelformat.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qtransform.h \
@@ -2209,17 +2235,6 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qspan.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/q20iterator.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qline.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qvariant.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qdebug.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qtextstream.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qcontiguouscache.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qmap.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qshareddata_impl.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qset.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qhash.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qpalette.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qbrush.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qfont.h \
@@ -2230,7 +2245,6 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qcursor.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qbitmap.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qevent.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qiodevice.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qurl.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qeventpoint.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/qvector2d.h \
@@ -2316,7 +2330,13 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qrubberband.h \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QRadioButton \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qradiobutton.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractbutton.h
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QMessageBox \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qmessagebox.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qdialog.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qdialogbuttonbox.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/QScreen \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QDialog
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o examroomdetail.o ../../examroomdetail.cpp
 
 examroomlist.o: ../../examroomlist.cpp ../../examroomlist.h \
