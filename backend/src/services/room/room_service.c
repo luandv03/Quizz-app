@@ -431,3 +431,27 @@ int start_exam(int room_id)
 
     return 1;
 }
+
+int create_room(const char *subject, const char *description, int number_of_easy_question, int number_of_medium_question, int number_of_hard_question, int time_limit, const char *start, const char *end)
+{
+    MYSQL *conn = get_db_connection();
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return 0;
+    }
+
+    char query[512];
+    snprintf(query, sizeof(query),
+             "INSERT INTO room (subject, description, number_of_easy_question, number_of_medium_question, number_of_hard_question, time_limit, start, end, status) "
+             "VALUES ('%s', '%s', %d, %d, %d, %d, '%s', '%s', 'Not started')",
+             subject, description, number_of_easy_question, number_of_medium_question, number_of_hard_question, time_limit, start, end);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    return 1;
+}
