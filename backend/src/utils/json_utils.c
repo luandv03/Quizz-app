@@ -1,10 +1,11 @@
 #include "json_utils.h"
 #include <stdio.h>
 #include <string.h>
+#include <cjson/cJSON.h>
+#include <stdlib.h>
 
 int parse_json(const char *json_str, KeyValuePair *pairs, int max_pairs)
 {
-    // printf("json_str: %s\n", json_str);
     cJSON *json = cJSON_Parse(json_str);
     if (json == NULL)
     {
@@ -31,6 +32,22 @@ int parse_json(const char *json_str, KeyValuePair *pairs, int max_pairs)
         {
             strncpy(pairs[pair_count].key, item->string, sizeof(pairs[pair_count].key) - 1);
             snprintf(pairs[pair_count].value, sizeof(pairs[pair_count].value), "%lf", item->valuedouble);
+            pair_count++;
+        }
+        else if (cJSON_IsArray(item))
+        {
+            strncpy(pairs[pair_count].key, item->string, sizeof(pairs[pair_count].key) - 1);
+            char *array_str = cJSON_Print(item);
+            strncpy(pairs[pair_count].value, array_str, sizeof(pairs[pair_count].value) - 1);
+            free(array_str);
+            pair_count++;
+        }
+        else if (cJSON_IsObject(item))
+        {
+            strncpy(pairs[pair_count].key, item->string, sizeof(pairs[pair_count].key) - 1);
+            char *object_str = cJSON_Print(item);
+            strncpy(pairs[pair_count].value, object_str, sizeof(pairs[pair_count].value) - 1);
+            free(object_str);
             pair_count++;
         }
     }
