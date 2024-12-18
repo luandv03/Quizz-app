@@ -85,6 +85,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_get_user_not_in_room(socket, msg);
     }
+    else if (strcmp(msg->type, SUBMIT_EXAM_QUESTION) == 0)
+    {
+        handle_submit_exam_question(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)

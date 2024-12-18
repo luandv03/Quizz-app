@@ -5,5 +5,6 @@
 #include "room/room_controller.h"
 #include "user/user_controller.h"
 #include "question/question_controller.h"
+#include "exam/exam_controller.h"
 
 #endif // CONTROLLER_H
