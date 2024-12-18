@@ -21,6 +21,8 @@ INSERT INTO room (subject, description, number_of_easy_question, number_of_mediu
 
 -- Insert users into user_in_room for History Room (Room ID 4)
 INSERT INTO user_in_room (room_id, user_id) VALUES
+(1, 1),
+(2, 2),
 (4, 1),
 (4, 2);
 
