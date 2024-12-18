@@ -9,4 +9,7 @@ void handle_get_exam_result_of_room(int client_socket, ControlMessage *msg);
 void handle_get_room_by_id(int client_socket, ControlMessage *msg);
 void handle_start_exam(int client_socket, ControlMessage *msg);
 void handle_create_room(int client_socket, ControlMessage *msg);
+void handle_get_room_question(int client_socket, ControlMessage *msg);
+void handle_get_user_in_room(int client_socket, ControlMessage *msg);
+
 #endif // ROOM_CONTROLLER_H
