@@ -45,9 +45,6 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_user_enter_room(socket, msg);
     }
-    else if (strcmp(msg->type, CREATE_ROOM) == 0)
-    {
-    }
     else if (strcmp(msg->type, GET_USER_EXAM_RESULT) == 0)
     {
         handle_get_user_exam_result(socket, msg);
@@ -67,6 +64,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     else if (strcmp(msg->type, START_EXAM) == 0)
     {
         handle_start_exam(socket, msg);
+    }
+    else if (strcmp(msg->type, CREATE_ROOM) == 0)
+    {
+        handle_create_room(socket, msg);
     }
 }
 
