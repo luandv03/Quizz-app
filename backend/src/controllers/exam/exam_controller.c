@@ -88,3 +88,45 @@ void handle_submit_exam(int client_socket, ControlMessage *msg)
     write(client_socket, response, strlen(response));
     close(client_socket);
 }
+
+void handle_user_start_exam(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 10);
+
+    int room_id = -1, user_id = -1;
+
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "user_id") == 0)
+        {
+            user_id = atoi(pairs[i].value);
+        }
+    }
+
+    int exam_id = -1;
+    char *result = user_start_exam(room_id, user_id, &exam_id);
+    char response[8192];
+    char timestamp[50];
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (result == 0)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION USER_START_EXAM_FAILURE %s\n{\"message\": \"Failed to start exam\"}", timestamp);
+    }
+    else
+    {
+        size_t response_size = strlen(result) + 256;
+        char *response = (char *)malloc(response_size);
+        snprintf(response, sizeof(response), "DATA JSON USER_START_EXAM\n{\n\"room_id\": %d,\n\"user_id\": %d\n\"questions\": %s}", room_id, user_id, result);
+        free(result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+}
