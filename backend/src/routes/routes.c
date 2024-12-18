@@ -69,6 +69,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_create_room(socket, msg);
     }
+    else if (strcmp(msg->type, ADD_QUESTION) == 0)
+    {
+        handle_add_question(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)
@@ -212,7 +216,6 @@ void *pthread_routine(void *arg)
         ControlMessage msg;
         sscanf(header, "CONTROL %s", msg.type);
         strncpy(msg.body, body, sizeof(msg.body) - 1);
-        printf("msg.type: %s\n", msg.type);
         handle_control_message(new_socket_fd, &msg);
     }
     else if (strncmp(header, "DATA", 4) == 0)
