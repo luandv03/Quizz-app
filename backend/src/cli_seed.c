@@ -4,7 +4,7 @@
 #include <mysql/mysql.h>
 #include "db/connect-db.h"
 
-void run_migration(MYSQL *conn, const char *filename)
+void run_seed(MYSQL *conn, const char *filename)
 {
     FILE *file = fopen(filename, "r");
     if (!file)
@@ -48,7 +48,7 @@ void run_migration(MYSQL *conn, const char *filename)
     fclose(file);
 }
 
-void migrate(const char *migration_file)
+void seed(const char *seed_file)
 {
     MYSQL *conn = mysql_init(NULL);
     if (conn == NULL)
@@ -64,7 +64,7 @@ void migrate(const char *migration_file)
         return;
     }
 
-    run_migration(conn, migration_file);
+    run_seed(conn, seed_file);
 
     mysql_close(conn);
 }
@@ -73,11 +73,11 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        fprintf(stderr, "Usage: %s <migration_file>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <seed_file>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    migrate(argv[1]);
+    seed(argv[1]);
 
     return EXIT_SUCCESS;
 }

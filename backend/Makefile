@@ -67,6 +67,9 @@ seed: $(SEED_TARGET)
 	done; \
 	fi
 
+reset:
+	./resetdb.sh
+
 # Clean up the build files
 clean:
 	rm -f $(OBJS) $(TARGET) $(MIGRATION_OBJS) $(MIGRATION_TARGET)
