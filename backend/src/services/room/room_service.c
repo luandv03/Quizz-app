@@ -512,6 +512,62 @@ char *get_user_in_room(int room_id)
     return json_string;
 }
 
+char *get_user_not_in_room(int room_id)
+{
+    MYSQL *conn = get_db_connection();
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    char query[256];
+    snprintf(query, sizeof(query),
+             "SELECT u.id, u.name, u.email "
+             "FROM user u "
+             "LEFT JOIN user_in_room ur ON u.id = ur.user_id AND ur.room_id = %d "
+             "WHERE ur.user_id IS NULL",
+             room_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    int num_rows = mysql_num_rows(res);
+    if (num_rows == 0)
+    {
+        return NULL;
+    }
+
+    MYSQL_ROW row;
+
+    cJSON *json_array = cJSON_CreateArray();
+    while ((row = mysql_fetch_row(res)))
+    {
+        cJSON *user_json = cJSON_CreateObject();
+        cJSON_AddNumberToObject(user_json, "id", atoi(row[0]));
+        cJSON_AddStringToObject(user_json, "name", row[1]);
+        cJSON_AddStringToObject(user_json, "email", row[2]);
+        cJSON_AddItemToArray(json_array, user_json);
+    }
+
+    mysql_free_result(res);
+
+    char *json_string = cJSON_Print(json_array);
+    cJSON_Delete(json_array);
+
+    return json_string;
+}
+
 char *get_room_question(int room_id)
 {
     MYSQL *conn = get_db_connection();

@@ -17,6 +17,7 @@
 #define ADD_QUESTION "ADD_QUESTION"
 #define GET_ROOM_QUESTION "GET_ROOM_QUESTION"
 #define GET_USER_IN_ROOM "GET_USER_IN_ROOM"
+#define GET_USER_NOT_IN_ROOM "GET_USER_NOT_IN_ROOM"
 
 // Struct Definition
 typedef struct
