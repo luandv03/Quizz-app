@@ -22,6 +22,8 @@ public:
 
 signals:
     void showExamRoomList();
+    void showUserManagement();
+    void showExamRoomManagement();
 
 private:
     Ui::ExamRoomDetail *ui;

@@ -25,13 +25,26 @@ ExamRoomList::ExamRoomList(QWidget *parent) :
     QMenu *menu = new QMenu(this);
     QAction *examRoomListAction = new QAction("Exam Room List", this);
     QAction *profileAction = new QAction("Profile", this);
+    QAction *userManagementAction = new QAction("User Management", this);
+    QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
     QAction *practicesAction = new QAction("Logout", this);
 
     menu->addAction(examRoomListAction);
     menu->addAction(profileAction);
+    menu->addAction(userManagementAction);
+    menu->addAction(examRoomManagementAction);
     menu->addAction(practicesAction);
 
     ui->avatarButton->setMenu(menu);
+
+    connect(userManagementAction, &QAction::triggered, [this]() {
+        emit showUserManagement();
+    });
+
+    connect(examRoomManagementAction, &QAction::triggered, [this]() {
+        qDebug() << "showExamRoomManagement";
+        emit showExamRoomManagement();
+    });
 
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL GET_ROOM_LIST\n%1");
