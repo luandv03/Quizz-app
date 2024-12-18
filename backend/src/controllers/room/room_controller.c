@@ -310,3 +310,39 @@ void handle_get_user_in_room(int client_socket, ControlMessage *msg)
         free(result);
     }
 }
+
+void handle_get_user_not_in_room(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 1);
+
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    char response[8192];
+    memset(response, 0, sizeof(response));
+
+    char *result = get_user_not_in_room(room_id);
+    if (result == NULL)
+    {
+        snprintf(response, sizeof(response), "DATA JSON USER_NOT_IN_ROOM\n{\n\"data\": []\n}");
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA JSON USER_NOT_IN_ROOM\n{\n\"data\": %s\n}", result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+
+    if (result != NULL)
+    {
+        free(result);
+    }
+}

@@ -11,5 +11,6 @@ void handle_start_exam(int client_socket, ControlMessage *msg);
 void handle_create_room(int client_socket, ControlMessage *msg);
 void handle_get_room_question(int client_socket, ControlMessage *msg);
 void handle_get_user_in_room(int client_socket, ControlMessage *msg);
+void handle_get_user_not_in_room(int client_socket, ControlMessage *msg);
 
 #endif // ROOM_CONTROLLER_H
