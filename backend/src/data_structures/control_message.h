@@ -15,6 +15,9 @@
 #define CREATE_ROOM "CREATE_ROOM"
 #define DELETE_ROOM "DELETE_ROOM"
 #define ADD_QUESTION "ADD_QUESTION"
+#define GET_ROOM_QUESTION "GET_ROOM_QUESTION"
+#define GET_USER_IN_ROOM "GET_USER_IN_ROOM"
+
 // Struct Definition
 typedef struct
 {

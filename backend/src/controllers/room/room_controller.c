@@ -16,11 +16,11 @@ void handle_get_room_list(int client_socket, ControlMessage *msg)
     char *result = get_all_room();
     if (result == NULL)
     {
-        snprintf(response, sizeof(response), "DATA JSON GET_ROOM_LIST\n{\"data\": []}");
+        snprintf(response, sizeof(response), "DATA JSON GET_ROOM_LIST\n{\n\"data\": []\n}");
     }
     else
     {
-        snprintf(response, sizeof(response), "DATA JSON GET_ROOM_LIST\n{\"data\": %s}", result);
+        snprintf(response, sizeof(response), "DATA JSON GET_ROOM_LIST\n{\n\"data\": %s\n}", result);
     }
 
     write(client_socket, response, strlen(response));
@@ -238,4 +238,75 @@ void handle_create_room(int client_socket, ControlMessage *msg)
 
     write(client_socket, response, strlen(response));
     close(client_socket);
+}
+
+void handle_get_room_question(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 1);
+
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    char response[8192];
+    memset(response, 0, sizeof(response));
+
+    char *result = get_room_question(room_id);
+    if (result == NULL)
+    {
+        snprintf(response, sizeof(response), "DATA JSON ROOM_QUESTION\n{\n\"data\": []\n}");
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA JSON ROOM_QUESTION\n{\n\"data\": %s\n}", result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+
+    if (result != NULL)
+    {
+        free(result);
+    }
+}
+void handle_get_user_in_room(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 1);
+
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    char response[8192];
+    memset(response, 0, sizeof(response));
+
+    char *result = get_user_in_room(room_id);
+    if (result == NULL)
+    {
+        snprintf(response, sizeof(response), "DATA JSON USER_IN_ROOM\n{\n\"data\": []\n}");
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA JSON USER_IN_ROOM\n{\n\"data\": %s\n}", result);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+
+    if (result != NULL)
+    {
+        free(result);
+    }
 }
