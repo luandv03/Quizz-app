@@ -19,6 +19,8 @@
 #define GET_USER_IN_ROOM "GET_USER_IN_ROOM"
 #define GET_USER_NOT_IN_ROOM "GET_USER_NOT_IN_ROOM"
 #define SUBMIT_EXAM_QUESTION "SUBMIT_EXAM_QUESTION"
+#define SUBMIT_EXAM "SUBMIT_EXAM"
+
 // Struct Definition
 typedef struct
 {
