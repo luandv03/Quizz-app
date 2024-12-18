@@ -176,3 +176,66 @@ void handle_start_exam(int client_socket, ControlMessage *msg)
     write(client_socket, response, strlen(response));
     close(client_socket);
 }
+
+void handle_create_room(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 10);
+
+    char subject[256] = "", description[256] = "", start[256] = "", end[256] = "";
+    int number_of_easy_question = 0, number_of_medium_question = 0, number_of_hard_question = 0, time_limit = 0;
+
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "subject") == 0)
+        {
+            strncpy(subject, pairs[i].value, sizeof(subject) - 1);
+        }
+        else if (strcmp(pairs[i].key, "description") == 0)
+        {
+            strncpy(description, pairs[i].value, sizeof(description) - 1);
+        }
+        else if (strcmp(pairs[i].key, "number_of_easy_question") == 0)
+        {
+            number_of_easy_question = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "number_of_medium_question") == 0)
+        {
+            number_of_medium_question = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "number_of_hard_question") == 0)
+        {
+            number_of_hard_question = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "time_limit") == 0)
+        {
+            time_limit = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "start") == 0)
+        {
+            strncpy(start, pairs[i].value, sizeof(start) - 1);
+        }
+        else if (strcmp(pairs[i].key, "end") == 0)
+        {
+            strncpy(end, pairs[i].value, sizeof(end) - 1);
+        }
+    }
+
+    int result = create_room(subject, description, number_of_easy_question, number_of_medium_question, number_of_hard_question, time_limit, start, end);
+    char response[2048];
+    char timestamp[50];
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (result == 0)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION ADD_ROOM_FAILURE %s\n{\"message\": \"Failed to create room\"}", timestamp);
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION ADD_ROOM_SUCCESS %s\n{\"message\": \"Room created successfully\"}", timestamp);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+}
