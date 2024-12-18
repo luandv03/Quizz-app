@@ -11,28 +11,37 @@ CONFIG += c++17
 
 SOURCES += \
     examroomdetail.cpp \
+    examroomdialog.cpp \
     examroomlist.cpp \
+    examroommanagement.cpp \
     home.cpp \
     main.cpp \
     mainwindow.cpp \
     signin.cpp \
-    signup.cpp
+    signup.cpp \
+    usermanagement.cpp
 
 HEADERS += \
     examroomdetail.h \
+    examroomdialog.h \
     examroomlist.h \
+    examroommanagement.h \
     home.h \
     mainwindow.h \
     signin.h \
-    signup.h
+    signup.h \
+    usermanagement.h
 
 FORMS += \
     examroomdetail.ui \
+    examroomdialog.ui \
     examroomlist.ui \
+    examroommanagement.ui \
     home.ui \
     mainwindow.ui \
     signin.ui \
-    signup.ui
+    signup.ui \
+    usermanagement.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

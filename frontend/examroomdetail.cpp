@@ -26,16 +26,30 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QMenu *menu = new QMenu(this);
     QAction *examRoomListAction = new QAction("Exam Room List", this);
     QAction *profileAction = new QAction("Profile", this);
+    QAction *userManagementAction = new QAction("User Management", this);
+    QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
     QAction *practicesAction = new QAction("Logout", this);
 
     menu->addAction(examRoomListAction);
     menu->addAction(profileAction);
+    menu->addAction(userManagementAction);
+    menu->addAction(examRoomManagementAction);
     menu->addAction(practicesAction);
 
     ui->avatarButton->setMenu(menu);
 
     connect(examRoomListAction, &QAction::triggered, [this]() {
         emit showExamRoomList();
+    });
+
+    connect(userManagementAction, &QAction::triggered, [this]() {
+        qDebug() << "show user management";
+        emit showUserManagement();
+    });
+
+    connect(examRoomManagementAction, &QAction::triggered, [this]() {
+        qDebug() << "showExamRoomManagement";
+        emit showExamRoomManagement();
     });
 
     ui->viewExamResultBTn->setEnabled(false);
