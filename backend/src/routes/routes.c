@@ -81,6 +81,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_get_user_in_room(socket, msg);
     }
+    else if (strcmp(msg->type, GET_USER_NOT_IN_ROOM) == 0)
+    {
+        handle_get_user_not_in_room(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)
