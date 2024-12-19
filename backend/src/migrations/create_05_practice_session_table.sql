@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS practice_session (
     room_id INT NOT NULL,
     start_time DATETIME,
     end_time DATETIME,
-    score INT,
+    score DECIMAL(5,2) NOT NULL DEFAULT 0.00,
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (room_id) REFERENCES room(id)
 );

@@ -1,20 +1,20 @@
 -- Insert exam results for students in History Room (Room ID 4)
-INSERT INTO exam (user_id, room_id, start_time, end_time) VALUES
+INSERT INTO practice_session (user_id, room_id, start_time, end_time) VALUES
 (1, 4, '2023-11-03 09:00:00', '2023-11-03 10:00:00'),
 (2, 4, '2023-11-03 09:00:00', '2023-11-03 10:00:00');
 
 -- Insert exam results for students in English Room (Room ID 5)
-INSERT INTO exam (user_id, room_id, start_time, end_time) VALUES
+INSERT INTO practice_session (user_id, room_id, start_time, end_time) VALUES
 (3, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
 (4, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00');
 
 -- Insert exam results for students in Physics Room (Room ID 6)
-INSERT INTO exam (user_id, room_id, start_time, end_time) VALUES
+INSERT INTO practice_session (user_id, room_id, start_time, end_time) VALUES
 (5, 6, '2023-11-06 09:00:00', '2023-11-06 10:00:00'),
 (6, 6, '2023-11-06 09:00:00', '2023-11-06 10:00:00');
 
 -- Insert exam questions for History Room (Room ID 4)
-INSERT INTO exam_question (question_id, exam_id, user_answer) VALUES
+INSERT INTO practice_question (question_id, practice_session_id, user_answer) VALUES
 (91,1,362),
 (92,1,366),
 (93,1,370),
@@ -37,7 +37,7 @@ INSERT INTO exam_question (question_id, exam_id, user_answer) VALUES
 (110,1,438);
 
 -- Insert exam questions for English Room (Room ID 5)
-INSERT INTO exam_question (question_id, exam_id, user_answer) VALUES
+INSERT INTO practice_question (question_id, practice_session_id, user_answer) VALUES
 (121,3,482),
 (122,3,486),
 (123,3,490),
@@ -60,7 +60,7 @@ INSERT INTO exam_question (question_id, exam_id, user_answer) VALUES
 (140,3,558);
 
 -- Insert exam questions for Physics Room (Room ID 6)
-INSERT INTO exam_question (question_id, exam_id, user_answer) VALUES
+INSERT INTO practice_question (question_id, practice_session_id, user_answer) VALUES
 (151,5,602),
 (152,5,606),
 (153,5,610),
@@ -83,7 +83,7 @@ INSERT INTO exam_question (question_id, exam_id, user_answer) VALUES
 (170,5,678);
 
 -- Insert exam questions for History Room (Room ID 4)
-INSERT INTO exam_question (question_id, exam_id) VALUES
+INSERT INTO practice_question (question_id, practice_session_id) VALUES
 (91, 2),
 (92, 2),
 (93, 2),
@@ -106,7 +106,7 @@ INSERT INTO exam_question (question_id, exam_id) VALUES
 (110, 2);
 
 -- Insert exam questions for English Room (Room ID 5)
-INSERT INTO exam_question (question_id, exam_id) VALUES
+INSERT INTO practice_question (question_id, practice_session_id) VALUES
 (121, 4),
 (122, 4),
 (123, 4),
@@ -129,7 +129,7 @@ INSERT INTO exam_question (question_id, exam_id) VALUES
 (140, 4);
 
 -- Insert exam questions for Physics Room (Room ID 6)
-INSERT INTO exam_question (question_id, exam_id) VALUES
+INSERT INTO practice_question (question_id, practice_session_id) VALUES
 (151, 6),
 (152, 6),
 (153, 6),
