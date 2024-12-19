@@ -76,7 +76,6 @@ clean:
 
 # Run the server
 run: $(TARGET)
-	@clear
 	./$(TARGET)
 
 .PHONY: all clean run
