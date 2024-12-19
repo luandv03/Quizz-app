@@ -94,3 +94,38 @@ void handle_get_user_practice_result(int client_socket, ControlMessage *msg)
         free(result);
     }
 }
+
+void handle_get_user_profile(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 10);
+
+    int user_id = -1;
+
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "user_id") == 0)
+        {
+            user_id = atoi(pairs[i].value);
+        }
+    }
+
+    char *user_profile = get_user_profile_by_id(user_id);
+    char response[2048];
+    char timestamp[50];
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (user_profile == NULL)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION GET_USER_PROFILE_FAILURE %s\n{\"message\": \"Failed to get user profile\"}", timestamp);
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "DATA JSON GET_PROFILE_BY_ID\n%s", user_profile);
+        free(user_profile);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+}

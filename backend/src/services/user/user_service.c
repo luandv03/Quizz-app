@@ -146,3 +146,60 @@ char *get_user_practice_result(int room_id, int user_id)
     mysql_free_result(res);
     return json_string;
 }
+
+char *get_user_profile_by_id(int user_id)
+{
+    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    // Truy vấn SQL lấy thông tin người dùng theo id
+    char query[512];
+    snprintf(query, sizeof(query),
+             "SELECT u.id, u.name, u.email, u.dob "
+             "FROM user u "
+             "WHERE u.id = %d;",
+             user_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    MYSQL_ROW row; // Dòng dữ liệu từ kết quả truy vấn
+    int num_rows = mysql_num_rows(res);
+    if (num_rows == 0)
+    {
+        fprintf(stderr, "No data found for user_id: %d\n", user_id);
+        mysql_free_result(res);
+        return NULL;
+    }
+
+    cJSON *user_json = cJSON_CreateObject();
+
+    // Lặp qua các dòng dữ liệu trong kết quả truy vấn
+    while ((row = mysql_fetch_row(res)))
+    {
+        cJSON_AddNumberToObject(user_json, "id", atoi(row[0]));
+        cJSON_AddStringToObject(user_json, "name", row[1]);
+        cJSON_AddStringToObject(user_json, "email", row[2]);
+        cJSON_AddStringToObject(user_json, "dob", row[3]);
+    }
+
+    char *json_string = cJSON_Print(user_json);
+    cJSON_Delete(user_json);
+    mysql_free_result(res);
+
+    return json_string;
+}
