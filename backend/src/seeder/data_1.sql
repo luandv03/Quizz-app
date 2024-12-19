@@ -12,12 +12,12 @@ INSERT INTO user (email, pass, name, dob) VALUES
 ('sophia.hernandez@example.com', '1', 'Sophia Hernandez', '2011-10-30');
 
 INSERT INTO room (subject, description, number_of_easy_question, number_of_medium_question, number_of_hard_question, time_limit, start, end, status) VALUES
-('Math', 'Math exam for grade 10', 10, 15, 5, 60, '2023-11-01 09:00:00', '2025-11-01 10:00:00', 'Not started'),
-('Science', 'Science exam for grade 10', 10, 15, 5, 60, '2023-11-02 09:00:00', '2025-11-02 10:00:00', 'Not started'),
-('Geography', 'Geography exam for grade 10', 10, 15, 5, 60, '2023-11-04 09:00:00', '2025-11-04 10:00:00', 'Not started'),
-('History', 'History exam for grade 10', 10, 15, 5, 60, '2023-11-03 09:00:00', '2023-11-03 10:00:00', 'Finished'),
-('English', 'English exam for grade 10', 10, 15, 5, 60, '2023-11-05 09:00:00', '2023-11-05 10:00:00', 'Finished'),
-('Physics', 'Physics exam for grade 10', 10, 15, 5, 60, '2023-11-06 09:00:00', '2023-11-06 10:00:00', 'Finished');
+('Math', 'Math exam for grade 10', 10, 5, 5, 60, '2023-11-01 09:00:00', '2025-11-01 10:00:00', 'Not started'),
+('Science', 'Science exam for grade 10', 10, 5, 5, 60, '2023-11-02 09:00:00', '2025-11-02 10:00:00', 'Not started'),
+('Geography', 'Geography exam for grade 10', 10, 5, 5, 60, '2023-11-04 09:00:00', '2025-11-04 10:00:00', 'Not started'),
+('History', 'History exam for grade 10', 10, 5, 5, 60, '2023-11-03 09:00:00', '2023-11-03 10:00:00', 'Finished'),
+('English', 'English exam for grade 10', 10, 5, 5, 60, '2023-11-05 09:00:00', '2023-11-05 10:00:00', 'Finished'),
+('Physics', 'Physics exam for grade 10', 10, 5, 5, 60, '2023-11-06 09:00:00', '2023-11-06 10:00:00', 'Finished');
 
 -- Insert users into user_in_room for History Room (Room ID 4)
 INSERT INTO user_in_room (room_id, user_id) VALUES
