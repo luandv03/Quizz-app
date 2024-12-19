@@ -6,5 +6,6 @@
 #include "./user/user_service.h"
 #include "./question/question_service.h"
 #include "./exam/exam_service.h"
+#include "./practice/practice_service.h"
 
 #endif // SERVICE_H

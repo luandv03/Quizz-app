@@ -6,5 +6,6 @@
 #include "user/user_controller.h"
 #include "question/question_controller.h"
 #include "exam/exam_controller.h"
+#include "practice/practice_controller.h"
 
 #endif // CONTROLLER_H

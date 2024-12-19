@@ -97,6 +97,18 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_user_start_exam(socket, msg);
     }
+    else if (strcmp(msg->type, USER_START_PRACTICE) == 0)
+    {
+        handle_user_start_practice(socket, msg);
+    }
+    else if (strcmp(msg->type, SUBMIT_PRATICE_QUESTION) == 0)
+    {
+        handle_submit_practice_question(socket, msg);
+    }
+    else if (strcmp(msg->type, SUBMIT_PRACTICE) == 0)
+    {
+        handle_submit_practice(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)
