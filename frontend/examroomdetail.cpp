@@ -38,6 +38,10 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
 
     ui->avatarButton->setMenu(menu);
 
+    connect(profileAction, &QAction::triggered, [this]() {
+        emit showProfile();
+    });
+
     connect(examRoomListAction, &QAction::triggered, [this]() {
         emit showExamRoomList();
     });

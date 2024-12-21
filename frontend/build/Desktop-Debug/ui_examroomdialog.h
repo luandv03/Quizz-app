@@ -45,7 +45,7 @@ public:
     QLabel *status;
     QPushButton *startExam;
     QLabel *label_8;
-    QPushButton *addQuestion;
+    QPushButton *addQuestionButton;
     QListWidget *listWidget;
     QWidget *tabUser;
     QLabel *label_7;
@@ -56,6 +56,10 @@ public:
     QPushButton *searchButton;
     QPushButton *addUser;
     QTableWidget *userTableWidget;
+    QWidget *tabExamResult;
+    QLabel *label_71;
+    QTableWidget *examResultTableWidget;
+    QWidget *tabExamResultChart;
 
     void setupUi(QWidget *ExamRoomDialog)
     {
@@ -127,10 +131,10 @@ public:
         label_8 = new QLabel(tabExamRoomDetail);
         label_8->setObjectName("label_8");
         label_8->setGeometry(QRect(10, 230, 141, 17));
-        addQuestion = new QPushButton(tabExamRoomDetail);
-        addQuestion->setObjectName("addQuestion");
-        addQuestion->setGeometry(QRect(760, 220, 111, 25));
-        addQuestion->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+        addQuestionButton = new QPushButton(tabExamRoomDetail);
+        addQuestionButton->setObjectName("addQuestionButton");
+        addQuestionButton->setGeometry(QRect(760, 220, 111, 25));
+        addQuestionButton->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
         listWidget = new QListWidget(tabExamRoomDetail);
         listWidget->setObjectName("listWidget");
         listWidget->setGeometry(QRect(0, 250, 871, 271));
@@ -182,13 +186,39 @@ public:
         userTableWidget->setObjectName("userTableWidget");
         userTableWidget->setGeometry(QRect(0, 80, 782, 684));
         tabWidget->addTab(tabUser, QString());
+        tabExamResult = new QWidget();
+        tabExamResult->setObjectName("tabExamResult");
+        label_71 = new QLabel(tabExamResult);
+        label_71->setObjectName("label_71");
+        label_71->setGeometry(QRect(10, 10, 241, 17));
+        examResultTableWidget = new QTableWidget(tabExamResult);
+        if (examResultTableWidget->columnCount() < 6)
+            examResultTableWidget->setColumnCount(6);
+        QTableWidgetItem *__qtablewidgetitem5 = new QTableWidgetItem();
+        examResultTableWidget->setHorizontalHeaderItem(0, __qtablewidgetitem5);
+        QTableWidgetItem *__qtablewidgetitem6 = new QTableWidgetItem();
+        examResultTableWidget->setHorizontalHeaderItem(1, __qtablewidgetitem6);
+        QTableWidgetItem *__qtablewidgetitem7 = new QTableWidgetItem();
+        examResultTableWidget->setHorizontalHeaderItem(2, __qtablewidgetitem7);
+        QTableWidgetItem *__qtablewidgetitem8 = new QTableWidgetItem();
+        examResultTableWidget->setHorizontalHeaderItem(3, __qtablewidgetitem8);
+        QTableWidgetItem *__qtablewidgetitem9 = new QTableWidgetItem();
+        examResultTableWidget->setHorizontalHeaderItem(4, __qtablewidgetitem9);
+        QTableWidgetItem *__qtablewidgetitem10 = new QTableWidgetItem();
+        examResultTableWidget->setHorizontalHeaderItem(5, __qtablewidgetitem10);
+        examResultTableWidget->setObjectName("examResultTableWidget");
+        examResultTableWidget->setGeometry(QRect(0, 40, 782, 684));
+        tabWidget->addTab(tabExamResult, QString());
+        tabExamResultChart = new QWidget();
+        tabExamResultChart->setObjectName("tabExamResultChart");
+        tabWidget->addTab(tabExamResultChart, QString());
 
         verticalLayout->addWidget(tabWidget);
 
 
         retranslateUi(ExamRoomDialog);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(ExamRoomDialog);
@@ -211,7 +241,7 @@ public:
         status->setText(QCoreApplication::translate("ExamRoomDialog", "Ch\306\260a b\341\272\257t \304\221\341\272\247u", nullptr));
         startExam->setText(QCoreApplication::translate("ExamRoomDialog", "Ph\303\241t \304\221\341\273\201", nullptr));
         label_8->setText(QCoreApplication::translate("ExamRoomDialog", "Ng\303\242n h\303\240ng c\303\242u h\341\273\217i", nullptr));
-        addQuestion->setText(QCoreApplication::translate("ExamRoomDialog", "Th\303\252m c\303\242u h\341\273\217i", nullptr));
+        addQuestionButton->setText(QCoreApplication::translate("ExamRoomDialog", "Th\303\252m c\303\242u h\341\273\217i", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabExamRoomDetail), QCoreApplication::translate("ExamRoomDialog", "Chi tiet phong thi", nullptr));
         label_7->setText(QCoreApplication::translate("ExamRoomDialog", "Danh s\303\241ch ng\306\260\341\273\235i trong ph\303\262ng thi", nullptr));
         searchLabel->setText(QCoreApplication::translate("ExamRoomDialog", "Search User", nullptr));
@@ -228,6 +258,21 @@ public:
         QTableWidgetItem *___qtablewidgetitem4 = userTableWidget->horizontalHeaderItem(4);
         ___qtablewidgetitem4->setText(QCoreApplication::translate("ExamRoomDialog", "view", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabUser), QCoreApplication::translate("ExamRoomDialog", "Danh sach nguoi tham gia", nullptr));
+        label_71->setText(QCoreApplication::translate("ExamRoomDialog", "Danh s\303\241ch k\341\272\277t qu\341\272\243 ph\303\262ng thi", nullptr));
+        QTableWidgetItem *___qtablewidgetitem5 = examResultTableWidget->horizontalHeaderItem(0);
+        ___qtablewidgetitem5->setText(QCoreApplication::translate("ExamRoomDialog", "userId", nullptr));
+        QTableWidgetItem *___qtablewidgetitem6 = examResultTableWidget->horizontalHeaderItem(1);
+        ___qtablewidgetitem6->setText(QCoreApplication::translate("ExamRoomDialog", "name", nullptr));
+        QTableWidgetItem *___qtablewidgetitem7 = examResultTableWidget->horizontalHeaderItem(2);
+        ___qtablewidgetitem7->setText(QCoreApplication::translate("ExamRoomDialog", "email", nullptr));
+        QTableWidgetItem *___qtablewidgetitem8 = examResultTableWidget->horizontalHeaderItem(3);
+        ___qtablewidgetitem8->setText(QCoreApplication::translate("ExamRoomDialog", "so cau dung", nullptr));
+        QTableWidgetItem *___qtablewidgetitem9 = examResultTableWidget->horizontalHeaderItem(4);
+        ___qtablewidgetitem9->setText(QCoreApplication::translate("ExamRoomDialog", "tong so cau", nullptr));
+        QTableWidgetItem *___qtablewidgetitem10 = examResultTableWidget->horizontalHeaderItem(5);
+        ___qtablewidgetitem10->setText(QCoreApplication::translate("ExamRoomDialog", "diem", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tabExamResult), QCoreApplication::translate("ExamRoomDialog", "Ket qua cua phong thi", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(tabExamResultChart), QCoreApplication::translate("ExamRoomDialog", "Thong ke pho diem", nullptr));
     } // retranslateUi
 
 };

@@ -34,37 +34,6 @@
      <property name="styleSheet">
       <string notr="true"/>
      </property>
-     <!-- <widget class="QPushButton" name="closeButton">
-      <property name="geometry">
-       <rect>
-        <x>740</x>
-        <y>0</y>
-        <width>140</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>140</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::LayoutDirection::LeftToRight</enum>
-      </property>
-      <property name="text">
-       <string>Đóng</string>
-      </property>
-     </widget> -->
     </widget>
    </item>
    <item>
@@ -76,12 +45,9 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabExamRoomDetail">
-      <!-- <property name="styleSheet">
-       <string notr="true">background-color: #f0f0f0;</string>
-      </property> -->
       <attribute name="title">
        <string>Chi tiet phong thi</string>
       </attribute>
@@ -273,7 +239,7 @@
         <string>Ngân hàng câu hỏi</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="addQuestion">
+      <widget class="QPushButton" name="addQuestionButton">
        <property name="geometry">
         <rect>
          <x>760</x>
@@ -406,6 +372,69 @@
         </property>
        </column>
       </widget>
+     </widget>
+     <widget class="QWidget" name="tabExamResult">
+      <attribute name="title">
+       <string>Ket qua cua phong thi</string>
+      </attribute>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>241</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Danh sách kết quả phòng thi</string>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="examResultTableWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>40</y>
+         <width>782</width>
+         <height>684</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text">
+         <string>userId</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>email</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>so cau dung</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>tong so cau</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>diem</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabExamResultChart">
+      <attribute name="title">
+       <string>Thong ke pho diem</string>
+      </attribute>
      </widget>
     </widget>
    </item>

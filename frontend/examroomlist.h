@@ -24,6 +24,7 @@ signals:
     void showExamRoomDetail();
     void showUserManagement();
     void showExamRoomManagement();
+    void showProfile();
 
 private slots:
     void on_searchButton_clicked();

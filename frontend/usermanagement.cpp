@@ -27,6 +27,10 @@ UserManagement::UserManagement(QWidget *parent) :
 
     ui->avatarButton->setMenu(menu);
 
+    connect(profileAction, &QAction::triggered, [this]() {
+        emit showProfile();
+    });
+
     connect(examRoomListAction, &QAction::triggered, [this]() {
         qDebug() << "show exam roomlist";
         emit showExamRoomList();

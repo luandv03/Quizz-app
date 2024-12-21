@@ -40,7 +40,8 @@ constexpr auto qt_meta_stringdata_CLASSExamRoomDetailENDCLASS = QtMocHelpers::st
     "showExamRoomList",
     "",
     "showUserManagement",
-    "showExamRoomManagement"
+    "showExamRoomManagement",
+    "showProfile"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -53,19 +54,21 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSExamRoomDetailENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       3,       // signalCount
+       4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   32,    2, 0x06,    1 /* Public */,
-       3,    0,   33,    2, 0x06,    2 /* Public */,
-       4,    0,   34,    2, 0x06,    3 /* Public */,
+       1,    0,   38,    2, 0x06,    1 /* Public */,
+       3,    0,   39,    2, 0x06,    2 /* Public */,
+       4,    0,   40,    2, 0x06,    3 /* Public */,
+       5,    0,   41,    2, 0x06,    4 /* Public */,
 
  // signals: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -87,6 +90,8 @@ Q_CONSTINIT const QMetaObject ExamRoomDetail::staticMetaObject = { {
         // method 'showUserManagement'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showExamRoomManagement'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'showProfile'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -101,6 +106,7 @@ void ExamRoomDetail::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 0: _t->showExamRoomList(); break;
         case 1: _t->showUserManagement(); break;
         case 2: _t->showExamRoomManagement(); break;
+        case 3: _t->showProfile(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -123,6 +129,13 @@ void ExamRoomDetail::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
             using _t = void (ExamRoomDetail::*)();
             if (_t _q_method = &ExamRoomDetail::showExamRoomManagement; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 2;
+                return;
+            }
+        }
+        {
+            using _t = void (ExamRoomDetail::*)();
+            if (_t _q_method = &ExamRoomDetail::showProfile; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 3;
                 return;
             }
         }
@@ -149,13 +162,13 @@ int ExamRoomDetail::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
@@ -176,5 +189,11 @@ void ExamRoomDetail::showUserManagement()
 void ExamRoomDetail::showExamRoomManagement()
 {
     QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
+}
+
+// SIGNAL 3
+void ExamRoomDetail::showProfile()
+{
+    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
 }
 QT_WARNING_POP

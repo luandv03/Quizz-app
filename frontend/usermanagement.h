@@ -19,6 +19,7 @@ public:
 signals:
     void showExamRoomList();
     void showExamRoomManagement();
+    void showProfile();
 
 private slots:
     void onViewButtonClicked(int row);
