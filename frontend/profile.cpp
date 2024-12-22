@@ -2,6 +2,8 @@
 #include "profile.h"
 #include "ui_profile.h"
 
+#include "userdata.h"
+
 #include <QMenu>
 
 Profile::Profile(QWidget *parent) :
@@ -9,6 +11,8 @@ Profile::Profile(QWidget *parent) :
     ui(new Ui::Profile)
 {
     ui->setupUi(this);
+
+    qDebug() << "Profile constructor";
 
     // Set up the avatar button dropdown menu
     QMenu *menu = new QMenu(this);
@@ -41,9 +45,9 @@ Profile::Profile(QWidget *parent) :
 
 
     // Giả lập dữ liệu từ backend
-    QString userName = "JohnDoe";
-    QString email = "johndoe@example.com";
-    QString dob = "1990-01-01";
+    QString userName = UserData::instance().getUserName();
+    QString email = UserData::instance().getEmail();
+    QString dob = UserData::instance().getDob();
     QString password = "password123";
 
     // Gán dữ liệu cho QLineEdit
@@ -71,6 +75,22 @@ Profile::Profile(QWidget *parent) :
 Profile::~Profile()
 {
     delete ui;
+}
+
+void Profile::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+    
+    // Giả lập dữ liệu từ backend
+    QString userName = UserData::instance().getUserName();
+    QString email = UserData::instance().getEmail();
+    QString dob = UserData::instance().getDob();
+    QString password = "password123";
+
+    // Gán dữ liệu cho QLineEdit
+    ui->userNameLineEdit->setText(userName);
+    ui->emailLineEdit->setText(email);
+    ui->dobLineEdit->setText(dob);
+    ui->passwordLineEdit->setText(password);
 }
 
 void Profile::checkForChanges()

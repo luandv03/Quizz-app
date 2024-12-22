@@ -44,6 +44,7 @@ constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::string
     "showProfile",
     "showExamRoomList",
     "showExamRoomDetail",
+    "roomId",
     "showUserManagement",
     "showExamRoomManagement"
 );
@@ -71,9 +72,9 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
        4,    0,   64,    2, 0x08,    3 /* Private */,
        5,    0,   65,    2, 0x08,    4 /* Private */,
        6,    0,   66,    2, 0x08,    5 /* Private */,
-       7,    0,   67,    2, 0x08,    6 /* Private */,
-       8,    0,   68,    2, 0x08,    7 /* Private */,
-       9,    0,   69,    2, 0x08,    8 /* Private */,
+       7,    1,   67,    2, 0x08,    6 /* Private */,
+       9,    0,   70,    2, 0x08,    8 /* Private */,
+      10,    0,   71,    2, 0x08,    9 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -81,7 +82,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    8,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -109,6 +110,7 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showExamRoomDetail'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<int, std::false_type>,
         // method 'showUserManagement'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showExamRoomManagement'
@@ -128,13 +130,12 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 2: _t->showHome(); break;
         case 3: _t->showProfile(); break;
         case 4: _t->showExamRoomList(); break;
-        case 5: _t->showExamRoomDetail(); break;
+        case 5: _t->showExamRoomDetail((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 6: _t->showUserManagement(); break;
         case 7: _t->showExamRoomManagement(); break;
         default: ;
         }
     }
-    (void)_a;
 }
 
 const QMetaObject *MainWindow::metaObject() const

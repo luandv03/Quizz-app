@@ -79,8 +79,9 @@ void MainWindow::showExamRoomList() {
     ui->stackedWidget->setCurrentWidget(examRoomListForm);
 }
 
-void MainWindow::showExamRoomDetail() {
+void MainWindow::showExamRoomDetail(int roomId) {
     qDebug() << "Switching to ExamRoomDetail UI";
+    examRoomDetailForm->setRoomId(roomId); // Pass the roomId to ExamRoomDetail
     ui->stackedWidget->setCurrentWidget(examRoomDetailForm);
 }
 

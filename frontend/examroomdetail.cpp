@@ -298,6 +298,14 @@ ExamRoomDetail::~ExamRoomDetail()
     delete tcpSocket;
 }
 
+void ExamRoomDetail::setRoomId(int roomId) {
+    currentRoomId = roomId;
+    qDebug() << "ExamRoomDetail: Room ID set to" << currentRoomId;
+
+    // Load the exam room details based on the roomId
+    // Implement the logic to load and display the exam room details
+}
+
 void ExamRoomDetail::displayQuestions(const QJsonArray &questionsArray)
 {
     // ui->questionListWidget->clear();  // Xóa các mục cũ

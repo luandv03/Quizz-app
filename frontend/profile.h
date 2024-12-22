@@ -15,6 +15,9 @@ public:
     explicit Profile(QWidget *parent = nullptr);
     ~Profile();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 signals:
     void showExamRoomList();
     void showUserManagement();

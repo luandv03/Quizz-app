@@ -30,7 +30,7 @@ private slots:
     void showHome();
     void showProfile();
     void showExamRoomList();
-    void showExamRoomDetail();
+    void showExamRoomDetail(int roomId);
     void showUserManagement();
     void showExamRoomManagement();
 
