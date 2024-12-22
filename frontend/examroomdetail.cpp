@@ -18,7 +18,8 @@
 ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ExamRoomDetail),
-    tcpSocket(new QTcpSocket(this))
+    tcpSocket(new QTcpSocket(this)),
+    tcpSocket2(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -253,7 +254,10 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
 
     // connet to handle logic comment
     connect(ui->submitCommentButton, &QPushButton::clicked, this, &ExamRoomDetail::on_submitCommentButton_clicked);
+
     connect(tcpSocket, &QTcpSocket::readyRead, this, &ExamRoomDetail::onReadyRead);
+    connect(tcpSocket, &QTcpSocket::connected, this, &ExamRoomDetail::onConnected);
+    connect(tcpSocket, &QTcpSocket::disconnected, this, &ExamRoomDetail::onDisconnected);
     // Connect to TCP server
     tcpSocket->connectToHost("localhost", 12345);
 
@@ -304,6 +308,99 @@ void ExamRoomDetail::setRoomId(int roomId) {
 
     // Load the exam room details based on the roomId
     // Implement the logic to load and display the exam room details
+    // Construct the JSON object for the request
+    QJsonObject json;
+    json["room_id"] = roomId;
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL GET_ROOM_BY_ID\n%1").arg(QString(jsonData));
+
+    qDebug() << "Sending join room request: " << dataString;
+
+    if (tcpSocket2->state() == QAbstractSocket::UnconnectedState) {
+        tcpSocket2->connectToHost("localhost", 8080);
+        if (!tcpSocket2->waitForConnected(3000)) {
+            qDebug() << "Failed to connect to server.";
+            return;
+        }
+    }
+
+    qint64 bytesWritten = tcpSocket2->write(dataString.toUtf8());
+    if (bytesWritten == -1) {
+        qDebug() << "Failed to write to socket: " << tcpSocket2->errorString();
+        return;
+    }
+
+    if (!tcpSocket2->flush()) {
+        qDebug() << "Failed to flush socket: " << tcpSocket2->errorString();
+        return;
+    }
+
+    qDebug() << "Join room request sent, bytes written: " << bytesWritten;
+    // Connect the readyRead signal to handle the response
+    connect(tcpSocket2, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleExamRoomDetailResponse);
+}
+
+void ExamRoomDetail::handleExamRoomDetailResponse()
+{
+    QByteArray response = tcpSocket2->readAll();
+    QString responseString(response);
+
+    qDebug() << "Room Response:" << responseString;
+
+    if (responseString.startsWith("DATA JSON GET_ROOM_BY_ID")) {
+            // Extract JSON part from the response
+            int jsonStartIndex = responseString.indexOf('{');
+            int jsonEndIndex = responseString.lastIndexOf('}');
+            if (jsonStartIndex != -1 && jsonEndIndex != -1) {
+                QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+                QJsonParseError parseError;
+                QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+                if (parseError.error == QJsonParseError::NoError) {
+                    QJsonObject examRoom = jsonDoc.object();
+
+                    qDebug() << "Exam Room:" << examRoom;
+
+                    ui->subjectLabel->setText(examRoom["subject"].toString());
+
+                    QLabel *descriptionLabel = new QLabel(examRoom["description"].toString());
+                    descriptionLabel->setWordWrap(true);
+                    descriptionLabel->setMaximumHeight(40);
+
+                    ui->numberOfEasyQuestionLabel->setText(QString::number(examRoom["number_of_easy_question"].toInt()));
+                    ui->numberOfMediumQuestionLabel->setText(QString::number(examRoom["number_of_medium_question"].toInt()));
+                    ui->numberOfHardQuestionLabel->setText(QString::number(examRoom["number_of_hard_question"].toInt()));
+                    ui->timeLimitLabel->setText(QString::number(examRoom["time_limit"].toInt()) + " minutes");
+                    // ui->startTimeLabel->setText("Start Time: " + examRoom["start"].toString());
+                    // ui->endTimeLabel->setText("End Time: " + examRoom["end"].toString());
+                    ui->statusLabel->setText(examRoom["status"].toString());
+
+                    QString status = examRoom["status"].toString();
+
+                    if (status == "Not started") {
+                        ui->startExamButton->setEnabled(false);
+                        ui->viewExamResultBTn->setEnabled(false);
+                    } else if (status == "On going")
+                    {
+                        ui->startExamButton->setEnabled(true);
+                        ui->viewExamResultBTn->setEnabled(false);
+                    } else {
+                        ui->startExamButton->setEnabled(false);
+                        ui->viewExamResultBTn->setEnabled(true);
+                    }
+
+                } else {
+                    qDebug() << "JSON Parse Error:" << parseError.errorString();
+                }
+            } else {
+                qDebug() << "Invalid JSON format in response";
+            }
+        } else {
+            qDebug() << "Unknown response from server:" << responseString;
+    }
 }
 
 void ExamRoomDetail::displayQuestions(const QJsonArray &questionsArray)
@@ -562,4 +659,12 @@ void ExamRoomDetail::createComment(const QString &senderName, const QString &tim
     ui->discussionListWidget->addItem(new QListWidgetItem());
     ui->discussionListWidget->item(ui->discussionListWidget->count() - 1)->setSizeHint(commentWidget->sizeHint());
     ui->discussionListWidget->setItemWidget(ui->discussionListWidget->item(ui->discussionListWidget->count() - 1), commentWidget);
+}
+
+void ExamRoomDetail::onConnected() {
+    qDebug() << "Connected to server.";
+}
+
+void ExamRoomDetail::onDisconnected() {
+    qDebug() << "Disconnected from server.";
 }
