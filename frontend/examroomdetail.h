@@ -20,6 +20,8 @@ public:
     explicit ExamRoomDetail(QWidget *parent = nullptr);
     ~ExamRoomDetail();
 
+    void setRoomId(int roomId);
+
 signals:
     void showExamRoomList();
     void showUserManagement();
@@ -42,6 +44,8 @@ private:
     void onReadyRead();
     void updateCommentList(const QJsonArray &commentsArray);
     void createComment(const QString &senderName, const QString &timeSend, const QString &comment);
+
+    int currentRoomId;
 };
 
 #endif // EXAMROOMDETAIL_H

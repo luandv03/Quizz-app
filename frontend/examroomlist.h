@@ -20,8 +20,11 @@ public:
     explicit ExamRoomList(QWidget *parent = nullptr);
     ~ExamRoomList();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 signals:
-    void showExamRoomDetail();
+    void showExamRoomDetail(int roomId);
     void showUserManagement();
     void showExamRoomManagement();
     void showProfile();
@@ -29,14 +32,20 @@ signals:
 private slots:
     void on_searchButton_clicked();
     void on_avatarButton_clicked();
-    void handleJoinButtonClicked(QListWidgetItem *item);
+    void onReadyRead();
+    void handleJoinRoomResponse();
+    void handleJoinButtonClicked(int roomId);
+    void onConnected();
+    void onDisconnected();
+
 
 private:
     Ui::ExamRoomList *ui;
     QTcpSocket *tcpSocket;
     void populateExamRoomList(const QJsonArray &examRooms);
     void createExamRoomItem(const QJsonObject &examRoom);
-    void onReadyRead();
+    void callApiJoinExamRoom(int userId, int roomId);
+
 };
 
 #endif // EXAMROOMLIST_H

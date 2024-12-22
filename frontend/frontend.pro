@@ -23,6 +23,7 @@ SOURCES += \
     profile.cpp \
     signin.cpp \
     signup.cpp \
+    tcpconnection.cpp \
     usermanagement.cpp
 
 HEADERS += \
@@ -37,6 +38,8 @@ HEADERS += \
     profile.h \
     signin.h \
     signup.h \
+    tcpconnection.h \
+    userdata.h \
     usermanagement.h
 
 FORMS += \
