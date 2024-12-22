@@ -1,6 +1,8 @@
 // frontend/sources/examroomdetail.cpp
 #include "examroomdetail.h"
 #include "ui_examroomdetail.h"
+#include "userdata.h"
+
 #include <QMenu>
 #include <QAction>
 #include <QJsonDocument>
@@ -19,7 +21,8 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ExamRoomDetail),
     tcpSocket(new QTcpSocket(this)),
-    tcpSocket2(new QTcpSocket(this))
+    tcpSocket2(new QTcpSocket(this)),
+    tcpSocket3(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -401,6 +404,8 @@ void ExamRoomDetail::handleExamRoomDetailResponse()
         } else {
             qDebug() << "Unknown response from server:" << responseString;
     }
+
+    tcpSocket2->close();
 }
 
 void ExamRoomDetail::displayQuestions(const QJsonArray &questionsArray)
@@ -515,6 +520,9 @@ void ExamRoomDetail::viewExamResult()
 {
     ui->examDetailWidget->hide();
     ui->startExamWidget->hide();
+
+    handleGetExamRoomResultByUser();
+
     ui->examResultWidget->show();
 }
 
@@ -667,4 +675,93 @@ void ExamRoomDetail::onConnected() {
 
 void ExamRoomDetail::onDisconnected() {
     qDebug() << "Disconnected from server.";
+}
+
+void ExamRoomDetail::handleGetExamRoomResultByUser() {
+    // set exam result;
+    QJsonObject json;
+    json["room_id"] = currentRoomId;
+    json["user_id"] = UserData::instance().getUserId();
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL GET_USER_EXAM_RESULT\n%1").arg(QString(jsonData));
+
+    qDebug() << "Sending join room request: " << dataString;
+
+    if (tcpSocket3->state() == QAbstractSocket::UnconnectedState) {
+        tcpSocket3->connectToHost("localhost", 8080);
+        if (!tcpSocket3->waitForConnected(3000)) {
+            qDebug() << "Failed to connect to server.";
+            return;
+        }
+    }
+
+    qint64 bytesWritten = tcpSocket3->write(dataString.toUtf8());
+    if (bytesWritten == -1) {
+        qDebug() << "Failed to write to socket: " << tcpSocket3->errorString();
+        return;
+    }
+
+    if (!tcpSocket3->flush()) {
+        qDebug() << "Failed to flush socket: " << tcpSocket3->errorString();
+        return;
+    }
+
+    qDebug() << "Join room request sent, bytes written: " << bytesWritten;
+    // Connect the readyRead signal to handle the response
+    connect(tcpSocket3, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleGetExamRoomResultByUserResponse);
+}
+
+void ExamRoomDetail::handleGetExamRoomResultByUserResponse() {
+    QByteArray response = tcpSocket3->readAll();
+    QString responseString(response);
+
+    qDebug() << "Exam Room Result Response:" << responseString;
+
+    if (responseString.startsWith("DATA JSON USER_EXAM_RESULT")) {
+        // Extract JSON part from the response
+        int jsonStartIndex = responseString.indexOf('{');
+        int jsonEndIndex = responseString.lastIndexOf('}');
+        if (jsonStartIndex != -1 && jsonEndIndex != -1) {
+            QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+            QJsonParseError parseError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                QJsonObject jsonObj = jsonDoc.object();
+                QJsonArray examResults = jsonObj["data"].toObject()["exam_results"].toArray();
+
+                if (!examResults.isEmpty()) {
+                    QJsonObject examResult = examResults.first().toObject();
+                    int examId = examResult["exam_id"].toInt();
+                    double score = examResult["score"].toDouble();
+                    int totalQuestions = examResult["total_questions"].toInt();
+                    int answeredQuestions = examResult["answered_questions"].toInt();
+                    int correctAnswers = examResult["correct_answers"].toInt();
+
+                    qDebug() << "Exam ID:" << examId;
+                    qDebug() << "Score:" << score;
+                    qDebug() << "Total Questions:" << totalQuestions;
+                    qDebug() << "Answered Questions:" << answeredQuestions;
+                    qDebug() << "Correct Answers:" << correctAnswers;
+
+                    // Update UI with the extracted attributes
+                    // ui->examIdLabel->setText(QString::number(examId));
+                    ui->scoreLabel->setText(QString::number(score));
+                    ui->totalQuestionsLabel->setText(QString::number(totalQuestions));
+                    ui->answeredQuestionsLabel->setText(QString::number(answeredQuestions));
+                    ui->correctAnswersLabel->setText(QString::number(correctAnswers));
+                } else {
+                    qDebug() << "No exam results found.";
+                }
+            } else {
+                qDebug() << "Failed to parse exam results response JSON.";
+            }
+        } else {
+            qDebug() << "Invalid exam results response format.";
+        }
+    }
+
 }
