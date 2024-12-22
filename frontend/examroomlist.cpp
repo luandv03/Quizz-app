@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QThread>
 
 ExamRoomList::ExamRoomList(QWidget *parent) :
     QWidget(parent),
@@ -95,6 +96,9 @@ void ExamRoomList::handleJoinButtonClicked(int roomId)
     // For example, you can display a message box with the item text
     // QMessageBox::information(this, "Join Exam Room", "Joining " + item->text());
     // Emit signal to show Exam Room Detail UI
+    // await to call API get exam room detail
+    QThread::msleep(100);
+
     emit showExamRoomDetail(roomId);
 }
 

@@ -20,6 +20,7 @@ public:
     explicit ExamRoomDetail(QWidget *parent = nullptr);
     ~ExamRoomDetail();
 
+public slots:
     void setRoomId(int roomId);
 
 signals:
@@ -28,9 +29,15 @@ signals:
     void showExamRoomManagement();
     void showProfile();
 
+private slots:
+    void onConnected();
+    void onDisconnected();
+    void handleExamRoomDetailResponse();
+
 private:
     Ui::ExamRoomDetail *ui;
     QTcpSocket *tcpSocket;
+    QTcpSocket *tcpSocket2;
     QTimer *countdownTimer;     // Bộ đếm thời gian
     QTime remainingTime;        // Thời gian còn lại
     void displayQuestions(const QJsonArray &questionsArray);
