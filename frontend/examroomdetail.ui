@@ -512,7 +512,7 @@
          <string>Total questions</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_22">
+       <widget class="QLabel" name="totalQuestionsLabel">
         <property name="geometry">
          <rect>
           <x>160</x>
@@ -538,7 +538,7 @@
          <string>Submitted answers</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_24">
+       <widget class="QLabel" name="answeredQuestionsLabel">
         <property name="geometry">
          <rect>
           <x>160</x>
@@ -564,7 +564,7 @@
          <string>Correct answers</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_26">
+       <widget class="QLabel" name="correctAnswersLabel">
         <property name="geometry">
          <rect>
           <x>160</x>
@@ -594,6 +594,32 @@
         </property>
         <property name="checkable">
          <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_27">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>330</y>
+          <width>131</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Score</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="scoreLabel">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>330</y>
+          <width>231</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>30</string>
         </property>
        </widget>
       </widget>

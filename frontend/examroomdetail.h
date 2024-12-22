@@ -33,11 +33,14 @@ private slots:
     void onConnected();
     void onDisconnected();
     void handleExamRoomDetailResponse();
+    void handleGetExamRoomResultByUser();
+    void handleGetExamRoomResultByUserResponse();
 
 private:
     Ui::ExamRoomDetail *ui;
     QTcpSocket *tcpSocket;
     QTcpSocket *tcpSocket2;
+    QTcpSocket *tcpSocket3;
     QTimer *countdownTimer;     // Bộ đếm thời gian
     QTime remainingTime;        // Thời gian còn lại
     void displayQuestions(const QJsonArray &questionsArray);
