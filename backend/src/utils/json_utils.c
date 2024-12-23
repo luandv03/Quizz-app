@@ -6,6 +6,7 @@
 
 int parse_json(const char *json_str, KeyValuePair *pairs, int max_pairs)
 {
+    // printf("json_str: %s\n", json_str);
     cJSON *json = cJSON_Parse(json_str);
     if (json == NULL)
     {
