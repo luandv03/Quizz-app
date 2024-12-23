@@ -20,9 +20,11 @@ public:
 signals:
     void showExamRoomList();
     void showUserManagement();
+    void showProfile();
 
 private slots:
     void onViewButtonClicked(int row);
+    void onCreateExamRoomBtn();
 
 private:
     Ui::ExamRoomManagement *ui;

@@ -39,8 +39,10 @@ constexpr auto qt_meta_stringdata_CLASSExamRoomManagementENDCLASS = QtMocHelpers
     "showExamRoomList",
     "",
     "showUserManagement",
+    "showProfile",
     "onViewButtonClicked",
-    "row"
+    "row",
+    "onCreateExamRoomBtn"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -53,26 +55,30 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSExamRoomManagementENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       2,       // signalCount
+       3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   32,    2, 0x06,    1 /* Public */,
-       3,    0,   33,    2, 0x06,    2 /* Public */,
+       1,    0,   44,    2, 0x06,    1 /* Public */,
+       3,    0,   45,    2, 0x06,    2 /* Public */,
+       4,    0,   46,    2, 0x06,    3 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       4,    1,   34,    2, 0x08,    3 /* Private */,
+       5,    1,   47,    2, 0x08,    4 /* Private */,
+       7,    0,   50,    2, 0x08,    6 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Int,    6,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -90,9 +96,13 @@ Q_CONSTINIT const QMetaObject ExamRoomManagement::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showUserManagement'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'showProfile'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'onViewButtonClicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<int, std::false_type>
+        QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        // method 'onCreateExamRoomBtn'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
 } };
@@ -105,7 +115,9 @@ void ExamRoomManagement::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
         switch (_id) {
         case 0: _t->showExamRoomList(); break;
         case 1: _t->showUserManagement(); break;
-        case 2: _t->onViewButtonClicked((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 2: _t->showProfile(); break;
+        case 3: _t->onViewButtonClicked((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 4: _t->onCreateExamRoomBtn(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -121,6 +133,13 @@ void ExamRoomManagement::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
             using _t = void (ExamRoomManagement::*)();
             if (_t _q_method = &ExamRoomManagement::showUserManagement; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 1;
+                return;
+            }
+        }
+        {
+            using _t = void (ExamRoomManagement::*)();
+            if (_t _q_method = &ExamRoomManagement::showProfile; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 2;
                 return;
             }
         }
@@ -146,13 +165,13 @@ int ExamRoomManagement::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 5;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 5)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 5;
     }
     return _id;
 }
@@ -167,5 +186,11 @@ void ExamRoomManagement::showExamRoomList()
 void ExamRoomManagement::showUserManagement()
 {
     QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
+}
+
+// SIGNAL 2
+void ExamRoomManagement::showProfile()
+{
+    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
 }
 QT_WARNING_POP

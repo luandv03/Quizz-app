@@ -14,14 +14,14 @@ class ExamRoomDialog : public QWidget
 public:
     explicit ExamRoomDialog(QWidget *parent = nullptr);
     ~ExamRoomDialog();
-
     void setRoomDetails(const QString &roomId, const QString &roomName, const QString &description, const QString &timeLimit, const QString &status);
 
-// private slots:
-//     void onCloseButtonClicked();
+private slots:
+    void onAddQuestion();
 
 private:
     Ui::ExamRoomDialog *ui;
+    void setupScoreChart();
 };
 
 #endif // EXAMROOMDIALOG_H

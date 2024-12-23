@@ -11,6 +11,7 @@
 #include "examroomdetail.h"
 #include "usermanagement.h"
 #include "examroommanagement.h"
+#include "profile.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,6 +28,7 @@ private slots:
     void showSignup();
     void showSignin();
     void showHome();
+    void showProfile();
     void showExamRoomList();
     void showExamRoomDetail();
     void showUserManagement();
@@ -38,6 +40,7 @@ private:
     Signup *signupForm;
     Signin *signinForm;
     Home *homeForm;
+    Profile *profileForm;
     ExamRoomList *examRoomListForm;
     ExamRoomDetail *examRoomDetailForm;
     UserManagement *userManagement;

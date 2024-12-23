@@ -37,6 +37,10 @@ ExamRoomList::ExamRoomList(QWidget *parent) :
 
     ui->avatarButton->setMenu(menu);
 
+    connect(profileAction, &QAction::triggered, [this]() {
+        emit showProfile();
+    });
+
     connect(userManagementAction, &QAction::triggered, [this]() {
         emit showUserManagement();
     });
@@ -113,17 +117,30 @@ void ExamRoomList::createExamRoomItem(const QJsonObject &examRoom)
     descriptionLabel->setWordWrap(true);
     descriptionLabel->setMaximumHeight(40);
 
+    QLabel *numberOfEasyQuestionLabel = new QLabel("Số câu dễ: " + QString::number(examRoom["number_of_easy_question"].toInt()));
+    QLabel *numberOfMediumQuestionLabel = new QLabel("Số câu trung bình: " + QString::number(examRoom["number_of_medium_question"].toInt()));
+    QLabel *numberOfHardQuestionLabel = new QLabel("Số câu khó: " + QString::number(examRoom["number_of_hard_question"].toInt()));
     QLabel *timeLimitLabel = new QLabel("Time Limit: " + QString::number(examRoom["time_limit"].toInt()) + " minutes");
     QLabel *startTimeLabel = new QLabel("Start Time: " + examRoom["start"].toString());
     QLabel *endTimeLabel = new QLabel("End Time: " + examRoom["end"].toString());
+    QLabel *statusLabel = new QLabel("Status: " + examRoom["status"].toString());
 
+    // status : Not Started, Ongoing, Finished
+    // Not Started: Chưa bắt đầu => Users joined => Marked Joined On Button Join => Button: "View"
+    // Ongoing: Đang diễn ra => Users joined => Can view ; Users not joined => Can't join
+    // Finished: Đã kết thúc => Users joined => Marked Joined On Button Join => Button: "View"; 
+    // Users not joined => Can't join
     QPushButton *joinButton = new QPushButton("Join");
 
     layout->addWidget(subjectLabel);
     layout->addWidget(descriptionLabel);
+    layout->addWidget(numberOfEasyQuestionLabel);
+    layout->addWidget(numberOfMediumQuestionLabel);
+    layout->addWidget(numberOfHardQuestionLabel);
     layout->addWidget(timeLimitLabel);
     layout->addWidget(startTimeLabel);
     layout->addWidget(endTimeLabel);
+    layout->addWidget(statusLabel);
     layout->addWidget(joinButton);
     itemWidget->setLayout(layout);
 
@@ -140,7 +157,7 @@ void ExamRoomList::onReadyRead() {
     QByteArray response = tcpSocket->readAll();
     QString responseString(response);
 
-    if (responseString.startsWith("DATA JSON 1896 ALL_ROOM")) {
+    if (responseString.startsWith("DATA JSON GET_ROOM_LIST")) {
             qDebug() << "Room List Response:" << responseString;
 
             // Extract JSON part from the response

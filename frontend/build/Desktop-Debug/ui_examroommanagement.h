@@ -37,16 +37,20 @@ public:
     QLabel *searchLabel;
     QLineEdit *searchInput;
     QPushButton *searchButton;
+    QWidget *buttonContainer;
+    QHBoxLayout *horizontalLayout_3;
+    QSpacerItem *horizontalSpacer_2;
+    QPushButton *createExamRoomBtn;
     QTableWidget *examRoomTableWidget;
 
-    void setupUi(QWidget *Form)
+    void setupUi(QWidget *ExamRoomManagement)
     {
-        if (Form->objectName().isEmpty())
-            Form->setObjectName("Form");
-        Form->resize(800, 800);
-        verticalLayout = new QVBoxLayout(Form);
+        if (ExamRoomManagement->objectName().isEmpty())
+            ExamRoomManagement->setObjectName("ExamRoomManagement");
+        ExamRoomManagement->resize(800, 800);
+        verticalLayout = new QVBoxLayout(ExamRoomManagement);
         verticalLayout->setObjectName("verticalLayout");
-        header = new QWidget(Form);
+        header = new QWidget(ExamRoomManagement);
         header->setObjectName("header");
         horizontalLayout = new QHBoxLayout(header);
         horizontalLayout->setObjectName("horizontalLayout");
@@ -67,7 +71,7 @@ public:
 
         verticalLayout->addWidget(header);
 
-        searchBar = new QWidget(Form);
+        searchBar = new QWidget(ExamRoomManagement);
         searchBar->setObjectName("searchBar");
         horizontalLayout_2 = new QHBoxLayout(searchBar);
         horizontalLayout_2->setObjectName("horizontalLayout_2");
@@ -89,7 +93,25 @@ public:
 
         verticalLayout->addWidget(searchBar);
 
-        examRoomTableWidget = new QTableWidget(Form);
+        buttonContainer = new QWidget(ExamRoomManagement);
+        buttonContainer->setObjectName("buttonContainer");
+        horizontalLayout_3 = new QHBoxLayout(buttonContainer);
+        horizontalLayout_3->setObjectName("horizontalLayout_3");
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        horizontalLayout_3->addItem(horizontalSpacer_2);
+
+        createExamRoomBtn = new QPushButton(buttonContainer);
+        createExamRoomBtn->setObjectName("createExamRoomBtn");
+        createExamRoomBtn->setMaximumSize(QSize(140, 25));
+        createExamRoomBtn->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+
+        horizontalLayout_3->addWidget(createExamRoomBtn);
+
+
+        verticalLayout->addWidget(buttonContainer);
+
+        examRoomTableWidget = new QTableWidget(ExamRoomManagement);
         if (examRoomTableWidget->columnCount() < 6)
             examRoomTableWidget->setColumnCount(6);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
@@ -110,22 +132,24 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(examRoomTableWidget->sizePolicy().hasHeightForWidth());
         examRoomTableWidget->setSizePolicy(sizePolicy);
+        examRoomTableWidget->viewport()->setProperty("cursor", QVariant(QCursor(Qt::CursorShape::PointingHandCursor)));
 
         verticalLayout->addWidget(examRoomTableWidget);
 
 
-        retranslateUi(Form);
+        retranslateUi(ExamRoomManagement);
 
-        QMetaObject::connectSlotsByName(Form);
+        QMetaObject::connectSlotsByName(ExamRoomManagement);
     } // setupUi
 
-    void retranslateUi(QWidget *Form)
+    void retranslateUi(QWidget *ExamRoomManagement)
     {
-        Form->setWindowTitle(QCoreApplication::translate("ExamRoomManagement", "Exam Room Management", nullptr));
+        ExamRoomManagement->setWindowTitle(QCoreApplication::translate("ExamRoomManagement", "Exam Room Management", nullptr));
         logoLabel->setText(QCoreApplication::translate("ExamRoomManagement", "QApp", nullptr));
         avatarButton->setText(QCoreApplication::translate("ExamRoomManagement", "Avatar", nullptr));
         searchLabel->setText(QCoreApplication::translate("ExamRoomManagement", "Search Exam Room", nullptr));
         searchButton->setText(QCoreApplication::translate("ExamRoomManagement", "Search", nullptr));
+        createExamRoomBtn->setText(QCoreApplication::translate("ExamRoomManagement", "T\341\272\241o ph\303\262ng thi", nullptr));
         QTableWidgetItem *___qtablewidgetitem = examRoomTableWidget->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QCoreApplication::translate("ExamRoomManagement", "roomId", nullptr));
         QTableWidgetItem *___qtablewidgetitem1 = examRoomTableWidget->horizontalHeaderItem(1);

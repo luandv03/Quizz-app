@@ -1,6 +1,7 @@
 #include "examroommanagement.h"
 #include "ui_examroommanagement.h"
 #include "examroomdialog.h"
+#include "createexamroom.h"
 
 #include <QMenu>
 #include <QMessageBox>
@@ -28,6 +29,10 @@ ExamRoomManagement::ExamRoomManagement(QWidget *parent) :
 
     ui->avatarButton->setMenu(menu);
 
+    connect(profileAction, &QAction::triggered, [this]() {
+        emit showProfile();
+    });
+
     connect(examRoomListAction, &QAction::triggered, [this]() {
         emit showExamRoomList();
     });
@@ -43,6 +48,11 @@ ExamRoomManagement::ExamRoomManagement(QWidget *parent) :
 
     // Populate the table with example data
     populateTable();
+
+    // show modal to create exam room
+    connect(ui->createExamRoomBtn, &QPushButton::clicked, [this]() {
+        onCreateExamRoomBtn();
+    });
 }
 
 ExamRoomManagement::~ExamRoomManagement()
@@ -113,6 +123,25 @@ void ExamRoomManagement::onViewButtonClicked(int row)
     parentDialog->exec();
 }
 
+void ExamRoomManagement::onCreateExamRoomBtn()
+{
+    // Create the parent dialog
+    QDialog *parentDialog = new QDialog(this);
+    parentDialog->setWindowTitle("Create Exam Room");
+    parentDialog->resize(900, 800);  // Set desired size for the dialog
+
+    // Create and configure the custom widget
+    CreateExamRoom *createExamRoom = new CreateExamRoom(parentDialog);
+    createExamRoom->setParent(parentDialog);
+
+    // Add the custom widget to the parent dialog's layout
+    QVBoxLayout *layout = new QVBoxLayout(parentDialog);
+    layout->addWidget(createExamRoom);
+    parentDialog->setLayout(layout);
+
+    // Show the parent dialog as modal
+    parentDialog->exec();
+}
 
 
 
