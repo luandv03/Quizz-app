@@ -4,6 +4,7 @@
 
 #include <QWidget>
 #include <QTcpSocket>
+#include "userdata.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Signin; }
@@ -19,14 +20,23 @@ public:
 signals:
     void showHome();
     void showExamRoomList();
+    void showUserManagement();
 
 private slots:
     void on_signinButton_clicked();
     void onReadyRead();
+    void onConnected();
+    void onDisconnected();
 
+    void getProfile();
+    void onProfile();
+   
 private:
     Ui::Signin *ui;
     QTcpSocket *tcpSocket;
+    QTcpSocket *tcpSocket2;
+    
+
 };
 
 #endif // SIGNIN_H
