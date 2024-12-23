@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
+#include <sys/socket.h>
 
 void handle_get_room_list(int client_socket, ControlMessage *msg)
 {
@@ -240,6 +241,27 @@ void handle_create_room(int client_socket, ControlMessage *msg)
     close(client_socket);
 }
 
+void send_large_response(int client_socket, const char *response) {
+    size_t total_length = strlen(response);
+    size_t sent = 0;
+    size_t chunk_size = 1024; // Kích thước mỗi khối dữ liệu
+
+    while (sent < total_length) {
+        size_t to_send = chunk_size;
+        if (sent + chunk_size > total_length) {
+            to_send = total_length - sent; // Gửi phần còn lại nếu nhỏ hơn chunk_size
+        }
+
+        ssize_t written = write(client_socket, response + sent, to_send);
+        if (written < 0) {
+            perror("Error sending response");
+            break;
+        }
+
+        sent += written;
+    }
+}
+
 void handle_get_room_question(int client_socket, ControlMessage *msg)
 {
     KeyValuePair pairs[10];
@@ -254,27 +276,36 @@ void handle_get_room_question(int client_socket, ControlMessage *msg)
         }
     }
 
-    char response[8192];
-    memset(response, 0, sizeof(response));
-
     char *result = get_room_question(room_id);
-    if (result == NULL)
-    {
-        snprintf(response, sizeof(response), "DATA JSON ROOM_QUESTION\n{\n\"data\": []\n}");
-    }
-    else
-    {
-        snprintf(response, sizeof(response), "DATA JSON ROOM_QUESTION\n{\n\"data\": %s\n}", result);
+    char *response;
+    if (result == NULL) {
+        response = strdup("DATA JSON ROOM_QUESTION\n{\n\"data\": []\n}");
+    } else {
+        size_t response_size = strlen(result) + 64;
+        response = (char *)malloc(response_size);
+        snprintf(response, response_size, "DATA JSON ROOM_QUESTION\n{\n\"data\": %s\n}", result);
     }
 
-    write(client_socket, response, strlen(response));
+    ssize_t total_sent = 0;
+    ssize_t len = strlen(response);
+    while (total_sent < len) {
+        ssize_t sent = write(client_socket, response + total_sent, len - total_sent);
+        if (sent <= 0) {
+            perror("write");
+            break;
+        }
+        total_sent += sent;
+    }
+
+    shutdown(client_socket, SHUT_WR);
     close(client_socket);
 
-    if (result != NULL)
-    {
+    free(response);
+    if (result != NULL) {
         free(result);
     }
 }
+
 void handle_get_user_in_room(int client_socket, ControlMessage *msg)
 {
     KeyValuePair pairs[10];

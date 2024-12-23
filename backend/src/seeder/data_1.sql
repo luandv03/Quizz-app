@@ -9,7 +9,8 @@ INSERT INTO user (email, pass, name, dob) VALUES
 ('james.garcia@example.com', '1', 'James Garcia', '2008-07-15'),
 ('isabella.martinez@example.com', '1', 'Isabella Martinez', '2009-08-20'),
 ('benjamin.rodriguez@example.com', '1', 'Benjamin Rodriguez', '2010-09-25'),
-('sophia.hernandez@example.com', '1', 'Sophia Hernandez', '2011-10-30');
+('sophia.hernandez@example.com', '1', 'Sophia Hernandez', '2011-10-30'),
+('admin@gmail.com', '1', 'Admin', '2003-08-28');
 
 INSERT INTO room (subject, description, number_of_easy_question, number_of_medium_question, number_of_hard_question, time_limit, start, end, status) VALUES
 ('Math', 'Math exam for grade 10', 10, 5, 5, 60, '2023-11-01 09:00:00', '2025-11-01 10:00:00', 'Not started'),
