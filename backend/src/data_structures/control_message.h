@@ -13,7 +13,6 @@
 #define GET_ROOM_BY_ID "GET_ROOM_BY_ID"
 #define START_EXAM "START_EXAM"
 #define CREATE_ROOM "CREATE_ROOM"
-<<<<<<< HEAD
 #define DELETE_ROOM "DELETE_ROOM" // not yet implement
 #define ADD_QUESTION "ADD_QUESTION"
 #define GET_ROOM_QUESTION "GET_ROOM_QUESTION"
@@ -27,10 +26,6 @@
 #define SUBMIT_PRACTICE "SUBMIT_PRACTICE"
 #define GET_PROFILE_BY_ID "GET_PROFILE_BY_ID"
 
-=======
-#define DELETE_ROOM "DELETE_ROOM"
-#define ADD_QUESTION "ADD_QUESTION"
->>>>>>> bbe2b6e (create room)
 // Struct Definition
 typedef struct
 {

@@ -120,7 +120,7 @@ char *user_start_exam(int room_id, int user_id, int *exam_id)
         return 0;
     }
 
-    char query[256];
+    char query[512];
     snprintf(query, sizeof(query),
              "SELECT id FROM exam WHERE room_id = %d AND user_id = %d AND end_time IS NULL", room_id, user_id);
     if (mysql_query(conn, query))
@@ -148,13 +148,15 @@ char *user_start_exam(int room_id, int user_id, int *exam_id)
     *exam_id = atoi(row[0]);
     mysql_free_result(res);
 
-    // Get questions
+    // Get exam details and questions
     snprintf(query, sizeof(query),
-             "SELECT q.id, q.content, a.id, a.content, a.is_true "
-             "FROM exam_question eq "
+             "SELECT e.id, e.start_time, r.time_limit, q.id, q.content, a.id, a.content, a.is_true, eq.user_answer "
+             "FROM exam e "
+             "JOIN room r ON e.room_id = r.id "
+             "JOIN exam_question eq ON e.id = eq.exam_id "
              "JOIN question q ON eq.question_id = q.id "
              "JOIN answer_of_question a ON q.id = a.question_id "
-             "WHERE eq.exam_id = %d",
+             "WHERE e.id = %d",
              *exam_id);
     if (mysql_query(conn, query))
     {
@@ -169,40 +171,56 @@ char *user_start_exam(int room_id, int user_id, int *exam_id)
         return NULL;
     }
 
-    cJSON *json_array = cJSON_CreateArray();
+    cJSON *json_response = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json_response, "room_id", room_id);
+    cJSON_AddNumberToObject(json_response, "user_id", user_id);
+
+    row = mysql_fetch_row(res);
+    if (row != NULL)
+    {
+        cJSON_AddNumberToObject(json_response, "exam_id", atoi(row[0]));
+        cJSON_AddStringToObject(json_response, "start_time", row[1]);
+        cJSON_AddNumberToObject(json_response, "time_limit", atoi(row[2]));
+    }
+
+    cJSON *json_questions = cJSON_CreateArray();
+    cJSON_AddItemToObject(json_response, "questions", json_questions);
+
     int current_question_id = -1;
     cJSON *current_question = NULL;
 
-    while ((row = mysql_fetch_row(res)))
+    do
     {
-        int question_id = atoi(row[0]);
+        int question_id = atoi(row[3]);
         if (question_id != current_question_id)
         {
             if (current_question != NULL)
             {
-                cJSON_AddItemToArray(json_array, current_question);
+                cJSON_AddItemToArray(json_questions, current_question);
             }
             current_question = cJSON_CreateObject();
             cJSON_AddNumberToObject(current_question, "question_id", question_id);
-            cJSON_AddStringToObject(current_question, "content", row[1]);
+            cJSON_AddStringToObject(current_question, "content", row[4]);
             cJSON *answers_array = cJSON_CreateArray();
             cJSON_AddItemToObject(current_question, "answer_of_question", answers_array);
+            cJSON_AddNumberToObject(current_question, "user_answer", row[8] ? atoi(row[8]) : -1); // Add user answer
             current_question_id = question_id;
         }
 
         cJSON *answer = cJSON_CreateObject();
-        cJSON_AddNumberToObject(answer, "answer_id", atoi(row[2]));
-        cJSON_AddStringToObject(answer, "content", row[3]);
+        cJSON_AddNumberToObject(answer, "answer_id", atoi(row[5]));
+        cJSON_AddStringToObject(answer, "content", row[6]);
+        cJSON_AddBoolToObject(answer, "is_true", atoi(row[7]));
         cJSON_AddItemToArray(cJSON_GetObjectItem(current_question, "answer_of_question"), answer);
-    }
+    } while ((row = mysql_fetch_row(res)));
 
     if (current_question != NULL)
     {
-        cJSON_AddItemToArray(json_array, current_question);
+        cJSON_AddItemToArray(json_questions, current_question);
     }
 
-    char *json_string = cJSON_Print(json_array);
-    cJSON_Delete(json_array);
+    char *json_string = cJSON_Print(json_response);
+    cJSON_Delete(json_response);
     mysql_free_result(res);
 
     return json_string;

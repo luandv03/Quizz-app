@@ -46,7 +46,7 @@ void handle_user_start_practice(int client_socket, ControlMessage *msg)
     {
         size_t response_size = strlen(result) + 256;
         char *response = (char *)malloc(response_size);
-        snprintf(response, response_size, "DATA JSON USER_START_PRACTICE\n{\n\"room_id\": %d,\n\"user_id\": %d\n\"questions\": %s}", room_id, user_id, result);
+        snprintf(response, response_size, "DATA JSON USER_START_PRACTICE\n%s", result);
         free(result);
         write(client_socket, response, strlen(response));
         close(client_socket);
