@@ -16,13 +16,17 @@
 #include <QMessageBox>
 #include <QScreen>  // Thêm dòng này để sử dụng QScreen
 #include <QDialog>
+#include <QThread>
 
 ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ExamRoomDetail),
     tcpSocket(new QTcpSocket(this)),
     tcpSocket2(new QTcpSocket(this)),
-    tcpSocket3(new QTcpSocket(this))
+    tcpSocket3(new QTcpSocket(this)),
+    tcpSocket4(new QTcpSocket(this)),
+    tcpSocket5(new QTcpSocket(this)),
+    tcpSocket6(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -65,17 +69,21 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     // time counter
     // Countdown Timer Setup
     countdownTimer = new QTimer(this);
-    remainingTime = QTime(0, 1, 0);  // Đặt thời gian ban đầu là 1 giờ 30 phút
+    // remainingTime = QTime(0, 1, 0);  // Đặt thời gian ban đầu là 1 giờ 30 phút
 
-    // Cập nhật `timerLabel` ban đầu
-    ui->timerLabel->setText(remainingTime.toString("hh:mm:ss"));
+    // // Cập nhật `timerLabel` ban đầu
+    // ui->timerLabel->setText(remainingTime.toString("hh:mm:ss"));
+    // // Kết nối QTimer với hàm cập nhật thời gian
+    // connect(countdownTimer, &QTimer::timeout, this, &ExamRoomDetail::updateCountdown);
+
     ui->endMyExamBtn->setCursor(Qt::PointingHandCursor);
-
-    // Kết nối QTimer với hàm cập nhật thời gian
-    connect(countdownTimer, &QTimer::timeout, this, &ExamRoomDetail::updateCountdown);
 
     // Connect startExamButton to toggle visibility
     connect(ui->startExamButton, &QPushButton::clicked, [this]() {
+        handleStartExam();
+
+        return;
+
         ui->examDetailWidget->hide();
         ui->examResultWidget->hide();
         ui->startExamWidget->show();
@@ -228,6 +236,9 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
             // Thực hiện hành động kết thúc bài thi nếu chọn Yes
             countdownTimer->stop();
             ui->timerLabel->setText("Exam Ended!");
+            
+            handleSubmitExam();
+
             ui->startExamWidget->hide();
             ui->examDetailWidget->show();
 
@@ -381,6 +392,12 @@ void ExamRoomDetail::handleExamRoomDetailResponse()
                     // ui->endTimeLabel->setText("End Time: " + examRoom["end"].toString());
                     ui->statusLabel->setText(examRoom["status"].toString());
 
+                    // set Time limit for exam room
+                    int timeLimit = examRoom["time_limit"].toInt();
+                    remainingTime = QTime(0, timeLimit, 0);  //
+                    // Cập nhật `timerLabel` ban đầu
+                    ui->timerLabel->setText(remainingTime.toString("hh:mm:ss"));
+
                     QString status = examRoom["status"].toString();
 
                     if (status == "Not started") {
@@ -443,6 +460,7 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 
     // Tạo các radio button cho các đáp án
     QJsonArray answersArray = questionObj["answer_of_question"].toArray();
+    QList<QRadioButton*> answerButtons; // Lưu các radio button
     for (const QJsonValue &ansValue : answersArray) {
         QJsonObject ansObj = ansValue.toObject();
         QString answerText = ansObj["content"].toString();
@@ -451,6 +469,9 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 
         QRadioButton *optionButton = new QRadioButton(answerText);
         layout->addWidget(optionButton);
+
+        // Lưu radio button vào danh sách
+        answerButtons.append(optionButton);
     }
 
     QPushButton *sendButton = new QPushButton("Gửi");
@@ -459,6 +480,7 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
     layout->addWidget(sendButton);
 
     QLabel *notiSendAnswer = new QLabel("Câu trả lời đã được gửi.");
+    notiSendAnswer->setVisible(false); // Ẩn thông báo ban đầu
     layout->addWidget(notiSendAnswer);
 
     // Thiết lập layout cho câu hỏi
@@ -468,6 +490,31 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
     item->setSizeHint(questionWidget->sizeHint());
     ui->questionListWidget->addItem(item);
     ui->questionListWidget->setItemWidget(item, questionWidget);
+
+    // Kết nối sendButton với logic gửi câu trả lời
+    int examQuestionId = questionObj["id"].toInt(); // Lấy examQuestionId từ dữ liệu
+    connect(sendButton, &QPushButton::clicked, this, [=]() {
+        // Kiểm tra radio button được chọn
+        int selectedAnswerId = -1;
+        for (QRadioButton *button : answerButtons) {
+            if (button->isChecked()) {
+                selectedAnswerId = button->property("answerId").toInt();
+                break;
+            }
+        }
+
+        if (selectedAnswerId != -1) {
+            // Gửi câu trả lời
+            handleSendAnswer(examQuestionId, selectedAnswerId);
+
+            // Kết nối tín hiệu xử lý phản hồi
+            connect(this, &ExamRoomDetail::answerSubmittedSuccessfully, [=]() {
+                notiSendAnswer->setVisible(true); // Hiển thị thông báo nếu thành công
+            });
+        } else {
+            qDebug() << "No answer selected.";
+        }
+    });
 }
 
 void ExamRoomDetail::updateCountdown()
@@ -487,6 +534,10 @@ void ExamRoomDetail::updateCountdown()
 
         // Hiển thị hộp thoại và đợi người dùng nhấn nút
         msgBox.exec();
+
+        // call func handle submit exam
+        handleSubmitExam();
+        QThread::msleep(100);
 
         ui->startExamWidget->hide();
         ui->examDetailWidget->show();
@@ -764,4 +815,244 @@ void ExamRoomDetail::handleGetExamRoomResultByUserResponse() {
         }
     }
 
+}
+
+void ExamRoomDetail::handleStartExam() {
+    // set exam result;
+    QJsonObject json;
+    json["room_id"] = currentRoomId;
+    json["user_id"] = UserData::instance().getUserId();
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL USER_START_EXAM\n%1").arg(QString(jsonData));
+
+    qDebug() << "Sending start exam request: " << dataString;
+
+    if (tcpSocket4->state() == QAbstractSocket::UnconnectedState) {
+        tcpSocket4->connectToHost("localhost", 8080);
+        if (!tcpSocket4->waitForConnected(3000)) {
+            qDebug() << "Failed to connect to server.";
+            return;
+        }
+    }
+
+    qint64 bytesWritten = tcpSocket4->write(dataString.toUtf8());
+    if (bytesWritten == -1) {
+        qDebug() << "Failed to write to socket: " << tcpSocket4->errorString();
+        return;
+    }
+
+    if (!tcpSocket4->flush()) {
+        qDebug() << "Failed to flush socket: " << tcpSocket4->errorString();
+        return;
+    }
+
+    qDebug() << "Start exam request sent, bytes written: " << bytesWritten;
+    // Connect the readyRead signal to handle the response
+    connect(tcpSocket4, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleStartExamResponse);
+}
+
+void ExamRoomDetail::handleStartExamResponse() {
+    QByteArray response = tcpSocket4->readAll();
+    QString responseString(response);
+
+    qDebug() << "Start Exam Response:" << responseString;
+
+    if (responseString.startsWith("DATA JSON USER_START_EXAM")) {
+        // Extract JSON part from the response
+        int jsonStartIndex = responseString.indexOf('{');
+        int jsonEndIndex = responseString.lastIndexOf('}');
+        if (jsonStartIndex != -1 && jsonEndIndex != -1) {
+            QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+            QJsonParseError parseError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                QJsonObject jsonObj = jsonDoc.object();
+                examId = jsonObj["exam_id"].toInt();
+                QJsonArray questions = jsonObj["questions"].toArray();
+
+                if (!questions.isEmpty()) {
+                    displayQuestions(questions);
+
+                    ui->examDetailWidget->hide();
+                    ui->examResultWidget->hide();
+                    ui->startExamWidget->show();
+
+                    countdownTimer->start(1000);  // Cập nhật mỗi 1 giây
+                    // Kết nối QTimer với hàm cập nhật thời gian
+                    connect(countdownTimer, &QTimer::timeout, this, &ExamRoomDetail::updateCountdown);
+                } else {
+                    qDebug() << "No questions found.";
+                }
+                
+            } else {
+                qDebug() << "Failed to parse exam results response JSON.";
+            }
+        } else {
+            qDebug() << "Invalid exam results response format.";
+        }
+    }
+}
+
+// Logic to send answer of question
+// CONTROL SUBMIT_EXAM_QUESTION
+// {
+//   "exam_question_id": 180,
+//   "answer_id": 1
+// }
+void ExamRoomDetail::handleSendAnswer(int examQuestionId, int answerId)
+{
+    // set exam result;
+    QJsonObject json;
+    json["exam_question_id"] = examQuestionId;
+    json["answer_id"] = answerId;
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL SUBMIT_EXAM_QUESTION\n%1").arg(QString(jsonData));
+
+    qDebug() << "Sending send answer request: " << dataString;
+
+    if (tcpSocket5->state() == QAbstractSocket::UnconnectedState) {
+        tcpSocket5->connectToHost("localhost", 8080);
+        if (!tcpSocket5->waitForConnected(3000)) {
+            qDebug() << "Failed to connect to server.";
+            return;
+        }
+    }
+
+    qint64 bytesWritten = tcpSocket5->write(dataString.toUtf8());
+    if (bytesWritten == -1) {
+        qDebug() << "Failed to write to socket: " << tcpSocket5->errorString();
+        return;
+    }
+
+    if (!tcpSocket5->flush()) {
+        qDebug() << "Failed to flush socket: " << tcpSocket5->errorString();
+        return;
+    }
+
+    qDebug() << "Send answer request sent, bytes written: " << bytesWritten;
+    // Connect the readyRead signal to handle the response
+    connect(tcpSocket5, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleSendAnswerResponse);
+}
+
+// "NOTIFICATION SUBMIT_EXAM_QUESTION_SUCCESS 2024-12-18T23:55:55
+// {
+//   ""message"": ""Exam question submitted successfully""
+// }"
+void ExamRoomDetail::handleSendAnswerResponse() {
+    QByteArray response = tcpSocket5->readAll();
+    QString responseString(response);
+
+    qDebug() << "Send Answer Response:" << responseString;
+
+    if (responseString.startsWith("NOTIFICATION SUBMIT_EXAM_QUESTION_SUCCESS")) {
+        // Extract JSON part from the response
+        int jsonStartIndex = responseString.indexOf('{');
+        int jsonEndIndex = responseString.lastIndexOf('}');
+        if (jsonStartIndex != -1 && jsonEndIndex != -1) {
+            QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+            QJsonParseError parseError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                QJsonObject jsonObj = jsonDoc.object();
+                QString message = jsonObj["message"].toString();
+
+                emit answerSubmittedSuccessfully();
+
+                qDebug() << "Message:" << message;
+                
+            } else {
+                qDebug() << "Failed to parse exam results response JSON.";
+            }
+        } else {
+            qDebug() << "Invalid exam results response format.";
+        }
+    }
+}
+
+// handle user submit exam
+void ExamRoomDetail::handleSubmitExam(){
+    // set exam result;
+    QJsonObject json;
+    json["examId"] = examId;
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL SUBMIT_EXAM\n%1").arg(QString(jsonData));
+
+    qDebug() << "Sending submit exam request: " << dataString;
+
+    if (tcpSocket6->state() == QAbstractSocket::UnconnectedState) {
+        tcpSocket6->connectToHost("localhost", 8080);
+        if (!tcpSocket6->waitForConnected(3000)) {
+            qDebug() << "Failed to connect to server.";
+            return;
+        }
+    }
+
+    qint64 bytesWritten = tcpSocket6->write(dataString.toUtf8());
+    if (bytesWritten == -1) {
+        qDebug() << "Failed to write to socket: " << tcpSocket6->errorString();
+        return;
+    }
+
+    if (!tcpSocket6->flush()) {
+        qDebug() << "Failed to flush socket: " << tcpSocket6->errorString();
+        return;
+    }
+
+    qDebug() << "Submit exam request sent, bytes written: " << bytesWritten;
+    // Connect the readyRead signal to handle the response
+    connect(tcpSocket6, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleSubmitExamResponse);
+}
+
+// "NOTIFICATION SUBMIT_EXAM_SUCCESS 2024-12-19T00:12:55
+// {
+//         ""total_questions"":        30,
+//         ""answered_questions"":        30,
+//         ""correct_answers"":        30,
+//         ""incorrect_answers"":        0
+// }"
+void ExamRoomDetail::handleSubmitExamResponse() {
+    QByteArray response = tcpSocket6->readAll();
+    QString responseString(response);
+
+    qDebug() << "Submit Exam Response:" << responseString;
+
+    if (responseString.startsWith("NOTIFICATION SUBMIT_EXAM_SUCCESS")) {
+        // Extract JSON part from the response
+        int jsonStartIndex = responseString.indexOf('{');
+        int jsonEndIndex = responseString.lastIndexOf('}');
+        if (jsonStartIndex != -1 && jsonEndIndex != -1) {
+            QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+            QJsonParseError parseError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+            if (parseError.error == QJsonParseError::NoError) {
+                QJsonObject jsonObj = jsonDoc.object();
+                int totalQuestions = jsonObj["total_questions"].toInt();
+                int answeredQuestions = jsonObj["answered_questions"].toInt();
+                int correctAnswers = jsonObj["correct_answers"].toInt();
+                int incorrectAnswers = jsonObj["incorrect_answers"].toInt();
+
+                qDebug() << "Total Questions:" << totalQuestions;
+                qDebug() << "Answered Questions:" << answeredQuestions;
+                qDebug() << "Correct Answers:" << correctAnswers;
+                qDebug() << "Incorrect Answers:" << incorrectAnswers;
+                
+            } else {
+                qDebug() << "Failed to parse exam results response JSON.";
+            }
+        } else {
+            qDebug() << "Invalid exam results response format.";
+        }
+    }
 }

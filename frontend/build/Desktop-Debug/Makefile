@@ -4157,18 +4157,20 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qdatetime.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcalendar.h \
 		ui_examroomdetail.h \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QMenu \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qmenu.h \
-		/home/Qt/6.8.0/gcc_64/include/QtGui/QAction \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonDocument \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsondocument.h \
+		../../userdata.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QString \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonObject \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonobject.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonvalue.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcborvalue.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qcborcommon.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qregularexpression.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/quuid.h \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonObject \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsonobject.h \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QMenu \
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qmenu.h \
+		/home/Qt/6.8.0/gcc_64/include/QtGui/QAction \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonDocument \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsondocument.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonParseError \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/QFile \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/qfile.h \
@@ -4201,7 +4203,8 @@ examroomdetail.o: ../../examroomdetail.cpp ../../examroomdetail.h \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qdialog.h \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qdialogbuttonbox.h \
 		/home/Qt/6.8.0/gcc_64/include/QtGui/QScreen \
-		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QDialog
+		/home/Qt/6.8.0/gcc_64/include/QtWidgets/QDialog \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QThread
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o examroomdetail.o ../../examroomdetail.cpp
 
 examroomdialog.o: ../../examroomdialog.cpp ../../examroomdialog.h \
@@ -4731,7 +4734,8 @@ examroomlist.o: ../../examroomlist.cpp ../../examroomlist.h \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qdialog.h \
 		/home/Qt/6.8.0/gcc_64/include/QtWidgets/qdialogbuttonbox.h \
 		/home/Qt/6.8.0/gcc_64/include/QtCore/QJsonDocument \
-		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsondocument.h
+		/home/Qt/6.8.0/gcc_64/include/QtCore/qjsondocument.h \
+		/home/Qt/6.8.0/gcc_64/include/QtCore/QThread
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o examroomlist.o ../../examroomlist.cpp
 
 examroommanagement.o: ../../examroommanagement.cpp ../../examroommanagement.h \
