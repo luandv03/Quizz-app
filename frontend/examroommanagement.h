@@ -17,14 +17,19 @@ public:
     explicit ExamRoomManagement(QWidget *parent = nullptr);
     ~ExamRoomManagement();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 signals:
     void showExamRoomList();
     void showUserManagement();
     void showProfile();
+    void logout();
 
 private slots:
     void onViewButtonClicked(int row);
     void onCreateExamRoomBtn();
+    void showMenuNavigator();
 
 private:
     Ui::ExamRoomManagement *ui;

@@ -12,37 +12,7 @@ Profile::Profile(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    qDebug() << "Profile constructor";
-
-    // Set up the avatar button dropdown menu
-    QMenu *menu = new QMenu(this);
-    QAction *examRoomListACtion = new QAction("Exam Room List", this);
-    QAction *profileAction = new QAction("Profile", this);
-    QAction *userManagementAction = new QAction("User Management", this);
-    QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
-    QAction *practicesAction = new QAction("Logout", this);
-
-    menu->addAction(examRoomListACtion);
-    menu->addAction(profileAction);
-    menu->addAction(userManagementAction);
-    menu->addAction(examRoomManagementAction);
-    menu->addAction(practicesAction);
-
-    ui->avatarButton->setMenu(menu);
-
-    connect(userManagementAction, &QAction::triggered, [this]() {
-        emit showUserManagement();
-    });
-
-    connect(examRoomManagementAction, &QAction::triggered, [this]() {
-        qDebug() << "showExamRoomManagement";
-        emit showExamRoomManagement();
-    });
-
-    connect(examRoomListACtion, &QAction::triggered, [this]() {
-        emit showExamRoomList();
-    });
-
+    showMenuNavigator(); 
 
     // Giả lập dữ liệu từ backend
     QString userName = UserData::instance().getUserName();
@@ -91,6 +61,68 @@ void Profile::showEvent(QShowEvent *event) {
     ui->emailLineEdit->setText(email);
     ui->dobLineEdit->setText(dob);
     ui->passwordLineEdit->setText(password);
+
+    showMenuNavigator();
+}
+
+void Profile::showMenuNavigator()
+{
+    // Implement search functionality here
+    QString role = UserData::instance().getRole();
+
+    // Set up the avatar button dropdown menu
+    QMenu *menu = new QMenu(this);
+
+    if (role == "admin") {
+        QAction *profileAction = new QAction("Profile", this);
+        QAction *userManagementAction = new QAction("User Management", this);
+        QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
+        QAction *logoutAction = new QAction("Logout", this);
+
+        menu->addAction(profileAction);
+        menu->addAction(userManagementAction);
+        menu->addAction(examRoomManagementAction);
+        menu->addAction(logoutAction);
+
+        ui->avatarButton->setMenu(menu);
+
+        connect(profileAction, &QAction::triggered, [this]() {
+            emit showProfile();
+        });
+
+        connect(userManagementAction, &QAction::triggered, [this]() {
+            emit showUserManagement();
+        });
+
+        connect(examRoomManagementAction, &QAction::triggered, [this]() {
+            qDebug() << "showExamRoomManagement";
+            emit showExamRoomManagement();
+        });
+
+        connect(logoutAction, &QAction::triggered, [this]() {
+            emit logout();
+        });
+    } else {
+        QAction *examRoomListAction = new QAction("Exam Room List", this);
+        QAction *profileAction = new QAction("Profile", this);
+        QAction *logoutAction = new QAction("Logout", this);
+
+        menu->addAction(examRoomListAction);
+        menu->addAction(profileAction);
+        menu->addAction(logoutAction);
+
+        ui->avatarButton->setMenu(menu);
+
+        connect(examRoomListAction, &QAction::triggered, [this]() {
+            emit showExamRoomList();
+        });
+
+        connect(logoutAction, &QAction::triggered, [this]() {
+            emit logout();
+        });
+    }
+
+    ui->avatarButton->setText(UserData::instance().getUserName());
 }
 
 void Profile::checkForChanges()

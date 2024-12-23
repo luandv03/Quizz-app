@@ -6,6 +6,7 @@
 #include <QJsonParseError>
 #include <QDateTime>
 #include <QDebug>
+#include <QThread>
 
 Signin::Signin(QWidget *parent)
     : QWidget(parent)
@@ -98,6 +99,19 @@ void Signin::onProfile() {
                 qDebug() << "User Name:" << UserData::instance().getUserName();
                 qDebug() << "Email:" << UserData::instance().getEmail();
                 qDebug() << "DOB:" << UserData::instance().getDob();
+
+                QString role = UserData::instance().getRole();
+                qDebug() << "Role:" << role;
+
+                if (role == "admin") {
+                    emit showUserManagement();
+                } else {
+                    emit showExamRoomList();
+                }
+
+                // reset sign form value
+                ui->emailLineEdit->setText("");
+                ui->passwordLineEdit->setText("");
             }
         }
     }
@@ -127,8 +141,6 @@ void Signin::onReadyRead() {
                 qDebug() << "User ID:" << UserData::instance().getUserId();
 
                 getProfile();
-
-                emit showExamRoomList();
             }
         }
     } else {

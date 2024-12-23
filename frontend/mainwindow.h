@@ -33,6 +33,7 @@ private slots:
     void showExamRoomDetail(int roomId);
     void showUserManagement();
     void showExamRoomManagement();
+    void logout();
 
 private:
     Ui::MainWindow *ui;

@@ -16,13 +16,18 @@ public:
     explicit UserManagement(QWidget *parent = nullptr);
     ~UserManagement();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 signals:
     void showExamRoomList();
     void showExamRoomManagement();
     void showProfile();
-
+    void logout();
+    
 private slots:
     void onViewButtonClicked(int row);
+    void showMenuNavigator();
 
 private:
     Ui::UserManagement *ui;

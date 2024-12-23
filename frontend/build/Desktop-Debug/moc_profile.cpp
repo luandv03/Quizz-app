@@ -36,10 +36,13 @@ namespace {
 struct qt_meta_stringdata_CLASSProfileENDCLASS_t {};
 constexpr auto qt_meta_stringdata_CLASSProfileENDCLASS = QtMocHelpers::stringData(
     "Profile",
-    "showExamRoomList",
+    "showProfile",
     "",
+    "showExamRoomList",
     "showUserManagement",
-    "showExamRoomManagement"
+    "showExamRoomManagement",
+    "logout",
+    "showMenuNavigator"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -52,21 +55,31 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSProfileENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       3,       // signalCount
+       5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   32,    2, 0x06,    1 /* Public */,
-       3,    0,   33,    2, 0x06,    2 /* Public */,
-       4,    0,   34,    2, 0x06,    3 /* Public */,
+       1,    0,   50,    2, 0x06,    1 /* Public */,
+       3,    0,   51,    2, 0x06,    2 /* Public */,
+       4,    0,   52,    2, 0x06,    3 /* Public */,
+       5,    0,   53,    2, 0x06,    4 /* Public */,
+       6,    0,   54,    2, 0x06,    5 /* Public */,
+
+ // slots: name, argc, parameters, tag, flags, initial metatype offsets
+       7,    0,   55,    2, 0x08,    6 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+
+ // slots: parameters
     QMetaType::Void,
 
        0        // eod
@@ -81,11 +94,17 @@ Q_CONSTINIT const QMetaObject Profile::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSProfileENDCLASS_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<Profile, std::true_type>,
+        // method 'showProfile'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showExamRoomList'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showUserManagement'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'showExamRoomManagement'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'logout'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'showMenuNavigator'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -97,31 +116,48 @@ void Profile::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         auto *_t = static_cast<Profile *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->showExamRoomList(); break;
-        case 1: _t->showUserManagement(); break;
-        case 2: _t->showExamRoomManagement(); break;
+        case 0: _t->showProfile(); break;
+        case 1: _t->showExamRoomList(); break;
+        case 2: _t->showUserManagement(); break;
+        case 3: _t->showExamRoomManagement(); break;
+        case 4: _t->logout(); break;
+        case 5: _t->showMenuNavigator(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (Profile::*)();
-            if (_t _q_method = &Profile::showExamRoomList; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+            if (_t _q_method = &Profile::showProfile; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
             }
         }
         {
             using _t = void (Profile::*)();
-            if (_t _q_method = &Profile::showUserManagement; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+            if (_t _q_method = &Profile::showExamRoomList; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 1;
                 return;
             }
         }
         {
             using _t = void (Profile::*)();
-            if (_t _q_method = &Profile::showExamRoomManagement; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+            if (_t _q_method = &Profile::showUserManagement; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 2;
+                return;
+            }
+        }
+        {
+            using _t = void (Profile::*)();
+            if (_t _q_method = &Profile::showExamRoomManagement; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 3;
+                return;
+            }
+        }
+        {
+            using _t = void (Profile::*)();
+            if (_t _q_method = &Profile::logout; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 4;
                 return;
             }
         }
@@ -148,32 +184,44 @@ int Profile::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 6;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 6)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 6;
     }
     return _id;
 }
 
 // SIGNAL 0
-void Profile::showExamRoomList()
+void Profile::showProfile()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }
 
 // SIGNAL 1
-void Profile::showUserManagement()
+void Profile::showExamRoomList()
 {
     QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 
 // SIGNAL 2
-void Profile::showExamRoomManagement()
+void Profile::showUserManagement()
 {
     QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
+}
+
+// SIGNAL 3
+void Profile::showExamRoomManagement()
+{
+    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
+}
+
+// SIGNAL 4
+void Profile::logout()
+{
+    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
 }
 QT_WARNING_POP
