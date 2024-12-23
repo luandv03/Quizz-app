@@ -1,5 +1,6 @@
 #include "usermanagement.h"
 #include "ui_usermanagement.h"
+#include "userdata.h"
 
 #include <QMenu>
 #include <QMessageBox>
@@ -11,35 +12,7 @@ UserManagement::UserManagement(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // Set up the avatar button dropdown menu
-    QMenu *menu = new QMenu(this);
-    QAction *examRoomListAction = new QAction("Exam Room List", this);
-    QAction *profileAction = new QAction("Profile", this);
-    QAction *userManagementAction = new QAction("User Management", this);
-    QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
-    QAction *practicesAction = new QAction("Logout", this);
-
-    menu->addAction(examRoomListAction);
-    menu->addAction(profileAction);
-    menu->addAction(userManagementAction);
-    menu->addAction(examRoomManagementAction);
-    menu->addAction(practicesAction);
-
-    ui->avatarButton->setMenu(menu);
-
-    connect(profileAction, &QAction::triggered, [this]() {
-        emit showProfile();
-    });
-
-    connect(examRoomListAction, &QAction::triggered, [this]() {
-        qDebug() << "show exam roomlist";
-        emit showExamRoomList();
-    });
-
-    connect(examRoomManagementAction, &QAction::triggered, [this]() {
-        qDebug() << "showExamRoomManagement";
-        emit showExamRoomManagement();
-    });
+    showMenuNavigator();
 
     // Set up the table columns
     ui->userTableWidget->setColumnCount(5);
@@ -53,6 +26,70 @@ UserManagement::UserManagement(QWidget *parent) :
 UserManagement::~UserManagement()
 {
     delete ui;
+}
+
+void UserManagement::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+    
+    showMenuNavigator();
+}
+
+void UserManagement::showMenuNavigator()
+{
+    // Implement search functionality here
+    QString role = UserData::instance().getRole();
+
+    qDebug() << "Role trong User Manager:" << role;
+
+    // Set up the avatar button dropdown menu
+    QMenu *menu = new QMenu(this);
+
+    if (role == "admin") {
+        QAction *profileAction = new QAction("Profile", this);
+        QAction *userManagementAction = new QAction("User Management", this);
+        QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
+        QAction *logoutAction = new QAction("Logout", this);
+
+        menu->addAction(profileAction);
+        menu->addAction(userManagementAction);
+        menu->addAction(examRoomManagementAction);
+        menu->addAction(logoutAction);
+
+        ui->avatarButton->setMenu(menu);
+
+        connect(profileAction, &QAction::triggered, [this]() {
+            emit showProfile();
+        });
+
+        connect(examRoomManagementAction, &QAction::triggered, [this]() {
+            qDebug() << "showExamRoomManagement";
+            emit showExamRoomManagement();
+        });
+
+        connect(logoutAction, &QAction::triggered, [this]() {
+            emit logout();
+        });
+    } else {
+        QAction *examRoomListAction = new QAction("Exam Room List", this);
+        QAction *profileAction = new QAction("Profile", this);
+        QAction *logoutAction = new QAction("Logout", this);
+
+        menu->addAction(examRoomListAction);
+        menu->addAction(profileAction);
+        menu->addAction(logoutAction);
+
+        ui->avatarButton->setMenu(menu);
+
+        connect(examRoomListAction, &QAction::triggered, [this]() {
+            emit showExamRoomList();
+        });
+
+        connect(logoutAction, &QAction::triggered, [this]() {
+            emit logout();
+        });
+    }
+
+    ui->avatarButton->setText(UserData::instance().getUserName());
 }
 
 void UserManagement::populateTable()

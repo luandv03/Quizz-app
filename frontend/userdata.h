@@ -49,6 +49,21 @@ public:
         return QString();
     }
 
+    QString getRole() const {
+        if (userData.contains("email")) {
+            QString email = userData["email"].toString();
+
+            qDebug() << "Is Admin:" << email;
+
+            if (email == "admin@gmail.com") {
+                qDebug() << "Admin role detected";
+
+                return "admin";
+            } else return "user";
+        }
+        return QString();
+    }
+
     QJsonObject getUserData() const {
         return userData;
     }

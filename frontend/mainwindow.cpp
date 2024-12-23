@@ -33,23 +33,29 @@ MainWindow::MainWindow(QWidget *parent)
     connect(signupForm, &Signup::showHome, this, &MainWindow::showHome);
     connect(signinForm, &Signin::showHome, this, &MainWindow::showHome);
     connect(signinForm, &Signin::showExamRoomList, this, &MainWindow::showExamRoomList);
+    connect(signinForm, &Signin::showUserManagement, this, &MainWindow::showUserManagement);
     connect(profileForm, &Profile::showExamRoomList, this, &MainWindow::showExamRoomList);
     connect(profileForm, &Profile::showUserManagement, this, &MainWindow::showUserManagement);
+    connect(profileForm, &Profile::logout, this, &MainWindow::logout);
     connect(profileForm, &Profile::showExamRoomManagement, this, &MainWindow::showExamRoomManagement);
     connect(examRoomListForm, &ExamRoomList::showExamRoomDetail, this, &MainWindow::showExamRoomDetail);
     connect(examRoomListForm, &ExamRoomList::showUserManagement, this, &MainWindow::showUserManagement);
     connect(examRoomListForm, &ExamRoomList::showExamRoomManagement, this, &MainWindow::showExamRoomManagement);
     connect(examRoomListForm, &ExamRoomList::showProfile, this, &MainWindow::showProfile);
+    connect(examRoomListForm, &ExamRoomList::logout, this, &MainWindow::logout);
     connect(examRoomDetailForm, &ExamRoomDetail::showExamRoomList, this, &MainWindow::showExamRoomList);
     connect(examRoomDetailForm, &ExamRoomDetail::showUserManagement, this, &MainWindow::showUserManagement);
     connect(examRoomDetailForm, &ExamRoomDetail::showExamRoomManagement, this, &MainWindow::showExamRoomManagement);
     connect(examRoomDetailForm, &ExamRoomDetail::showProfile, this, &MainWindow::showProfile);
+    connect(examRoomDetailForm, &ExamRoomDetail::logout, this, &MainWindow::logout);
     connect(userManagement, &UserManagement::showExamRoomList, this, &MainWindow::showExamRoomList);
     connect(userManagement, &UserManagement::showExamRoomManagement, this, &MainWindow::showExamRoomManagement);
     connect(userManagement, &UserManagement::showProfile, this, &MainWindow::showProfile);
+    connect(userManagement, &UserManagement::logout, this, &MainWindow::logout);
     connect(examRoomManagement, &ExamRoomManagement::showExamRoomList, this, &MainWindow::showExamRoomList);
     connect(examRoomManagement, &ExamRoomManagement::showUserManagement, this, &MainWindow::showUserManagement);
     connect(examRoomManagement, &ExamRoomManagement::showProfile, this, &MainWindow::showProfile);
+    connect(examRoomManagement, &ExamRoomManagement::logout, this, &MainWindow::logout);
 
     // Connect signals to slots
     // connect(signinForm->findChild<QPushButton *>("signinButton"), &QPushButton::clicked,
@@ -95,4 +101,9 @@ void MainWindow::showExamRoomManagement() {
 
 void MainWindow::showProfile() {
     ui->stackedWidget->setCurrentWidget(profileForm);
+}
+
+void MainWindow::logout() {
+    UserData::instance().reset();
+    emit showSignin();
 }

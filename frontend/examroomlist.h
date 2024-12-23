@@ -28,6 +28,7 @@ signals:
     void showUserManagement();
     void showExamRoomManagement();
     void showProfile();
+    void logout();
 
 private slots:
     void on_searchButton_clicked();
@@ -37,7 +38,7 @@ private slots:
     void handleJoinButtonClicked(int roomId);
     void onConnected();
     void onDisconnected();
-
+    void showMenuNavigator();
 
 private:
     Ui::ExamRoomList *ui;

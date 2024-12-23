@@ -29,8 +29,10 @@ signals:
     void showExamRoomManagement();
     void showProfile();
     void answerSubmittedSuccessfully();
+    void logout();
 
 private slots:
+    void showMenuNavigator();
     void onConnected();
     void onDisconnected();
     void handleExamRoomDetailResponse();

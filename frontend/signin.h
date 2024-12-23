@@ -20,6 +20,7 @@ public:
 signals:
     void showHome();
     void showExamRoomList();
+    void showUserManagement();
 
 private slots:
     void on_signinButton_clicked();

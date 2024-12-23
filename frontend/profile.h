@@ -18,10 +18,15 @@ public:
 protected:
     void showEvent(QShowEvent *event) override;
 
+private slots:
+    void showMenuNavigator();
+
 signals:
+    void showProfile();
     void showExamRoomList();
     void showUserManagement();
     void showExamRoomManagement();
+    void logout();
 
 private:
     Ui::Profile *ui;
