@@ -455,7 +455,6 @@ int create_room(const char *subject, const char *description, int number_of_easy
 
     return 1;
 }
-<<<<<<< HEAD
 
 char *get_user_in_room(int room_id)
 {
@@ -649,5 +648,3 @@ char *get_room_question(int room_id)
 
     return json_string;
 }
-=======
->>>>>>> bbe2b6e (create room)
