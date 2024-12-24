@@ -2,6 +2,8 @@
 #include "../../db/connect-db.h"
 #include "../../utils/mysql_utils.h"
 #include "../../utils/random_array_utils.h"
+#include "../../utils/time_utils.h"
+#include "../../utils/log_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +29,21 @@ int submit_exam_question(int exam_question_id, int answer_id)
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
         return 0;
     }
+
+    // Log the submit exam question activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('Exam question %d answered with %d', '%s')", exam_question_id, answer_id, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "Exam question %d answered with %d", exam_question_id, answer_id);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
 
     return 1;
 }
@@ -108,6 +125,21 @@ int submit_exam(int exam_id, int *total_questions, int *answered_questions, int 
         return 0;
     }
 
+    // Log the submit exam activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('Exam %d submitted', '%s')", exam_id, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "Exam %d submitted", exam_id);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
+
     return 1;
 }
 
@@ -150,7 +182,7 @@ char *user_start_exam(int room_id, int user_id, int *exam_id)
 
     // Get exam details and questions
     snprintf(query, sizeof(query),
-             "SELECT e.id, e.start_time, r.time_limit, q.id, q.content, a.id, a.content, a.is_true, eq.user_answer "
+             "SELECT e.id, e.start_time, r.time_limit, q.id, q.content, a.id, a.content, a.is_true, eq.user_answer, eq.id "
              "FROM exam e "
              "JOIN room r ON e.room_id = r.id "
              "JOIN exam_question eq ON e.id = eq.exam_id "
@@ -200,6 +232,7 @@ char *user_start_exam(int room_id, int user_id, int *exam_id)
             }
             current_question = cJSON_CreateObject();
             cJSON_AddNumberToObject(current_question, "question_id", question_id);
+            cJSON_AddNumberToObject(current_question, "exam_question_id", atoi(row[9])); // Add exam_question_id
             cJSON_AddStringToObject(current_question, "content", row[4]);
             cJSON *answers_array = cJSON_CreateArray();
             cJSON_AddItemToObject(current_question, "answer_of_question", answers_array);
@@ -218,6 +251,21 @@ char *user_start_exam(int room_id, int user_id, int *exam_id)
     {
         cJSON_AddItemToArray(json_questions, current_question);
     }
+
+    // Log the user start exam activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('User %d started exam %d in room %d', '%s')", user_id, *exam_id, room_id, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "User %d started exam %d in room %d", user_id, *exam_id, room_id);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
 
     char *json_string = cJSON_Print(json_response);
     cJSON_Delete(json_response);
