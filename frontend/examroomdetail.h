@@ -67,6 +67,8 @@ private:
     
     void displayQuestions(const QJsonArray &questionsArray);
     void createQuestionItem(const QJsonObject &questionObj);
+    void displayQuestionsPractice(const QJsonArray &questionsArray);
+    void createQuestionItemPractice(const QJsonObject &questionObj);
     void updateCountdown();
     void disableSendButtons(QWidget *widget);
     void viewExamResult();

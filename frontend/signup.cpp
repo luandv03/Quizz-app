@@ -11,6 +11,10 @@ Signup::Signup(QWidget *parent)
 {
     ui->setupUi(this);
     connect(tcpSocket, &QTcpSocket::readyRead, this, &Signup::onReadyRead);
+
+    connect(ui->signinButton, &QPushButton::clicked, [this]() {
+        emit showSignin();
+    });
 }
 
 Signup::~Signup() {
@@ -23,19 +27,8 @@ void Signup::on_signupButton_clicked() {
     json["password"] = ui->passwordLineEdit->text();
     json["username"] = ui->usernameLineEdit->text();
 
-    QJsonDocument doc(json);
-    QByteArray data = doc.toJson();
-
-    tcpSocket->connectToHost("localhost", 8080);
-    if (tcpSocket->waitForConnected()) {
-        tcpSocket->write("POST /signup ");
-        tcpSocket->write(data);
-        tcpSocket->flush();
-    }
 }
 
 void Signup::onReadyRead() {
-    QByteArray response = tcpSocket->readAll();
-    ui->responseLabel->setText(response);
-    emit showHome();
+    
 }

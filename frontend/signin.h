@@ -21,6 +21,7 @@ signals:
     void showHome();
     void showExamRoomList();
     void showUserManagement();
+    void showSignup();
 
 private slots:
     void on_signinButton_clicked();
