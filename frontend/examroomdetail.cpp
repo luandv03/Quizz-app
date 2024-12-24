@@ -284,6 +284,12 @@ ExamRoomDetail::~ExamRoomDetail()
     delete tcpSocket;
 }
 
+void ExamRoomDetail::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+
+    showMenuNavigator();
+}
+
 void ExamRoomDetail::showMenuNavigator()
 {
     // Implement search functionality here
@@ -435,7 +441,7 @@ void ExamRoomDetail::handleExamRoomDetailResponse()
                     if (status == "Not started") {
                         ui->startExamButton->setEnabled(false);
                         ui->viewExamResultBTn->setEnabled(false);
-                    } else if (status == "On going")
+                    } else if (status == "Ongoing")
                     {
                         ui->startExamButton->setEnabled(true);
                         ui->viewExamResultBTn->setEnabled(false);
@@ -903,7 +909,7 @@ void ExamRoomDetail::handleStartExamResponse() {
             QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
             if (parseError.error == QJsonParseError::NoError) {
                 QJsonObject jsonObj = jsonDoc.object();
-                examId = jsonObj["exam_id"].toInt();
+                // examId = jsonObj["exam_id"].toInt();
                 QJsonArray questions = jsonObj["questions"].toArray();
 
                 if (!questions.isEmpty()) {
@@ -921,7 +927,7 @@ void ExamRoomDetail::handleStartExamResponse() {
                 }
                 
             } else {
-                qDebug() << "Failed to parse exam results response JSON.";
+                qDebug() << "Failed to parse exam questions response JSON.";
             }
         } else {
             qDebug() << "Invalid exam results response format.";

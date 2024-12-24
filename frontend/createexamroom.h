@@ -2,6 +2,7 @@
 #define CREATEEXAMROOM_H
 
 #include <QWidget>
+#include <QTcpSocket>
 
 namespace Ui {
 class CreateExamRoom;
@@ -18,9 +19,12 @@ public:
 private slots:
     void onSaveButtonClicked();
     void validateInputs();
+    void handleCreateExamRoom();
+    void handleCreateExamRoomResponse();
 
 private:
     Ui::CreateExamRoom *ui;
+    QTcpSocket *tcpSocket;
 };
 
 #endif // CREATEEXAMROOM_H

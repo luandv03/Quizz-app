@@ -19,6 +19,17 @@ UserManagement::UserManagement(QWidget *parent) :
     QStringList headers = {"userId", "name", "email", "dob", "view"};
     ui->userTableWidget->setHorizontalHeaderLabels(headers);
 
+    // Make the header bold
+    QHeaderView *header = ui->userTableWidget->horizontalHeader();
+    QFont headerFont = header->font();
+    headerFont.setBold(true);
+    header->setFont(headerFont);
+
+    // Optional: Adjust alignment and resize behavior
+    header->setDefaultAlignment(Qt::AlignCenter); // Center alignment for the headers
+    ui->userTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // Adjust columns to fill the table width
+
+
     // Populate the table with example data
     populateTable();
 }

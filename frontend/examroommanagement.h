@@ -30,9 +30,12 @@ private slots:
     void onViewButtonClicked(int row);
     void onCreateExamRoomBtn();
     void showMenuNavigator();
+    void handleGetExamRoom();
+    void handleGetExamRoomResponse();
 
 private:
     Ui::ExamRoomManagement *ui;
+    QTcpSocket *tcpSocket; // Call API get exam room list
     void populateTable();
 };
 
