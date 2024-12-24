@@ -11,8 +11,11 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+pthread_mutex_t lock;
+
 #define PORT 8080
 #define BACKLOG 10
+
 
 typedef struct pthread_arg_t
 {
@@ -24,8 +27,8 @@ typedef struct pthread_arg_t
 /* Thread routine to serve connection to client. */
 void *pthread_routine(void *arg);
 
-/* Signal handler to handle SIGTERM and SIGINT signals. */
-void signal_handler(int signal_number);
+// /* Signal handler to handle SIGTERM and SIGINT signals. */
+// void signal_handler(int signal_number);
 
 void handle_control_message(int socket, ControlMessage *msg)
 {
@@ -179,23 +182,27 @@ void setup_routes(int server_fd)
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-
-    /* Assign signal handlers to signals. */
-    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+     if (pthread_mutex_init(&lock, NULL) != 0)
     {
-        perror("signal");
-        exit(1);
+        printf("\n Mutex init has failed\n");
+        return;
     }
-    if (signal(SIGTERM, signal_handler) == SIG_ERR)
-    {
-        perror("signal");
-        exit(1);
-    }
-    if (signal(SIGINT, signal_handler) == SIG_ERR)
-    {
-        perror("signal");
-        exit(1);
-    }
+    // /* Assign signal handlers to signals. */
+    // if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+    // {
+    //     perror("signal");
+    //     exit(1);
+    // }
+    // if (signal(SIGTERM, signal_handler) == SIG_ERR)
+    // {
+    //     perror("signal");
+    //     exit(1);
+    // }
+    // if (signal(SIGINT, signal_handler) == SIG_ERR)
+    // {
+    //     perror("signal");
+    //     exit(1);
+    // }
 
     /* Initialise pthread attribute to create detached threads. */
     if (pthread_attr_init(&pthread_attr) != 0)
@@ -256,13 +263,13 @@ void *pthread_routine(void *arg)
     memset(buffer, 0, sizeof(buffer));
     read(new_socket_fd, buffer, 2048);
 
-    printf("Received to client %s:%d  : %s\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), buffer);
+    // printf("Received to client %s:%d  : %s\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), buffer);
 
     char *header = strtok(buffer, "\n");
     char *body = header + strlen(header) + 1; // Move the pointer to the position after the newline
 
     printf("header: %s - body: %s\n", header, body);
-
+    pthread_mutex_lock(&lock);
     if (strncmp(header, "CONTROL", 7) == 0)
     {
         ControlMessage msg;
@@ -284,6 +291,7 @@ void *pthread_routine(void *arg)
         strncpy(msg.body, body, sizeof(msg.body) - 1);
         handle_notification_message(new_socket_fd, &msg);
     }
+    pthread_mutex_unlock(&lock);
 
     close(new_socket_fd);
 
@@ -292,8 +300,8 @@ void *pthread_routine(void *arg)
     return NULL;
 }
 
-void signal_handler(int signal_number)
-{
-    /* TODO: Put exit cleanup code here. */
-    exit(0);
-}
+// void signal_handler(int signal_number)
+// {
+//     /* TODO: Put exit cleanup code here. */
+//     exit(0);
+// }
