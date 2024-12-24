@@ -25,7 +25,6 @@ int add_question(int room_id, const char *content, int difficulty, int *question
     if (mysql_query(conn, query))
     {
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return 0;
     }
 
@@ -51,7 +50,6 @@ int add_answer(int question_id, const char *content, int is_true)
     if (mysql_query(conn, query))
     {
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
-        mysql_close(conn);
         return 0;
     }
 

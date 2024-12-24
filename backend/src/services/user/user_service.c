@@ -203,3 +203,27 @@ char *get_user_profile_by_id(int user_id)
 
     return json_string;
 }
+
+int update_user_by_id(int user_id, const char *email, const char *name, const char *dob)
+{
+    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return 0;
+    }
+
+    char query[512];
+    snprintf(query, sizeof(query),
+             "UPDATE user SET email = '%s', name = '%s', dob = '%s' WHERE id = %d",
+             email, name, dob, user_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Update failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    return 1;
+}

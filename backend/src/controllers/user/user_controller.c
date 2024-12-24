@@ -129,3 +129,52 @@ void handle_get_user_profile(int client_socket, ControlMessage *msg)
     write(client_socket, response, strlen(response));
     close(client_socket);
 }
+
+void handle_update_user_by_id(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 10);
+
+    int user_id = -1;
+    char email[256] = {0};
+    char name[256] = {0};
+    char dob[256] = {0};
+
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "user_id") == 0)
+        {
+            user_id = atoi(pairs[i].value);
+        }
+        else if (strcmp(pairs[i].key, "email") == 0)
+        {
+            strncpy(email, pairs[i].value, sizeof(email) - 1);
+        }
+        else if (strcmp(pairs[i].key, "name") == 0)
+        {
+            strncpy(name, pairs[i].value, sizeof(name) - 1);
+        }
+        else if (strcmp(pairs[i].key, "dob") == 0)
+        {
+            strncpy(dob, pairs[i].value, sizeof(dob) - 1);
+        }
+    }
+
+    int result = update_user_by_id(user_id, email, name, dob);
+    char response[2048];
+    char timestamp[50];
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (result == 0)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION UPDATE_USER_BY_ID_FAILURE %s\n{\"message\": \"Failed to update user\"}", timestamp);
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION UPDATE_USER_BY_ID_SUCCESS %s\n{\"message\": \"User updated successfully\"}", timestamp);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+}
