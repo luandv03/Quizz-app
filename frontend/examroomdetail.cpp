@@ -84,7 +84,7 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
             // reset UI
             // Ví dụ reset trạng thái của các thành phần UI
             ui->timerLabel->setText("00:00");
-            ui->endMyExamBtn->setEnabled(true);  // Bật lại nút kết thúc bài thi nếu nó bị vô hiệu hóa
+            // ui->endMyExamBtn->setEnabled(true);  // Bật lại nút kết thúc bài thi nếu nó bị vô hiệu hóa
             qDebug() << "UI has been reset.";
             qDebug() << "Exam has ended.";
         });
@@ -363,6 +363,8 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 
     // Lấy giá trị `user_answer`
     int userAnswer = questionObj["user_answer"].toInt();
+
+    qDebug() << "User answer for question:" << userAnswer;
 
     // Tạo các radio button cho các đáp án
     QJsonArray answersArray = questionObj["answer_of_question"].toArray();
