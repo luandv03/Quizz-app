@@ -639,3 +639,80 @@ char *get_room_question(int room_id)
 
     return json_string;
 }
+
+char *get_statistic_by_room_id(int room_id)
+{
+    MYSQL *conn = get_db_connection();
+
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return NULL;
+    }
+
+    char query[512];
+    snprintf(query, sizeof(query),
+             "SELECT e.score "
+             "FROM exam e "
+             "WHERE e.room_id = %d",
+             room_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    MYSQL_RES *res = mysql_store_result(conn);
+    if (res == NULL)
+    {
+        fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
+        return NULL;
+    }
+
+    int score_ranges[10] = {0}; // Array to hold the count of scores in each range
+    MYSQL_ROW row;
+
+    while ((row = mysql_fetch_row(res)))
+    {
+        int score = atoi(row[0]);
+        if (score >= 0 && score < 10)
+            score_ranges[0]++;
+        else if (score >= 10 && score < 20)
+            score_ranges[1]++;
+        else if (score >= 20 && score < 30)
+            score_ranges[2]++;
+        else if (score >= 30 && score < 40)
+            score_ranges[3]++;
+        else if (score >= 40 && score < 50)
+            score_ranges[4]++;
+        else if (score >= 50 && score < 60)
+            score_ranges[5]++;
+        else if (score >= 60 && score < 70)
+            score_ranges[6]++;
+        else if (score >= 70 && score < 80)
+            score_ranges[7]++;
+        else if (score >= 80 && score < 90)
+            score_ranges[8]++;
+        else if (score >= 90 && score <= 100)
+            score_ranges[9]++;
+    }
+
+    cJSON *json_response = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json_response, "0-10", score_ranges[0]);
+    cJSON_AddNumberToObject(json_response, "10-20", score_ranges[1]);
+    cJSON_AddNumberToObject(json_response, "20-30", score_ranges[2]);
+    cJSON_AddNumberToObject(json_response, "30-40", score_ranges[3]);
+    cJSON_AddNumberToObject(json_response, "40-50", score_ranges[4]);
+    cJSON_AddNumberToObject(json_response, "50-60", score_ranges[5]);
+    cJSON_AddNumberToObject(json_response, "60-70", score_ranges[6]);
+    cJSON_AddNumberToObject(json_response, "70-80", score_ranges[7]);
+    cJSON_AddNumberToObject(json_response, "80-90", score_ranges[8]);
+    cJSON_AddNumberToObject(json_response, "90-100", score_ranges[9]);
+
+    char *json_string = cJSON_Print(json_response);
+    cJSON_Delete(json_response);
+    mysql_free_result(res);
+
+    return json_string;
+}
