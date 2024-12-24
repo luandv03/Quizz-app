@@ -21,7 +21,8 @@ ExamRoomDialog::ExamRoomDialog(QWidget *parent) :
     tcpSocket(new QTcpSocket(this)),
     tcpSocket1(new QTcpSocket(this)),
     tcpSocket2(new QTcpSocket(this)),
-    tcpSocket3(new QTcpSocket(this))
+    tcpSocket3(new QTcpSocket(this)),
+    tcpSocket4(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -53,6 +54,9 @@ ExamRoomDialog::ExamRoomDialog(QWidget *parent) :
     // handle start exam
     connect(ui->startExam, &QPushButton::clicked, this, &ExamRoomDialog::handleStartExam);
 
+    // handle end exam
+    connect(ui->endExam, &QPushButton::clicked, this, &ExamRoomDialog::handleEndExam);
+
     // Gọi hàm để tạo chart khi khởi tạo dialog
     setupScoreChart();
 }
@@ -75,6 +79,7 @@ void ExamRoomDialog::setRoomDetails(const QString &roomId, const QString &roomNa
 
     if (status == "Not started") {
         ui->startExam->setEnabled(true);
+        ui->endExam->setEnabled(false);
         ui->addQuestionButton->setEnabled(true);
         ui->addUser->setEnabled(true);
         // ui->tabExamResult->hide();  // Disable the tab
@@ -83,12 +88,14 @@ void ExamRoomDialog::setRoomDetails(const QString &roomId, const QString &roomNa
         ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabExamResultChart));
     } else if(status == "Finished") {
         ui->startExam->setEnabled(false);
+        ui->endExam->setEnabled(false);
         ui->addQuestionButton->setEnabled(false);
         ui->addUser->setEnabled(false);
         ui->tabExamResult->setEnabled(true);  
         ui->tabExamResultChart->setEnabled(true);  
     } else {
         ui->startExam->setEnabled(false);
+        ui->endExam->setEnabled(true);
         ui->addQuestionButton->setEnabled(false);
         ui->addUser->setEnabled(false);
         ui->tabExamResult->setEnabled(false);  // Disable the tab
@@ -424,6 +431,7 @@ void ExamRoomDialog::handleStartExamResponse() {
         // Update the status label
         ui->status->setText("Ongoing");
         ui->startExam->setEnabled(false);
+        ui->endExam->setEnabled(true);  
         ui->addQuestionButton->setEnabled(false);
         ui->addUser->setEnabled(false);
 
@@ -434,6 +442,59 @@ void ExamRoomDialog::handleStartExamResponse() {
         qDebug() << "Failed to start the exam";
 
         QMessageBox::critical(this, "Start Exam Failed", "Failed to start the exam. Please try again later.");
+    } else {
+        qDebug() << "Unexpected response format:" << responseString;
+    }
+}
+
+// "CONTROL END_EXAM
+// {
+//   ""room_id"": 1
+// }"
+void ExamRoomDialog::handleEndExam() {
+    QJsonObject json;
+    json["room_id"] = examRoomId;
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL END_EXAM\n%1").arg(QString(jsonData));
+
+    tcpSocket4->connectToHost("localhost", 8080);
+    if (tcpSocket4->waitForConnected()) {
+        tcpSocket4->write(dataString.toUtf8());
+        tcpSocket4->flush();
+    } else {
+        qDebug() << "Failed to connect to server";
+    }
+
+    connect(tcpSocket4, &QTcpSocket::readyRead, this, &ExamRoomDialog::handleEndExamResponse);
+}
+
+// "NOTIFICATION END_EXAM_SUCCESS 2024-12-24T21:10:34
+// {
+//   ""message"": ""Exam ended successfully""
+// }
+// "
+void ExamRoomDialog::handleEndExamResponse() {
+    QByteArray response = tcpSocket4->readAll();
+    QString responseString(response);
+
+    qDebug() << "End exam response from server:" << responseString;
+
+    if (responseString.startsWith("NOTIFICATION END_EXAM_SUCCESS")) {
+        // Update the status label
+        ui->status->setText("Finished");
+        ui->startExam->setEnabled(false);
+        ui->endExam->setEnabled(false);
+        ui->addQuestionButton->setEnabled(false);
+        ui->addUser->setEnabled(false);
+        ui->tabExamResult->setEnabled(true);  
+        ui->tabExamResultChart->setEnabled(true);  
+
+        qDebug() << "Exam ended successfully";
+        QMessageBox::information(this, "End Exam Success", "Exam ended successfully.");
     } else {
         qDebug() << "Unexpected response format:" << responseString;
     }
