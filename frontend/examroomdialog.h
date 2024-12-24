@@ -27,6 +27,8 @@ private slots:
     void handleGetExamResultResponse();
     void handleStartExam();
     void handleStartExamResponse();
+    void handleEndExam();
+    void handleEndExamResponse();
 
 private:
     Ui::ExamRoomDialog *ui;
@@ -34,6 +36,7 @@ private:
     QTcpSocket *tcpSocket1; // Call API get user in room
     QTcpSocket *tcpSocket2; // Call API get exam result
     QTcpSocket *tcpSocket3; // Call API start exam
+    QTcpSocket *tcpSocket4; // Call API send answer
     void setupScoreChart();
 
     int examRoomId; 
