@@ -3,10 +3,15 @@
 
 #include <QDebug>
 #include <QDialog>
+#include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 CreateExamRoom::CreateExamRoom(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::CreateExamRoom)
+    ui(new Ui::CreateExamRoom),
+    tcpSocket(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -49,33 +54,7 @@ void CreateExamRoom::validateInputs()
 // Slot xử lý khi bấm nút "Lưu"
 void CreateExamRoom::onSaveButtonClicked()
 {
-    QString examRoomName = ui->lineEdit->text();
-    QString description = ui->lineEdit_2->text();
-    int easyQuestions = ui->spinBox->value();
-    int mediumQuestions = ui->spinBox_2->value();
-    int hardQuestions = ui->spinBox_3->value();
-    int timeLimit = ui->spinBox_4->value();
-    QDateTime startTime = ui->dateTimeEdit->dateTime();
-    QDateTime endTime = ui->dateTimeEdit_2->dateTime();
-
-    QString result = QString("Tên phòng thi: %1\n"
-                             "Mô tả: %2\n"
-                             "Số câu dễ: %3\n"
-                             "Số câu trung bình: %4\n"
-                             "Số câu khó: %5\n"
-                             "Thời gian làm bài: %6 phút\n"
-                             "Thời gian bắt đầu: %7\n"
-                             "Thời gian kết thúc: %8")
-                             .arg(examRoomName)
-                             .arg(description)
-                             .arg(easyQuestions)
-                             .arg(mediumQuestions)
-                             .arg(hardQuestions)
-                             .arg(timeLimit)
-                             .arg(startTime.toString())
-                             .arg(endTime.toString());
-
-    qDebug() << result;
+    handleCreateExamRoom();
 
     // Close the parent QDialog
     QDialog *dialog = qobject_cast<QDialog *>(this->parentWidget());
@@ -83,5 +62,66 @@ void CreateExamRoom::onSaveButtonClicked()
         dialog->close();
     }
 
-    // QMessageBox::information(this, "Thông tin phòng thi", result);
+    QMessageBox::information(this, "Thông báo", "Phòng thi đã được tạo thành công!");
+}
+
+// "CONTROL CREATE_ROOM
+// {
+//   ""subject"": ""Mathematics"",
+//   ""description"": ""Desc"",
+//   ""number_of_easy_question"": 10,
+//   ""number_of_medium_question"": 5,
+//   ""number_of_hard_question"": 2,
+//   ""time_limit"": 30,
+//   ""start"": ""2024-12-05T10:00:00"",
+//   ""end"": ""2024-12-05T10:30:00""
+// }"
+void CreateExamRoom::handleCreateExamRoom() {
+    QJsonObject json;
+    json["subject"] = ui->lineEdit->text();
+    json["description"] = ui->lineEdit_2->text();
+    json["number_of_easy_question"] = ui->spinBox->value();
+    json["number_of_medium_question"] = ui->spinBox_2->value();
+    json["number_of_hard_question"] = ui->spinBox_3->value();
+    json["time_limit"] = ui->spinBox_4->value();
+
+    // Adjust the year of the start and end times
+    QDateTime startDateTime = ui->dateTimeEdit->dateTime();
+    QDateTime endDateTime = ui->dateTimeEdit_2->dateTime();
+    startDateTime = startDateTime.addYears(100);
+    endDateTime = endDateTime.addYears(100);
+
+    json["start"] = startDateTime.toString(Qt::ISODate);
+    json["end"] = endDateTime.toString(Qt::ISODate);
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL CREATE_ROOM\n%1").arg(QString(jsonData));
+
+    tcpSocket->connectToHost("localhost", 8080);
+    if (tcpSocket->waitForConnected()) {
+        tcpSocket->write(dataString.toUtf8());
+        tcpSocket->flush();
+    } else {
+        qDebug() << "Failed to connect to server";
+    }
+
+    connect(tcpSocket, &QTcpSocket::readyRead, this, &CreateExamRoom::handleCreateExamRoomResponse);
+}
+
+// NOTIFICATION CREATE_ROOM_SUCCESS Time
+void CreateExamRoom::handleCreateExamRoomResponse() {
+    QByteArray response = tcpSocket->readAll();
+    QString responseString(response);
+
+    qDebug() << "Create exam room response from server:" << responseString;
+    if (responseString.startsWith("NOTIFICATION CREATE_ROOM_SUCCESS")) {
+        // Extract the question ID from the response
+        qDebug() << "Create Question Success";
+       
+    } else {
+        qDebug() << "Failed to create question";
+    }
 }

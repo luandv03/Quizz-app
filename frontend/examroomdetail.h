@@ -23,6 +23,9 @@ public:
 public slots:
     void setRoomId(int roomId);
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 signals:
     void showExamRoomList();
     void showUserManagement();

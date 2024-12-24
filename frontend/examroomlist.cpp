@@ -27,36 +27,6 @@ ExamRoomList::ExamRoomList(QWidget *parent) :
     connect(tcpSocket, &QTcpSocket::disconnected, this, &ExamRoomList::onDisconnected);
 
     showMenuNavigator();
-
-    // Set up the avatar button dropdown menu
-    // QMenu *menu = new QMenu(this);
-    // QAction *examRoomListAction = new QAction("Exam Room List", this);
-    // QAction *profileAction = new QAction("Profile", this);
-    // QAction *userManagementAction = new QAction("User Management", this);
-    // QAction *examRoomManagementAction = new QAction("Exam Room Management", this);
-    // QAction *practicesAction = new QAction("Logout", this);
-
-    // menu->addAction(examRoomListAction);
-    // menu->addAction(profileAction);
-    // menu->addAction(userManagementAction);
-    // menu->addAction(examRoomManagementAction);
-    // menu->addAction(practicesAction);
-
-    // ui->avatarButton->setMenu(menu);
-
-    // connect(profileAction, &QAction::triggered, [this]() {
-    //     emit showProfile();
-    // });
-
-    // connect(userManagementAction, &QAction::triggered, [this]() {
-    //     emit showUserManagement();
-    // });
-
-    // connect(examRoomManagementAction, &QAction::triggered, [this]() {
-    //     qDebug() << "showExamRoomManagement";
-    //     emit showExamRoomManagement();
-    // });
-
 }
 
 ExamRoomList::~ExamRoomList()

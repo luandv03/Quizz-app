@@ -2,10 +2,14 @@
 #include "ui_createquestion.h"
 
 #include <QDialog>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 CreateQuestion::CreateQuestion(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::CreateQuestion)
+    ui(new Ui::CreateQuestion),
+    tcpSocket(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -35,6 +39,12 @@ CreateQuestion::CreateQuestion(QWidget *parent) :
 CreateQuestion::~CreateQuestion()
 {
     delete ui;
+}
+
+void CreateQuestion::setRoomId(int roomId) {
+    qDebug() << "Set room ID: " << roomId;
+    // Do something with roomId
+    this->roomId = roomId;
 }
 
 void CreateQuestion::onAddAnswerButtonClicked() {
@@ -109,6 +119,7 @@ void CreateQuestion::onSubmitButtonClicked() {
 }
 
 void CreateQuestion::onSaveQuestionClicked() {
+    qDebug() << "Submit button clicked for room: " << roomId;
     // Get the question content
     QString questionContent = ui->textEdit->toPlainText();
 
@@ -143,6 +154,8 @@ void CreateQuestion::onSaveQuestionClicked() {
         qDebug() << "Answer" << i + 1 << ":" << answers[i] 
                  << "| Correct:" << (correctAnswers[i] ? "Yes" : "No");
     }
+
+    handleCreateQuestion();
 
     // Close the parent QDialog
     QDialog *dialog = qobject_cast<QDialog *>(this->parentWidget());
@@ -194,4 +207,86 @@ void CreateQuestion::updateSaveButtonState() {
     // Kích hoạt nút Lưu nếu tất cả điều kiện được thỏa mãn
     bool canSave = !isQuestionEmpty && answerCount >= 4 && hasCorrectAnswer;
     ui->addAnswerButton_2->setEnabled(canSave);
+}
+
+// "CONTROL ADD_QUESTION
+// {
+//   ""room_id"": 1,
+//   ""content"": ""What is the capital of France?"",
+//   ""difficulty"": 2,
+//   ""answer_list"": [
+//     {
+//       ""content"": ""Paris"",
+//       ""is_true"": true
+//     },
+//     {
+//       ""content"": ""London"",
+//       ""is_true"": false
+//     },
+//     {
+//       ""content"": ""Berlin"",
+//       ""is_true"": false
+//     },
+//     {
+//       ""content"": ""Madrid"",
+//       ""is_true"": false
+//     }
+//   ]
+// }"
+void CreateQuestion::handleCreateQuestion() {
+    QJsonObject json;
+    json["room_id"] = roomId;
+    json["content"] = ui->textEdit->toPlainText();
+    json["difficulty"] = ui->difficultyComboBox->currentIndex() + 1;
+
+    QJsonArray answerList;
+    for (int i = 0; i < answerListWidget->count(); ++i) {
+        QListWidgetItem *item = answerListWidget->item(i);
+        QWidget *answerWidget = answerListWidget->itemWidget(item);
+
+        // Get the QPlainTextEdit and QRadioButton from answerWidget
+        QPlainTextEdit *textEdit = answerWidget->findChild<QPlainTextEdit *>();
+        QRadioButton *radioButton = answerWidget->findChild<QRadioButton *>();
+
+        if (textEdit && radioButton) {
+            QJsonObject answer;
+            answer["content"] = textEdit->toPlainText();
+            answer["is_true"] = radioButton->isChecked();
+            answerList.append(answer);
+        }
+    }
+
+    json["answer_list"] = answerList;
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL ADD_QUESTION\n%1").arg(QString(jsonData));
+
+    tcpSocket->connectToHost("localhost", 8080);
+    if (tcpSocket->waitForConnected()) {
+        tcpSocket->write(dataString.toUtf8());
+        tcpSocket->flush();
+    } else {
+        qDebug() << "Failed to connect to server";
+    }
+
+    connect(tcpSocket, &QTcpSocket::readyRead, this, &CreateQuestion::handleCreateQuestionResponse);
+}
+
+// NOTIFICATION ADD_QUESTION_SUCCESS Time
+void CreateQuestion::handleCreateQuestionResponse() {
+    QByteArray response = tcpSocket->readAll();
+    QString responseString(response);
+
+    qDebug() << "Create question response from server:" << responseString;
+
+    if (responseString.startsWith("NOTIFICATION ADD_QUESTION_SUCCESS")) {
+        // Extract the question ID from the response
+        qDebug() << "Create Question Success";
+       
+    } else {
+        qDebug() << "Failed to create question";
+    }
 }

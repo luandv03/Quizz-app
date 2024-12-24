@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
+    <width>918</width>
     <height>800</height>
    </rect>
   </property>
@@ -147,7 +147,7 @@
         <rect>
          <x>160</x>
          <y>40</y>
-         <width>67</width>
+         <width>701</width>
          <height>17</height>
         </rect>
        </property>
@@ -242,7 +242,7 @@
       <widget class="QPushButton" name="addQuestionButton">
        <property name="geometry">
         <rect>
-         <x>760</x>
+         <x>780</x>
          <y>220</y>
          <width>111</width>
          <height>25</height>
@@ -255,12 +255,12 @@
         <string>Thêm câu hỏi</string>
        </property>
       </widget>
-      <widget class="QListWidget" name="listWidget">
+      <widget class="QListWidget" name="listQuestionBankWidget">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>250</y>
-         <width>871</width>
+         <width>891</width>
          <height>271</height>
         </rect>
        </property>
@@ -385,6 +385,12 @@
          <width>241</width>
          <height>17</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
         <string>Danh sách kết quả phòng thi</string>
