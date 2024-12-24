@@ -367,23 +367,34 @@ void ExamRoomDialog::handleGetExamResultResponse() {
 
             if (parseError.error == QJsonParseError::NoError) {
                 QJsonObject jsonObj = jsonDoc.object();
-                QJsonArray examResultList = jsonObj["data"].toObject()["exam_results"].toArray();
+                QJsonArray examResultList = jsonObj["data"].toArray();
 
                 // Clear the table widget before populating
                 ui->examResultTableWidget->clearContents();
 
                 for (int i = 0; i < examResultList.size(); ++i) {
                     QJsonObject examResult = examResultList[i].toObject();
-                    QString subject = examResult["subject"].toString();
-                    QString username = examResult["username"].toString();
-                    QString score = QString::number(examResult["score"].toInt());
+                    QString userId = QString::number(examResult["user_id"].toInt());
+                    QString username = examResult["name"].toString();
+                    QString email = examResult["email"].toString();
+                    QString totalQuestions = QString::number(examResult["total_questions"].toInt());
+                    QString correctAnswers = QString::number(examResult["correct_answers"].toInt());
+                    QString score = QString::number(examResult["score"].toDouble());
+
+                    qDebug() << "User ID:" << userId;
+                    qDebug() << "Username:" << username;
+                    qDebug() << "Email:" << email;
+                    qDebug() << "Total Questions:" << totalQuestions;
 
                     // Add the exam result to the table widget
                     int row = ui->examResultTableWidget->rowCount();
                     ui->examResultTableWidget->insertRow(row);
-                    ui->examResultTableWidget->setItem(row, 0, new QTableWidgetItem(subject));
+                    ui->examResultTableWidget->setItem(row, 0, new QTableWidgetItem(userId));
                     ui->examResultTableWidget->setItem(row, 1, new QTableWidgetItem(username));
-                    ui->examResultTableWidget->setItem(row, 2, new QTableWidgetItem(score));
+                    ui->examResultTableWidget->setItem(row, 2, new QTableWidgetItem(email));
+                    ui->examResultTableWidget->setItem(row, 3, new QTableWidgetItem(totalQuestions));
+                    ui->examResultTableWidget->setItem(row, 4, new QTableWidgetItem(correctAnswers));
+                    ui->examResultTableWidget->setItem(row, 5, new QTableWidgetItem(score));
                 }
             } else {
                 qDebug() << "JSON Parse Error:" << parseError.errorString() << " at offset:" << parseError.offset;
