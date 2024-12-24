@@ -1,6 +1,8 @@
 #include "auth_service.h"
 #include "../../db/connect-db.h"
 #include "../../utils/mysql_utils.h"
+#include "../../utils/time_utils.h"
+#include "../../utils/log_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +21,21 @@ int signup(const char *email, const char *password, const char *username, const 
         fprintf(stderr, "Signup failed. Error: %s\n", mysql_error(conn));
         return 0;
     }
+
+    // Log the signup activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('User signed up with email: %s', '%s')", email, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "User signed up with email: %s", email);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
 
     return 1;
 }
@@ -49,6 +66,21 @@ int login(const char *email, const char *password)
     {
         MYSQL_ROW row = mysql_fetch_row(res);
         user_id = atoi(row[0]); // Assuming the first column is the user id
+
+        // Log the login activity
+        char *timestamp = get_current_time();
+        snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('User logged in with email: %s', '%s')", email, timestamp);
+        if (mysql_query(conn, query))
+        {
+            fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+        }
+
+        // Log to file
+        char log_message[256];
+        snprintf(log_message, sizeof(log_message), "User logged in with email: %s", email);
+        log_to_file(log_message, timestamp);
+
+        free(timestamp);
     }
     else
     {
