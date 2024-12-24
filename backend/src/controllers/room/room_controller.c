@@ -73,7 +73,7 @@ void handle_user_enter_room(int client_socket, ControlMessage *msg)
 void handle_get_exam_result_of_room(int client_socket, ControlMessage *msg)
 {
     KeyValuePair pairs[10];
-    int pair_count = parse_json(msg->body, pairs, 1);
+    int pair_count = parse_json(msg->body, pairs, 10);
 
     int room_id = -1;
     for (int i = 0; i < pair_count; i++)
@@ -90,11 +90,11 @@ void handle_get_exam_result_of_room(int client_socket, ControlMessage *msg)
 
     if (result == NULL)
     {
-        snprintf(response, sizeof(response), "DATA JSON 0 EXAM_RESULT_OF_ROOM\n{\"data\": []}");
+        snprintf(response, sizeof(response), "DATA JSON EXAM_RESULT_OF_ROOM\n{\"data\": []}");
     }
     else
     {
-        snprintf(response, sizeof(response), "DATA JSON %ld EXAM_RESULT_OF_ROOM\n{\"data\": %s}", strlen(result), result);
+        snprintf(response, sizeof(response), "DATA JSON EXAM_RESULT_OF_ROOM\n{\"data\": %s}", result);
     }
 
     write(client_socket, response, strlen(response));
@@ -241,19 +241,23 @@ void handle_create_room(int client_socket, ControlMessage *msg)
     close(client_socket);
 }
 
-void send_large_response(int client_socket, const char *response) {
+void send_large_response(int client_socket, const char *response)
+{
     size_t total_length = strlen(response);
     size_t sent = 0;
     size_t chunk_size = 1024; // Kích thước mỗi khối dữ liệu
 
-    while (sent < total_length) {
+    while (sent < total_length)
+    {
         size_t to_send = chunk_size;
-        if (sent + chunk_size > total_length) {
+        if (sent + chunk_size > total_length)
+        {
             to_send = total_length - sent; // Gửi phần còn lại nếu nhỏ hơn chunk_size
         }
 
         ssize_t written = write(client_socket, response + sent, to_send);
-        if (written < 0) {
+        if (written < 0)
+        {
             perror("Error sending response");
             break;
         }
@@ -278,9 +282,12 @@ void handle_get_room_question(int client_socket, ControlMessage *msg)
 
     char *result = get_room_question(room_id);
     char *response;
-    if (result == NULL) {
+    if (result == NULL)
+    {
         response = strdup("DATA JSON ROOM_QUESTION\n{\n\"data\": []\n}");
-    } else {
+    }
+    else
+    {
         size_t response_size = strlen(result) + 64;
         response = (char *)malloc(response_size);
         snprintf(response, response_size, "DATA JSON ROOM_QUESTION\n{\n\"data\": %s\n}", result);
@@ -288,9 +295,11 @@ void handle_get_room_question(int client_socket, ControlMessage *msg)
 
     ssize_t total_sent = 0;
     ssize_t len = strlen(response);
-    while (total_sent < len) {
+    while (total_sent < len)
+    {
         ssize_t sent = write(client_socket, response + total_sent, len - total_sent);
-        if (sent <= 0) {
+        if (sent <= 0)
+        {
             perror("write");
             break;
         }
@@ -301,7 +310,8 @@ void handle_get_room_question(int client_socket, ControlMessage *msg)
     close(client_socket);
 
     free(response);
-    if (result != NULL) {
+    if (result != NULL)
+    {
         free(result);
     }
 }

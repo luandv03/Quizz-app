@@ -194,23 +194,23 @@ char *get_room_detail(int room_id)
 
 char *get_exam_result_of_room(int room_id)
 {
-
-    MYSQL *conn = get_db_connection(); // Kết nối đến cơ sở dữ liệu
+    MYSQL *conn = get_db_connection();
     if (conn == NULL)
     {
         fprintf(stderr, "Database connection failed.\n");
         return NULL;
     }
 
-    // Truy vấn SQL lấy tất cả bài thi của phòng thi
     char query[512];
     snprintf(query, sizeof(query),
-             "SELECT r.id AS room_id, r.subject, u.name, e.score "
+             "SELECT u.id, u.name, u.email, e.score, "
+             "(SELECT COUNT(*) FROM exam_question eq WHERE eq.exam_id = e.id) AS total_questions, "
+             "(SELECT COUNT(*) FROM exam_question eq WHERE eq.exam_id = e.id AND eq.user_answer IS NOT NULL) AS answered_questions, "
+             "(SELECT COUNT(*) FROM exam_question eq JOIN answer_of_question aoq ON eq.user_answer = aoq.id WHERE eq.exam_id = e.id AND aoq.is_true = TRUE) AS correct_answers "
              "FROM exam e "
              "JOIN user u ON e.user_id = u.id "
-             "JOIN room r ON e.room_id = r.id "
              "WHERE e.room_id = %d "
-             "ORDER BY e.id ASC;",
+             "ORDER BY e.score DESC",
              room_id);
 
     if (mysql_query(conn, query))
@@ -223,38 +223,29 @@ char *get_exam_result_of_room(int room_id)
     if (res == NULL)
     {
         fprintf(stderr, "mysql_store_result() failed. Error: %s\n", mysql_error(conn));
-
         return NULL;
     }
 
+    cJSON *json_array = cJSON_CreateArray();
     MYSQL_ROW row;
 
-    int num_rows = mysql_num_rows(res);
-    if (num_rows == 0)
-    {
-        fprintf(stderr, "No data found for room_id: %d\n", room_id);
-        mysql_free_result(res);
-        return NULL;
-    }
-
-    cJSON *result_json = cJSON_CreateObject();
-    cJSON *exam_results = cJSON_CreateArray();
-
-    // Lặp qua các dòng dữ liệu trong kết quả truy vấn
     while ((row = mysql_fetch_row(res)))
     {
-        cJSON *exam_result = cJSON_CreateObject();
-        cJSON_AddNumberToObject(exam_result, "room_id", atoi(row[0]));
-        cJSON_AddStringToObject(exam_result, "subject", row[1]);
-        cJSON_AddStringToObject(exam_result, "username", row[2]);
-        cJSON_AddNumberToObject(exam_result, "score", atoi(row[3]));
-        cJSON_AddItemToArray(exam_results, exam_result);
+        cJSON *json_user = cJSON_CreateObject();
+        cJSON_AddNumberToObject(json_user, "user_id", atoi(row[0]));
+        cJSON_AddStringToObject(json_user, "name", row[1]);
+        cJSON_AddStringToObject(json_user, "email", row[2]);
+        cJSON_AddNumberToObject(json_user, "score", atof(row[3]));
+        cJSON_AddNumberToObject(json_user, "total_questions", atoi(row[4]));
+        cJSON_AddNumberToObject(json_user, "answered_questions", atoi(row[5]));
+        cJSON_AddNumberToObject(json_user, "correct_answers", atoi(row[6]));
+        cJSON_AddItemToArray(json_array, json_user);
     }
 
-    cJSON_AddItemToObject(result_json, "exam_results", exam_results);
-    char *json_string = cJSON_Print(result_json);
-    cJSON_Delete(result_json);
+    char *json_string = cJSON_Print(json_array);
+    cJSON_Delete(json_array);
     mysql_free_result(res);
+
     return json_string;
 }
 
