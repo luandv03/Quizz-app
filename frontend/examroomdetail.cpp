@@ -463,7 +463,7 @@ void ExamRoomDetail::displayQuestions(const QJsonArray &questionsArray)
 void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 {
     // Tạo một widget mới để hiển thị câu hỏi
-    QListWidgetItem *item = new QListWidgetItem(ui->questionListPracticeWidget);
+    QListWidgetItem *item = new QListWidgetItem(ui->questionListWidget);
 
     // Tạo một widget để chứa câu hỏi và các lựa chọn
     QWidget *questionWidget = new QWidget();
@@ -520,8 +520,8 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 
     // Đặt widget câu hỏi vào item
     item->setSizeHint(questionWidget->sizeHint());
-    ui->questionListPracticeWidget->addItem(item);
-    ui->questionListPracticeWidget->setItemWidget(item, questionWidget);
+    ui->questionListWidget->addItem(item);
+    ui->questionListWidget->setItemWidget(item, questionWidget);
 
     // Kết nối sendButton với logic gửi câu trả lời
     int examQuestionId = questionObj["exam_question_id"].toInt(); // Lấy `question_id` từ dữ liệu
