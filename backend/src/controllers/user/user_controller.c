@@ -35,11 +35,11 @@ void handle_get_user_exam_result(int client_socket, ControlMessage *msg)
 
     if (result == NULL)
     {
-        snprintf(response, sizeof(response), "DATA JSON 0 USER_EXAM_RESULT\n{\"data\": []}");
+        snprintf(response, sizeof(response), "DATA JSON USER_EXAM_RESULT\n{\"data\": []}");
     }
     else
     {
-        snprintf(response, sizeof(response), "DATA JSON %ld USER_EXAM_RESULT\n{\"data\": %s}", strlen(result), result);
+        snprintf(response, sizeof(response), "DATA JSON USER_EXAM_RESULT\n{\"data\": %s}", result);
     }
 
     write(client_socket, response, strlen(response));

@@ -127,7 +127,7 @@ void ExamRoomList::onReadyRead() {
     QByteArray response = tcpSocket->readAll();
     QString responseString(response);
 
-    if (responseString.startsWith("DATA JSON 945 ALL_ROOM")) {
+    if (responseString.startsWith("DATA JSON 1896 ALL_ROOM")) {
             qDebug() << "Room List Response:" << responseString;
 
             // Extract JSON part from the response

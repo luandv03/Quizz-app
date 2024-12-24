@@ -54,6 +54,7 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     // Connect startExamButton to toggle visibility
     connect(ui->startExamButton, &QPushButton::clicked, [this]() {
         ui->examDetailWidget->hide();
+        ui->examResultWidget->hide();
         ui->startExamWidget->show();
 
         countdownTimer->start(1000);  // Cập nhật mỗi 1 giây
@@ -180,6 +181,7 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
         displayQuestions(jsonString);
     });
 
+    // show message when time exam expired
     connect(ui->endMyExamBtn, &QPushButton::clicked, [this]() {
         QDialog dialog(this);
         dialog.setWindowTitle("Confirm");
@@ -221,6 +223,14 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
         dialog.exec();
     });
 
+    // show exam result ui
+    connect(ui->viewExamResultBTn, &QPushButton::clicked, this, &ExamRoomDetail::viewExamResult);
+
+    // back to exam detail ui
+    connect(ui->backExamDetailWidget, &QPushButton::clicked, [this]() {
+        ui->examDetailWidget->show();
+        ui->examResultWidget->hide();
+    });
 }
 
 ExamRoomDetail::~ExamRoomDetail()
@@ -334,5 +344,12 @@ void ExamRoomDetail::disableSendButtons(QWidget *widget) {
             disableSendButtons(childWidget); // Đệ quy nếu có widget lồng nhau
         }
     }
+}
+
+void ExamRoomDetail::viewExamResult()
+{
+    ui->examDetailWidget->hide();
+    ui->startExamWidget->hide();
+    ui->examResultWidget->show();
 }
 
