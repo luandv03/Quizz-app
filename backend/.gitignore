@@ -3,3 +3,4 @@
 server
 src/cli_migrate
 src/cli_seed
+log.txt
