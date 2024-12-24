@@ -423,3 +423,36 @@ void handle_get_statistic_by_room_id(int client_socket, ControlMessage *msg)
         free(result);
     }
 }
+
+void handle_end_exam(int client_socket, ControlMessage *msg)
+{
+    KeyValuePair pairs[10];
+    int pair_count = parse_json(msg->body, pairs, 10);
+
+    int room_id = -1;
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (strcmp(pairs[i].key, "room_id") == 0)
+        {
+            room_id = atoi(pairs[i].value);
+        }
+    }
+
+    int result = end_exam(room_id);
+    char response[2048];
+    char timestamp[50];
+    time_t now = time(NULL);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S", localtime(&now));
+
+    if (result == 0)
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION END_EXAM_FAILURE %s\n{\"message\": \"Failed to end exam\"}", timestamp);
+    }
+    else
+    {
+        snprintf(response, sizeof(response), "NOTIFICATION END_EXAM_SUCCESS %s\n{\"message\": \"Exam ended successfully\"}", timestamp);
+    }
+
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+}

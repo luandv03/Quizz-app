@@ -716,3 +716,25 @@ char *get_statistic_by_room_id(int room_id)
 
     return json_string;
 }
+
+int end_exam(int room_id)
+{
+    MYSQL *conn = get_db_connection();
+
+    if (conn == NULL)
+    {
+        fprintf(stderr, "Database connection failed.\n");
+        return 0;
+    }
+
+    char query[256];
+    snprintf(query, sizeof(query), "UPDATE room SET status = 'Finished' WHERE id = %d", room_id);
+
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Update failed. Error: %s\n", mysql_error(conn));
+        return 0;
+    }
+
+    return 1;
+}

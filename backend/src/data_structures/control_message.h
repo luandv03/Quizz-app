@@ -27,7 +27,7 @@
 #define GET_PROFILE_BY_ID "GET_PROFILE_BY_ID"
 #define UPDATE_USER_BY_ID "UPDATE_USER_BY_ID"
 #define GET_STATISTIC_BY_ROOM_ID "GET_STATISTIC_BY_ROOM_ID"
-
+#define END_EXAM "END_EXAM"
 // Struct Definition
 typedef struct
 {

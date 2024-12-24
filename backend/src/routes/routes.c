@@ -121,6 +121,10 @@ void handle_control_message(int socket, ControlMessage *msg)
     {
         handle_get_statistic_by_room_id(socket, msg);
     }
+    else if (strcmp(msg->type, END_EXAM) == 0)
+    {
+        handle_end_exam(socket, msg);
+    }
 }
 
 void handle_data_message(int socket, DataMessage *msg)
