@@ -49,135 +49,6 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     // Connect startExamButton to toggle visibility
     connect(ui->startExamButton, &QPushButton::clicked, [this]() {
         handleStartExam();
-
-        return;
-
-        ui->examDetailWidget->hide();
-        ui->examResultWidget->hide();
-        ui->startExamWidget->show();
-
-        countdownTimer->start(1000);  // Cập nhật mỗi 1 giây
-
-        // Gán dữ liệu JSON vào chuỗi
-        QJsonDocument doc = QJsonDocument::fromJson(R"(
-                            {
-                                "questions": [
-                                    {
-                                        "question_id": 1,
-                                        "content": "Git là gì?",
-                                        "answer_of_question": [
-                                            {
-                                                "answer_of_question_id": 1,
-                                                "content": "Một hệ thống quản lý phiên bản"
-                                            },
-                                            {
-                                                "answer_of_question_id": 2,
-                                                "content": "Một nền tảng lưu trữ trực tuyến"
-                                            },
-                                            {
-                                                "answer_of_question_id": 3,
-                                                "content": "Tên viết tắt của Gitlab và Github"
-                                            },
-                                            {
-                                                "answer_of_question_id": 4,
-                                                "content": "Một ngôn ngữ lập trình"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "question_id": 2,
-                                        "content": "Java là gì?",
-                                        "answer_of_question": [
-                                            {
-                                                "answer_of_question_id": 1,
-                                                "content": "Một hệ thống quản lý phiên bản"
-                                            },
-                                            {
-                                                "answer_of_question_id": 2,
-                                                "content": "Một nền tảng lưu trữ trực tuyến"
-                                            },
-                                            {
-                                                "answer_of_question_id": 3,
-                                                "content": "Tên viết tắt của Gitlab và Github"
-                                            },
-                                            {
-                                                "answer_of_question_id": 4,
-                                                "content": "Một ngôn ngữ lập trình"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "question_id": 3,
-                                        "content": "Tomcat là gì?",
-                                        "answer_of_question": [
-                                            {
-                                                "answer_of_question_id": 1,
-                                                "content": "Một hệ thống quản lý phiên bản"
-                                            },
-                                            {
-                                                "answer_of_question_id": 2,
-                                                "content": "Một nền tảng lưu trữ trực tuyến"
-                                            },
-                                            {
-                                                "answer_of_question_id": 3,
-                                                "content": "Tên viết tắt của Gitlab và Github"
-                                            },
-                                            {
-                                                "answer_of_question_id": 4,
-                                                "content": "Một ngôn ngữ lập trình"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "question_id": 4,
-                                        "content": "Docker là gì?",
-                                        "answer_of_question": [
-                                            {
-                                                "answer_of_question_id": 1,
-                                                "content": "Một hệ thống quản lý phiên bản"
-                                            },
-                                            {
-                                                "answer_of_question_id": 2,
-                                                "content": "Một nền tảng lưu trữ trực tuyến"
-                                            },
-                                            {
-                                                "answer_of_question_id": 3,
-                                                "content": "Tên viết tắt của Gitlab và Github"
-                                            },
-                                            {
-                                                "answer_of_question_id": 4,
-                                                "content": "Một ngôn ngữ lập trình"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "question_id": 5,
-                                        "content": "Linux là gì?",
-                                        "answer_of_question": [
-                                            {
-                                                "answer_of_question_id": 1,
-                                                "content": "Một hệ thống quản lý phiên bản"
-                                            },
-                                            {
-                                                "answer_of_question_id": 2,
-                                                "content": "Một nền tảng lưu trữ trực tuyến"
-                                            },
-                                            {
-                                                "answer_of_question_id": 3,
-                                                "content": "Tên viết tắt của Gitlab và Github"
-                                            },
-                                            {
-                                                "answer_of_question_id": 4,
-                                                "content": "Một ngôn ngữ lập trình"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                            )");
-
-        QJsonArray jsonString = doc.object()["questions"].toArray();
-        displayQuestions(jsonString);
     });
 
     // show message when time exam expired
@@ -430,12 +301,6 @@ void ExamRoomDetail::handleExamRoomDetailResponse()
                     // ui->endTimeLabel->setText("End Time: " + examRoom["end"].toString());
                     ui->statusLabel->setText(examRoom["status"].toString());
 
-                    // set Time limit for exam room
-                    int timeLimit = examRoom["time_limit"].toInt();
-                    remainingTime = QTime(0, timeLimit, 0);  //
-                    // Cập nhật `timerLabel` ban đầu
-                    ui->timerLabel->setText(remainingTime.toString("hh:mm:ss"));
-
                     QString status = examRoom["status"].toString();
 
                     if (status == "Not started") {
@@ -496,17 +361,27 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
     questionLabel->setFont(questionFont);
     layout->addWidget(questionLabel);
 
+    // Lấy giá trị `user_answer`
+    int userAnswer = questionObj["user_answer"].toInt();
+
     // Tạo các radio button cho các đáp án
     QJsonArray answersArray = questionObj["answer_of_question"].toArray();
     QList<QRadioButton*> answerButtons; // Lưu các radio button
     for (const QJsonValue &ansValue : answersArray) {
         QJsonObject ansObj = ansValue.toObject();
         QString answerText = ansObj["content"].toString();
+        int answerId = ansObj["answer_id"].toInt();
 
         qDebug() << "Answer for question:" << ansObj["content"].toString();
 
         QRadioButton *optionButton = new QRadioButton(answerText);
+        optionButton->setProperty("answerId", answerId); // Lưu `answerId` vào property
         layout->addWidget(optionButton);
+
+         // Chọn radio button nếu `answerId` khớp với `user_answer`
+        if (answerId == userAnswer) {
+            optionButton->setChecked(true);
+        }
 
         // Lưu radio button vào danh sách
         answerButtons.append(optionButton);
@@ -530,7 +405,7 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
     ui->questionListWidget->setItemWidget(item, questionWidget);
 
     // Kết nối sendButton với logic gửi câu trả lời
-    int examQuestionId = questionObj["id"].toInt(); // Lấy examQuestionId từ dữ liệu
+    int examQuestionId = questionObj["question_id"].toInt(); // Lấy `question_id` từ dữ liệu
     connect(sendButton, &QPushButton::clicked, this, [=]() {
         // Kiểm tra radio button được chọn
         int selectedAnswerId = -1;
@@ -893,6 +768,38 @@ void ExamRoomDetail::handleStartExam() {
     connect(tcpSocket4, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleStartExamResponse);
 }
 
+// "DATA JSON USER_START_EXAM
+// {
+//         ""room_id"":        4,
+//         ""user_id"":        1,
+//         ""exam_id"":        1,
+//         ""start_time"":        ""2023-11-03 09:00:00"",
+//         ""time_limit"":        60,
+//         ""questions"":        [{
+//                         ""question_id"":        91,
+//                         ""content"":        ""Easy History Question 1"",
+//                         ""answer_of_question"":        [{
+//                                         ""answer_id"":        361,
+//                                         ""content"":        ""Answer 1"",
+//                                         ""is_true"":        false
+//                                 }, {
+//                                         ""answer_id"":        362,
+//                                         ""content"":        ""Answer 2"",
+//                                         ""is_true"":        true
+//                                 }, {
+//                                         ""answer_id"":        363,
+//                                         ""content"":        ""Answer 3"",
+//                                         ""is_true"":        false
+//                                 }, {
+//                                         ""answer_id"":        364,
+//                                         ""content"":        ""Answer 4"",
+//                                         ""is_true"":        false
+//                                 }],
+//                         ""user_answer"":        362
+//                 },   
+//         .........
+//     ]
+// }"
 void ExamRoomDetail::handleStartExamResponse() {
     QByteArray response = tcpSocket4->readAll();
     QString responseString(response);
@@ -909,7 +816,26 @@ void ExamRoomDetail::handleStartExamResponse() {
             QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
             if (parseError.error == QJsonParseError::NoError) {
                 QJsonObject jsonObj = jsonDoc.object();
-                // examId = jsonObj["exam_id"].toInt();
+                examId = jsonObj["exam_id"].toInt();
+                QString startTime = jsonObj["start_time"].toString(); 
+                int timeLimit = jsonObj["time_limit"].toInt(); // Lấy giới hạn thời gian
+
+                // Xử lý thời gian bắt đầu và giới hạn
+                QDateTime startDateTime = QDateTime::fromString(startTime, "yyyy-MM-dd HH:mm:ss");
+                if (!startDateTime.isValid()) {
+                    qDebug() << "Invalid start time format.";
+                    return;
+                }
+                QDateTime endDateTime = startDateTime.addSecs(timeLimit * 60); // Cộng thêm giới hạn thời gian (phút)
+                QDateTime currentDateTime = QDateTime::currentDateTime();
+
+                // Kiểm tra nếu thời gian hiện tại đã vượt qua thời gian kết thúc
+                if (currentDateTime > endDateTime) {
+                    qDebug() << "Time is up! The exam has ended.";
+                    QMessageBox::information(this, "Time's up!", "Thời gian làm bài thi đã kết thúc. Bạn không thể tham gia.");
+                    return;
+                }
+
                 QJsonArray questions = jsonObj["questions"].toArray();
 
                 if (!questions.isEmpty()) {
@@ -918,6 +844,24 @@ void ExamRoomDetail::handleStartExamResponse() {
                     ui->examDetailWidget->hide();
                     ui->examResultWidget->hide();
                     ui->startExamWidget->show();
+
+                    // Tính thời gian còn lại
+                    qint64 secondsLeft = currentDateTime.secsTo(endDateTime);
+                    if (secondsLeft <= 0) {
+                        qDebug() << "Time is up! The exam has ended.";
+                        return;
+                    }
+
+                    int minutesLeft = secondsLeft / 60;
+                    int secondsRemaining = secondsLeft % 60;
+
+                    qDebug() << "Time remaining:" << minutesLeft << "minutes" << secondsRemaining << "seconds";
+
+                    // set Time limit for exam room
+                    int timeLimit = jsonObj["time_limit"].toInt();
+                    remainingTime = QTime(0, minutesLeft, secondsRemaining);  //
+                    // Cập nhật `timerLabel` ban đầu
+                    ui->timerLabel->setText(remainingTime.toString("hh:mm:ss"));
 
                     countdownTimer->start(1000);  // Cập nhật mỗi 1 giây
                     // Kết nối QTimer với hàm cập nhật thời gian
@@ -935,12 +879,6 @@ void ExamRoomDetail::handleStartExamResponse() {
     }
 }
 
-// Logic to send answer of question
-// CONTROL SUBMIT_EXAM_QUESTION
-// {
-//   "exam_question_id": 180,
-//   "answer_id": 1
-// }
 void ExamRoomDetail::handleSendAnswer(int examQuestionId, int answerId)
 {
     // set exam result;
@@ -980,10 +918,6 @@ void ExamRoomDetail::handleSendAnswer(int examQuestionId, int answerId)
     connect(tcpSocket5, &QTcpSocket::readyRead, this, &ExamRoomDetail::handleSendAnswerResponse);
 }
 
-// "NOTIFICATION SUBMIT_EXAM_QUESTION_SUCCESS 2024-12-18T23:55:55
-// {
-//   ""message"": ""Exam question submitted successfully""
-// }"
 void ExamRoomDetail::handleSendAnswerResponse() {
     QByteArray response = tcpSocket5->readAll();
     QString responseString(response);
