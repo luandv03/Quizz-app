@@ -17,7 +17,7 @@ public:
     ~Signup();
 
 signals:
-    void showHome();
+    void showSignin();
 
 private slots:
     void on_signupButton_clicked();

@@ -20,6 +20,10 @@ Signin::Signin(QWidget *parent)
     connect(tcpSocket, &QTcpSocket::connected, this, &Signin::onConnected);
     connect(tcpSocket, &QTcpSocket::disconnected, this, &Signin::onDisconnected);
 
+    connect(ui->signupButton, &QPushButton::clicked, [this]() {
+        emit showSignup();
+    });
+
     // tcpSocket->connectToHost("localhost", 8080);
     // if (!tcpSocket->waitForConnected(3000)) {
     //     qDebug() << "Không thể kết nối tới server trong constructor.";

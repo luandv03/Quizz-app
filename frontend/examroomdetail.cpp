@@ -103,7 +103,7 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     // back to exam detail ui
     connect(ui->backExamDetailWidget, &QPushButton::clicked, [this]() {
         ui->examDetailWidget->show();
-        ui->examResultWidget->hide();
+        ui->examResultWidget_2->hide();
     });
 
     // connet to handle logic comment
@@ -121,21 +121,21 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
         "comments": [
             {
                 "id": 1,
-                "content": "Bai thi hom nay kho qua aaaaa :<<<<",
+                "content": "Bài thi hôm nay khó quá :<<<<",
                 "sender_id": 1,
                 "sender_name": "Dinh Van Luan",
                 "time_send": "2024-12-16 10:20:00"
             },
             {
                 "id": 2,
-                "content": "De rac qua uaaa :<<<<",
+                "content": "De rac qua :>>>",
                 "sender_id": 2,
                 "sender_name": "Nguyen Duc Phu",
                 "time_send": "2024-12-16 11:20:00"
             },
             {
                 "id": 3,
-                "content": "De nay cho cho no lam maaaa :<<<<",
+                "content": "MU vô địch",
                 "sender_id": 3,
                 "sender_name": "Hoang Hai PHong",
                 "time_send": "2024-12-16 11:30:00"
@@ -147,6 +147,122 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QJsonDocument commentsDoc = QJsonDocument::fromJson(commentsJsonString.toUtf8());
     QJsonArray commentsArray = commentsDoc.object()["comments"].toArray();
     updateCommentList(commentsArray);
+
+    // handle logic practice
+     // Connect startExamButton to toggle visibility
+    connect(ui->startPracticeButton, &QPushButton::clicked, [this]() {
+        ui->practiceDetailWidget->hide();
+        ui->startPracticeWidget->show();
+
+        // Gán dữ liệu JSON vào chuỗi
+        QJsonDocument doc = QJsonDocument::fromJson(R"(
+                            {
+                                "questions": [
+                                    {
+                                        "question_id": 1,
+                                        "content": "Git là gì?",
+                                        "answer_of_question": [
+                                            {
+                                                "answer_of_question_id": 1,
+                                                "content": "Một hệ thống quản lý phiên bản"
+                                            },
+                                            {
+                                                "answer_of_question_id": 2,
+                                                "content": "Một nền tảng lưu trữ trực tuyến"
+                                            },
+                                            {
+                                                "answer_of_question_id": 3,
+                                                "content": "Tên viết tắt của Gitlab và Github"
+                                            },
+                                            {
+                                                "answer_of_question_id": 4,
+                                                "content": "Một ngôn ngữ lập trình"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "question_id": 2,
+                                        "content": "Java là gì?",
+                                        "answer_of_question": [
+                                            {
+                                                "answer_of_question_id": 1,
+                                                "content": "Một hệ thống quản lý phiên bản"
+                                            },
+                                            {
+                                                "answer_of_question_id": 2,
+                                                "content": "Một nền tảng lưu trữ trực tuyến"
+                                            },
+                                            {
+                                                "answer_of_question_id": 3,
+                                                "content": "Tên viết tắt của Gitlab và Github"
+                                            },
+                                            {
+                                                "answer_of_question_id": 4,
+                                                "content": "Một ngôn ngữ lập trình"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "question_id": 3,
+                                        "content": "Tomcat là gì?",
+                                        "answer_of_question": [
+                                            {
+                                                "answer_of_question_id": 1,
+                                                "content": "Một hệ thống quản lý phiên bản"
+                                            },
+                                            {
+                                                "answer_of_question_id": 2,
+                                                "content": "Một nền tảng lưu trữ trực tuyến"
+                                            },
+                                            {
+                                                "answer_of_question_id": 3,
+                                                "content": "Tên viết tắt của Gitlab và Github"
+                                            },
+                                            {
+                                                "answer_of_question_id": 4,
+                                                "content": "Một ngôn ngữ lập trình"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                            )");
+
+        QJsonArray jsonString = doc.object()["questions"].toArray();
+        displayQuestionsPractice(jsonString);
+    });
+
+    connect(ui->endMyPracticeBtn, &QPushButton::clicked, [this]() {
+        QDialog dialog(this);
+        dialog.setWindowTitle("Confirm");
+        dialog.resize(500, 400);  // Đặt kích thước mong muốn
+
+        // Đưa Dialog ra giữa màn hình
+        dialog.move(QGuiApplication::primaryScreen()->geometry().center() - dialog.rect().center());
+
+        // Thêm nội dung vào dialog
+        QVBoxLayout layout(&dialog);
+        QLabel label("Bạn có chắc chắn muốn kết thúc bài luyện tập không?", &dialog);
+        layout.addWidget(&label);
+
+        QDialogButtonBox buttonBox(QDialogButtonBox::Yes | QDialogButtonBox::No, &dialog);
+        layout.addWidget(&buttonBox);
+
+        connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+            dialog.accept();
+
+            // Thực hiện hành động kết thúc bài luyện tập nếu chọn Yes
+            ui->timerPracticeLabel->setText("Practice Ended!");
+            ui->startPracticeWidget->hide();
+            ui->practiceDetailWidget->show();
+        });
+
+        connect(&buttonBox, &QDialogButtonBox::rejected, [&]() {
+            dialog.reject();
+        });
+
+        dialog.exec();
+    });
 }
 
 ExamRoomDetail::~ExamRoomDetail()
@@ -297,7 +413,7 @@ void ExamRoomDetail::handleExamRoomDetailResponse()
                     ui->numberOfEasyQuestionLabel->setText(QString::number(examRoom["number_of_easy_question"].toInt()));
                     ui->numberOfMediumQuestionLabel->setText(QString::number(examRoom["number_of_medium_question"].toInt()));
                     ui->numberOfHardQuestionLabel->setText(QString::number(examRoom["number_of_hard_question"].toInt()));
-                    ui->timeLimitLabel->setText(QString::number(examRoom["time_limit"].toInt()) + " minutes");
+                    ui->timeLimitLabel->setText(QString::number(examRoom["time_limit"].toInt()) + " phút");
                     // ui->startTimeLabel->setText("Start Time: " + examRoom["start"].toString());
                     // ui->endTimeLabel->setText("End Time: " + examRoom["end"].toString());
                     ui->statusLabel->setText(examRoom["status"].toString());
@@ -347,7 +463,7 @@ void ExamRoomDetail::displayQuestions(const QJsonArray &questionsArray)
 void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 {
     // Tạo một widget mới để hiển thị câu hỏi
-    QListWidgetItem *item = new QListWidgetItem(ui->questionListWidget);
+    QListWidgetItem *item = new QListWidgetItem(ui->questionListPracticeWidget);
 
     // Tạo một widget để chứa câu hỏi và các lựa chọn
     QWidget *questionWidget = new QWidget();
@@ -404,8 +520,8 @@ void ExamRoomDetail::createQuestionItem(const QJsonObject &questionObj)
 
     // Đặt widget câu hỏi vào item
     item->setSizeHint(questionWidget->sizeHint());
-    ui->questionListWidget->addItem(item);
-    ui->questionListWidget->setItemWidget(item, questionWidget);
+    ui->questionListPracticeWidget->addItem(item);
+    ui->questionListPracticeWidget->setItemWidget(item, questionWidget);
 
     // Kết nối sendButton với logic gửi câu trả lời
     int examQuestionId = questionObj["exam_question_id"].toInt(); // Lấy `question_id` từ dữ liệu
@@ -490,7 +606,7 @@ void ExamRoomDetail::viewExamResult()
 
     handleGetExamRoomResultByUser();
 
-    ui->examResultWidget->show();
+    ui->examResultWidget_2->show();
 }
 
 // handle logic comment
@@ -718,7 +834,7 @@ void ExamRoomDetail::handleGetExamRoomResultByUserResponse() {
                     // ui->examIdLabel->setText(QString::number(examId));
                     ui->scoreLabel->setText(QString::number(score));
                     ui->totalQuestionsLabel->setText(QString::number(totalQuestions));
-                    ui->answeredQuestionsLabel->setText(QString::number(answeredQuestions));
+                    ui->answeredQuestionsLabel_2->setText(QString::number(answeredQuestions));
                     ui->correctAnswersLabel->setText(QString::number(correctAnswers));
                 } else {
                     qDebug() << "No exam results found.";
@@ -845,7 +961,7 @@ void ExamRoomDetail::handleStartExamResponse() {
                     displayQuestions(questions);
 
                     ui->examDetailWidget->hide();
-                    ui->examResultWidget->hide();
+                    ui->examResultWidget_2->hide();
                     ui->startExamWidget->show();
 
                     // Tính thời gian còn lại
@@ -1030,4 +1146,67 @@ void ExamRoomDetail::handleSubmitExamResponse() {
             qDebug() << "Invalid exam results response format.";
         }
     }
+}
+
+
+void ExamRoomDetail::displayQuestionsPractice(const QJsonArray &questionsArray)
+{
+    // ui->questionListWidget->clear();  // Xóa các mục cũ
+    qDebug() << "Populating questions. Number of questions:" << questionsArray.size();
+
+    foreach (const QJsonValue &value, questionsArray) {
+        QJsonObject questionObj = value.toObject();
+        qDebug() << "Creating item for question:" << questionObj["content"].toString();
+
+        createQuestionItemPractice(questionObj);
+    }
+
+    qDebug() << "Finished populating questions.";
+}
+
+void ExamRoomDetail::createQuestionItemPractice(const QJsonObject &questionObj)
+{
+    // Tạo một widget mới để hiển thị câu hỏi
+    QListWidgetItem *item = new QListWidgetItem(ui->questionListPracticeWidget);
+
+    // Tạo một widget để chứa câu hỏi và các lựa chọn
+    QWidget *questionWidget = new QWidget();
+
+    QVBoxLayout *layout = new QVBoxLayout(questionWidget);
+
+    // Tạo label cho câu hỏi
+    QLabel *questionLabel = new QLabel(questionObj["content"].toString());
+    QFont questionFont;
+    questionFont.setPointSize(12);
+    questionFont.setBold(true);
+    questionLabel->setFont(questionFont);
+    layout->addWidget(questionLabel);
+
+    // Tạo các radio button cho các đáp án
+    QJsonArray answersArray = questionObj["answer_of_question"].toArray();
+    for (const QJsonValue &ansValue : answersArray) {
+        QJsonObject ansObj = ansValue.toObject();
+        QString answerText = ansObj["content"].toString();
+
+        qDebug() << "Answer for question:" << ansObj["content"].toString();
+
+        QRadioButton *optionButton = new QRadioButton(answerText);
+        layout->addWidget(optionButton);
+    }
+
+    QPushButton *sendButton = new QPushButton("Gửi");
+    sendButton->setMaximumSize(QSize(150, 40));
+    sendButton->setCursor(Qt::PointingHandCursor);
+    layout->addWidget(sendButton);
+
+    QLabel *notiSendAnswer = new QLabel("Câu trả lời đã được gửi.");
+    layout->addWidget(notiSendAnswer);
+
+    // Thiết lập layout cho câu hỏi
+    questionWidget->setLayout(layout);
+
+    // Đặt widget câu hỏi vào item
+    item->setSizeHint(questionWidget->sizeHint());
+    ui->questionListPracticeWidget->addItem(item);
+    ui->questionListPracticeWidget->setItemWidget(item, questionWidget);
 }
