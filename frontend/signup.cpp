@@ -3,7 +3,7 @@
 #include "ui_signup.h"
 #include <QJsonDocument>
 #include <QJsonObject>
-
+#include "config.h"
 Signup::Signup(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Signup)
@@ -26,7 +26,7 @@ void Signup::on_signupButton_clicked() {
     QJsonDocument doc(json);
     QByteArray data = doc.toJson();
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write("POST /signup ");
         tcpSocket->write(data);

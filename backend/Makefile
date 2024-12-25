@@ -2,10 +2,9 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -I/usr/include/mysql -I/usr/include/cjson -I include
-
-# Linker flags
-LDFLAGS = -L/usr/lib -lmysqlclient -lcjson
+CFLAGS = -Wall -I/usr/local/mysql/include -I/opt/homebrew/opt/cjson/include -I include
+ # install_name_tool -add_rpath /usr/local/mysql/lib src/cli_migrate
+LDFLAGS =  -L/usr/local/mysql/lib -lmysqlclient  -L/opt/homebrew/opt/cjson/lib -lcjson
 
 # Source files
 SRCS = $(wildcard src/**/*.c) $(wildcard src/**/**/*.c) src/main.c
@@ -28,7 +27,7 @@ SEED_TARGET = src/cli_seed
 
 # Default target
 all: $(TARGET)
-
+	install_name_tool -add_rpath /usr/local/mysql/lib $(TARGET)
 # Link the object files to create the executable
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
@@ -40,6 +39,7 @@ $(TARGET): $(OBJS)
 # Compile the migration tool
 $(MIGRATION_TARGET): $(MIGRATION_OBJS)
 	$(CC) $(MIGRATION_OBJS) -o $(MIGRATION_TARGET) $(LDFLAGS)
+	install_name_tool -add_rpath /usr/local/mysql/lib $(MIGRATION_TARGET)
 
 # Compile the seed tool
 $(SEED_TARGET): $(SEED_OBJS)
@@ -66,10 +66,8 @@ seed: $(SEED_TARGET)
 	./$(SEED_TARGET) $$file; \
 	done; \
 	fi
-
 reset:
 	./resetdb.sh
-
 # Clean up the build files
 clean:
 	rm -f $(OBJS) $(TARGET) $(MIGRATION_OBJS) $(MIGRATION_TARGET)

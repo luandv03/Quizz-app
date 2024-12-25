@@ -14,6 +14,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QThread>
+#include "config.h"
 
 ExamRoomList::ExamRoomList(QWidget *parent) :
     QWidget(parent),
@@ -43,7 +44,7 @@ void ExamRoomList::showEvent(QShowEvent *event) {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL GET_ROOM_LIST\n%1");
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();
@@ -262,7 +263,7 @@ void ExamRoomList::callApiJoinExamRoom(int userId, int roomId) {
     qDebug() << "Sending join room request: " << dataString;
 
     if (tcpSocket->state() == QAbstractSocket::UnconnectedState) {
-        tcpSocket->connectToHost("localhost", 8080);
+        tcpSocket->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server.";
             return;

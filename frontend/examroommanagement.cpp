@@ -10,7 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-
+#include "config.h"
 ExamRoomManagement::ExamRoomManagement(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ExamRoomManagement),
@@ -199,7 +199,7 @@ void ExamRoomManagement::handleGetExamRoom(){
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL GET_ROOM_LIST\n%1");
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();

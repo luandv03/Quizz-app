@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QDebug>
+#include "config.h"
 
 
 TcpConnection::TcpConnection(QObject* parent)
@@ -21,7 +22,7 @@ TcpConnection& TcpConnection::instance() {
 
 QTcpSocket* TcpConnection::getSocket() {
     if (tcpSocket->state() != QAbstractSocket::ConnectedState) {
-        tcpSocket->connectToHost("localhost", 8080);
+        tcpSocket->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server:" << tcpSocket->errorString();
         }
@@ -72,7 +73,7 @@ void TcpConnection::handleError(QAbstractSocket::SocketError socketError) {
     
     if (tcpSocket->state() == QAbstractSocket::UnconnectedState) {
         qDebug() << "Reconnecting to server...";
-        tcpSocket->connectToHost("localhost", 8080);
+        tcpSocket->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket->waitForConnected(3000)) {
             qDebug() << "Failed to reconnect to server:" << tcpSocket->errorString();
         }

@@ -434,7 +434,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>ĐInh Văn Luận</string>
+         <string>Ngô Văn Thức</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
