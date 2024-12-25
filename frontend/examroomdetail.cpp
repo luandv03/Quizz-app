@@ -123,21 +123,21 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
                 "id": 1,
                 "content": "Bài thi hôm nay khó quá :<<<<",
                 "sender_id": 1,
-                "sender_name": "Dinh Van Luan",
+                "sender_name": "Duong Van Gioi",
                 "time_send": "2024-12-16 10:20:00"
             },
             {
                 "id": 2,
-                "content": "De rac qua :>>>",
+                "content": "De kho qua :>>>",
                 "sender_id": 2,
-                "sender_name": "Nguyen Duc Phu",
+                "sender_name": "Ngo Van Thuc,
                 "time_send": "2024-12-16 11:20:00"
             },
             {
                 "id": 3,
                 "content": "MU vô địch",
                 "sender_id": 3,
-                "sender_name": "Hoang Hai PHong",
+                "sender_name": "Hoang Hai Phong",
                 "time_send": "2024-12-16 11:30:00"
             }
         ]
@@ -618,10 +618,10 @@ void ExamRoomDetail::on_submitCommentButton_clicked()
         QJsonObject commentObj;
         commentObj["type"] = "comment";
         commentObj["content"] = comment;
-        commentObj["sender_name"] = "Dinh Van Luan"; // Replace with actual sender name
+        commentObj["sender_name"] = "Duong Van Gioi"; // Replace with actual sender name
         commentObj["time_send"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
-        createComment("Dinh Van Luan", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"), comment);
+        createComment("Duong Van Gioi", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"), comment);
 
         QJsonDocument doc(commentObj);
         QString message = doc.toJson(QJsonDocument::Compact);
