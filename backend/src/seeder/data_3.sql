@@ -5,8 +5,17 @@ INSERT INTO exam (user_id, room_id, start_time, end_time) VALUES
 
 -- Insert exam results for students in English Room (Room ID 5)
 INSERT INTO exam (user_id, room_id, start_time, end_time) VALUES
+(1, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(2, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
 (3, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
-(4, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00');
+(4, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(5, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(6, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(7, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(8, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(9, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(10, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00'),
+(11, 5, '2023-11-05 09:00:00', '2023-11-05 10:00:00');
 
 -- Insert exam results for students in Physics Room (Room ID 6)
 INSERT INTO exam (user_id, room_id, start_time, end_time) VALUES
@@ -151,3 +160,12 @@ INSERT INTO exam_question (question_id, exam_id) VALUES
 (169, 6),
 (170, 6);
 
+UPDATE exam SET score = 76 where id = 2;
+UPDATE exam SET score = 72 where id = 4;
+UPDATE exam SET score = 55 where id = 6;
+UPDATE exam SET score = 85 where id = 7;
+UPDATE exam SET score = 79 where id = 8;
+UPDATE exam SET score = 45 where id = 9;
+UPDATE exam SET score = 67 where id = 10;
+UPDATE exam SET score = 69 where id = 11;
+UPDATE exam SET score = 75 where id = 12;

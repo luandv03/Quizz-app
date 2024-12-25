@@ -1,7 +1,9 @@
 #include "room_service.h"
 #include "../../db/connect-db.h"
 #include "../../utils/mysql_utils.h"
+#include "../../utils/time_utils.h"
 #include "../../utils/random_array_utils.h"
+#include "../../utils/log_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -109,6 +111,21 @@ int user_enter_room(int user_id, int room_id)
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
         return 0;
     }
+
+    // Log the user enter room activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('User %d entered room %d', '%s')", user_id, room_id, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "User %d entered room %d", user_id, room_id);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
 
     return 1;
 }
@@ -420,6 +437,21 @@ int start_exam(int room_id)
         return 0;
     }
 
+    // Log the start exam activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('Exam started for room %d', '%s')", room_id, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "Exam started for room %d", room_id);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
+
     return 1;
 }
 
@@ -443,6 +475,21 @@ int create_room(const char *subject, const char *description, int number_of_easy
         fprintf(stderr, "Query failed. Error: %s\n", mysql_error(conn));
         return 0;
     }
+
+    // Log the create room activity
+    char *timestamp = get_current_time();
+    snprintf(query, sizeof(query), "INSERT INTO log (log_content, log_time) VALUES ('Room created with subject: %s', '%s')", subject, timestamp);
+    if (mysql_query(conn, query))
+    {
+        fprintf(stderr, "Logging failed. Error: %s\n", mysql_error(conn));
+    }
+
+    // Log to file
+    char log_message[256];
+    snprintf(log_message, sizeof(log_message), "Room created with subject: %s", subject);
+    log_to_file(log_message, timestamp);
+
+    free(timestamp);
 
     return 1;
 }

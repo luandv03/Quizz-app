@@ -1,6 +1,7 @@
 #include "user_service.h"
 #include "../../db/connect-db.h"
 #include "../../utils/mysql_utils.h"
+#include "../../utils/time_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

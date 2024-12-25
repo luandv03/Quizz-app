@@ -23,7 +23,8 @@ ExamRoomDialog::ExamRoomDialog(QWidget *parent) :
     tcpSocket1(new QTcpSocket(this)),
     tcpSocket2(new QTcpSocket(this)),
     tcpSocket3(new QTcpSocket(this)),
-    tcpSocket4(new QTcpSocket(this))
+    tcpSocket4(new QTcpSocket(this)),
+    tcpSocket5(new QTcpSocket(this))
 {
     ui->setupUi(this);
 
@@ -59,7 +60,7 @@ ExamRoomDialog::ExamRoomDialog(QWidget *parent) :
     connect(ui->endExam, &QPushButton::clicked, this, &ExamRoomDialog::handleEndExam);
 
     // Gọi hàm để tạo chart khi khởi tạo dialog
-    setupScoreChart();
+    // setupScoreChart();
 }
 
 ExamRoomDialog::~ExamRoomDialog()
@@ -108,6 +109,8 @@ void ExamRoomDialog::setRoomDetails(const QString &roomId, const QString &roomNa
     handleGetUserInRoom(examRoomId);
     QThread::msleep(100);
     handleGetExamResult(examRoomId);
+    QThread::msleep(100);
+    handleGetExamResultChart();
 }
 
 // void ExamRoomDialog::onCloseButtonClicked()
@@ -137,48 +140,6 @@ void ExamRoomDialog::onAddQuestion()
 
     // Show the parent dialog as modal
     parentDialog->exec();
-}
-
-// build Exam Reult Charts
-void ExamRoomDialog::setupScoreChart()
-{
-    // Tạo dữ liệu cho phổ điểm (điểm từ 1-10)
-    QBarSet *set = new QBarSet("Phổ điểm");
-    *set << 1 << 2 << 5 << 8 << 10 << 12 << 7 << 6 << 3 << 2;  // Ví dụ dữ liệu phổ điểm
-
-    // Tạo series
-    QBarSeries *series = new QBarSeries();
-    series->append(set);
-
-    // Tạo chart
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Phổ điểm phòng thi");
-    chart->setAnimationOptions(QChart::SeriesAnimations);
-
-    // Tạo trục cho chart
-    QStringList categories;
-    for (int i = 1; i <= 10; ++i)
-        categories << QString::number(i);
-
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    axisX->append(categories);
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
-
-    QValueAxis *axisY = new QValueAxis();
-    axisY->setTitleText("Số lượng");
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
-
-    // Tạo chart view và gán chart vào tab
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-
-    // Thêm chart vào layout của tabExamResultChart
-    QVBoxLayout *layout = new QVBoxLayout(ui->tabExamResultChart);
-    layout->addWidget(chartView);
-    ui->tabExamResultChart->setLayout(layout);
 }
 
 void ExamRoomDialog::handleGetQuestionBank(int roomId){
@@ -249,10 +210,6 @@ void ExamRoomDialog::handleGetQuestionBankResponse() {
     }
 }
 
-// "CONTROL GET_USER_IN_ROOM
-// {
-//   ""room_id"":  1
-// }"
 void ExamRoomDialog::handleGetUserInRoom(int roomId) {
     QJsonObject json;
     json["room_id"] = roomId;
@@ -430,7 +387,6 @@ void ExamRoomDialog::handleStartExam() {
     connect(tcpSocket3, &QTcpSocket::readyRead, this, &ExamRoomDialog::handleStartExamResponse);
 }
 
-
 // NOTIFICATION START_EXAM_FAIL Time
 // NOTIFICATION START_EXAM_SUCCESS Time
 void ExamRoomDialog::handleStartExamResponse() {
@@ -459,10 +415,6 @@ void ExamRoomDialog::handleStartExamResponse() {
     }
 }
 
-// "CONTROL END_EXAM
-// {
-//   ""room_id"": 1
-// }"
 void ExamRoomDialog::handleEndExam() {
     QJsonObject json;
     json["room_id"] = examRoomId;
@@ -484,11 +436,6 @@ void ExamRoomDialog::handleEndExam() {
     connect(tcpSocket4, &QTcpSocket::readyRead, this, &ExamRoomDialog::handleEndExamResponse);
 }
 
-// "NOTIFICATION END_EXAM_SUCCESS 2024-12-24T21:10:34
-// {
-//   ""message"": ""Exam ended successfully""
-// }
-// "
 void ExamRoomDialog::handleEndExamResponse() {
     QByteArray response = tcpSocket4->readAll();
     QString responseString(response);
@@ -509,5 +456,155 @@ void ExamRoomDialog::handleEndExamResponse() {
         QMessageBox::information(this, "End Exam Success", "Exam ended successfully.");
     } else {
         qDebug() << "Unexpected response format:" << responseString;
+    }
+}
+
+
+// build Exam Reult Charts
+void ExamRoomDialog::setupScoreChart()
+{
+    // Tạo dữ liệu cho phổ điểm (điểm từ 1-10)
+    QBarSet *set = new QBarSet("Phổ điểm");
+    *set << 1 << 2 << 5 << 8 << 10 << 12 << 7 << 6 << 3 << 2;  // Ví dụ dữ liệu phổ điểm
+
+    // Tạo series
+    QBarSeries *series = new QBarSeries();
+    series->append(set);
+
+    // Tạo chart
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Phổ điểm phòng thi");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    // Tạo trục cho chart
+    QStringList categories;
+    for (int i = 1; i <= 10; ++i)
+        categories << QString::number(i);
+
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis *axisY = new QValueAxis();
+    axisY->setTitleText("Số lượng");
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    // Tạo chart view và gán chart vào tab
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    // Thêm chart vào layout của tabExamResultChart
+    QVBoxLayout *layout = new QVBoxLayout(ui->tabExamResultChart);
+    layout->addWidget(chartView);
+    ui->tabExamResultChart->setLayout(layout);
+}
+
+void ExamRoomDialog::handleGetExamResultChart() {
+    QJsonObject json;
+    json["room_id"] = examRoomId;
+
+    QJsonDocument doc(json);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+
+    // Construct the data string in the specified format
+    QString dataString = QString("CONTROL GET_STATISTIC_BY_ROOM_ID\n%1").arg(QString(jsonData));
+
+    tcpSocket5->connectToHost("localhost", 8080);
+    if (tcpSocket5->waitForConnected()) {
+        tcpSocket5->write(dataString.toUtf8());
+        tcpSocket5->flush();
+    } else {
+        qDebug() << "Failed to connect to server";
+    }
+
+    connect(tcpSocket5, &QTcpSocket::readyRead, this, &ExamRoomDialog::handleGetExamResultChartResponse);
+}
+
+void ExamRoomDialog::handleGetExamResultChartResponse() {
+    QByteArray response = tcpSocket5->readAll();
+    QString responseString(response);
+
+    qDebug() << "Get exam result chart response from server:" << responseString;
+
+    if (responseString.startsWith("DATA JSON STATISTIC_BY_ROOM_ID")) {
+        // Trích xuất phần JSON từ phản hồi
+        int jsonStartIndex = responseString.indexOf('{');
+        int jsonEndIndex = responseString.lastIndexOf('}');
+        if (jsonStartIndex != -1 && jsonEndIndex != -1 && jsonEndIndex > jsonStartIndex) {
+            QString jsonString = responseString.mid(jsonStartIndex, jsonEndIndex - jsonStartIndex + 1);
+
+            QJsonParseError parseError;
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
+
+            if (parseError.error == QJsonParseError::NoError) {
+                QJsonObject jsonObj = jsonDoc.object();
+                QJsonObject data = jsonObj["data"].toObject();
+
+                // Tạo series mới để hiển thị dữ liệu
+                QBarSeries *series = new QBarSeries();
+                QBarSet *set = new QBarSet("Phổ điểm");
+
+                QStringList categories;
+                int maxY = 0; // Giá trị lớn nhất trên trục Y
+
+                for (const QString &key : data.keys()) {
+                    int value = data[key].toInt();
+                    categories << key;
+                    *set << value;
+
+                    if (value > maxY) {
+                        maxY = value;
+                    }
+                }
+
+                series->append(set);
+
+                // Tạo biểu đồ mới và cập nhật dữ liệu
+                QChart *chart = new QChart();
+                chart->addSeries(series);
+                chart->setTitle("Phổ điểm phòng thi");
+                chart->setAnimationOptions(QChart::SeriesAnimations);
+
+                // Tạo trục X
+                QBarCategoryAxis *axisX = new QBarCategoryAxis();
+                axisX->append(categories);
+                chart->addAxis(axisX, Qt::AlignBottom);
+                series->attachAxis(axisX);
+
+                // Tạo trục Y
+                QValueAxis *axisY = new QValueAxis();
+                axisY->setTitleText("Số lượng");
+                axisY->setRange(0, maxY + 1); // Thêm khoảng cách trên trục Y
+                chart->addAxis(axisY, Qt::AlignLeft);
+                series->attachAxis(axisY);
+
+                // Hiển thị chart trên giao diện
+                QChartView *chartView = new QChartView(chart);
+                chartView->setRenderHint(QPainter::Antialiasing);
+
+                // Xóa biểu đồ cũ trong tab
+                QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(ui->tabExamResultChart->layout());
+                if (layout) {
+                    // Xóa các widget cũ trước khi thêm mới
+                    QLayoutItem *item;
+                    while ((item = layout->takeAt(0)) != nullptr) {
+                        delete item->widget();
+                        delete item;
+                    }
+                } else {
+                    layout = new QVBoxLayout(ui->tabExamResultChart);
+                }
+
+                layout->addWidget(chartView);
+                ui->tabExamResultChart->setLayout(layout);
+            } else {
+                qDebug() << "JSON parse error:" << parseError.errorString();
+            }
+        } else {
+            qDebug() << "Invalid JSON format in response.";
+        }
     }
 }

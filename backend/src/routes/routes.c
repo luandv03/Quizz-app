@@ -16,7 +16,6 @@ pthread_mutex_t lock;
 #define PORT 8080
 #define BACKLOG 10
 
-
 typedef struct pthread_arg_t
 {
     int new_socket_fd;
@@ -182,7 +181,7 @@ void setup_routes(int server_fd)
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-     if (pthread_mutex_init(&lock, NULL) != 0)
+    if (pthread_mutex_init(&lock, NULL) != 0)
     {
         printf("\n Mutex init has failed\n");
         return;
@@ -256,7 +255,6 @@ void *pthread_routine(void *arg)
 {
     pthread_arg_t *pthread_arg = (pthread_arg_t *)arg;
     int new_socket_fd = pthread_arg->new_socket_fd;
-    struct sockaddr_in client_address = pthread_arg->client_address;
 
     /* TODO: Put client interaction code here. */
     char buffer[2048];

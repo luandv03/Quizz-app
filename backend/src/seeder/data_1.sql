@@ -30,7 +30,16 @@ INSERT INTO user_in_room (room_id, user_id) VALUES
 -- Insert users into user_in_room for English Room (Room ID 5)
 INSERT INTO user_in_room (room_id, user_id) VALUES
 (5, 3),
-(5, 4);
+(5, 4),
+(5, 1),
+(5, 2),
+(5, 5),
+(5, 6),
+(5, 7),
+(5, 8),
+(5, 9),
+(5, 10),
+(5, 11);
 
 -- Insert users into user_in_room for Physics Room (Room ID 6)
 INSERT INTO user_in_room (room_id, user_id) VALUES

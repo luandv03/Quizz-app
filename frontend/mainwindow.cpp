@@ -30,8 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect signals to slots
     connect(homeForm, &Home::showSignup, this, &MainWindow::showSignup);
     connect(homeForm, &Home::showSignin, this, &MainWindow::showSignin);
-    connect(signupForm, &Signup::showHome, this, &MainWindow::showHome);
+    connect(signupForm, &Signup::showSignin, this, &MainWindow::showSignin);
     connect(signinForm, &Signin::showHome, this, &MainWindow::showHome);
+    connect(signinForm, &Signin::showSignup, this, &MainWindow::showSignup);
     connect(signinForm, &Signin::showExamRoomList, this, &MainWindow::showExamRoomList);
     connect(signinForm, &Signin::showUserManagement, this, &MainWindow::showUserManagement);
     connect(profileForm, &Profile::showExamRoomList, this, &MainWindow::showExamRoomList);
