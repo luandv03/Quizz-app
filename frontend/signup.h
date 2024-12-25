@@ -21,7 +21,8 @@ signals:
 
 private slots:
     void on_signupButton_clicked();
-    void onReadyRead();
+    void handleSignup();
+    void handleSignupResponse();
 
 private:
     Ui::Signup *ui;
