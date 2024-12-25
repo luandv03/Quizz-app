@@ -27,6 +27,7 @@ SOURCES += \
     usermanagement.cpp
 
 HEADERS += \
+    config.h \
     createexamroom.h \
     createquestion.h \
     examroomdetail.h \

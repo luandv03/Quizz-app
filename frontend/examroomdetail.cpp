@@ -17,6 +17,7 @@
 #include <QScreen>  // Thêm dòng này để sử dụng QScreen
 #include <QDialog>
 #include <QThread>
+#include "config.h"
 
 ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     QWidget(parent),
@@ -113,7 +114,7 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
     connect(tcpSocket, &QTcpSocket::connected, this, &ExamRoomDetail::onConnected);
     connect(tcpSocket, &QTcpSocket::disconnected, this, &ExamRoomDetail::onDisconnected);
     // Connect to TCP server
-    tcpSocket->connectToHost("localhost", 12345);
+    tcpSocket->connectToHost(IPADDRESS, 12345);
 
     // Example JSON string for comments
     QString commentsJsonString = R"(
@@ -130,7 +131,7 @@ ExamRoomDetail::ExamRoomDetail(QWidget *parent) :
                 "id": 2,
                 "content": "De kho qua :>>>",
                 "sender_id": 2,
-                "sender_name": "Ngo Van Thuc,
+                "sender_name": "Ngo Van Thuc",
                 "time_send": "2024-12-16 11:20:00"
             },
             {
@@ -361,7 +362,7 @@ void ExamRoomDetail::setRoomId(int roomId) {
     qDebug() << "Sending join room request: " << dataString;
 
     if (tcpSocket2->state() == QAbstractSocket::UnconnectedState) {
-        tcpSocket2->connectToHost("localhost", 8080);
+        tcpSocket2->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket2->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server.";
             return;
@@ -775,7 +776,7 @@ void ExamRoomDetail::handleGetExamRoomResultByUser() {
     qDebug() << "Sending join room request: " << dataString;
 
     if (tcpSocket3->state() == QAbstractSocket::UnconnectedState) {
-        tcpSocket3->connectToHost("localhost", 8080);
+        tcpSocket3->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket3->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server.";
             return;
@@ -864,7 +865,7 @@ void ExamRoomDetail::handleStartExam() {
     qDebug() << "Sending start exam request: " << dataString;
 
     if (tcpSocket4->state() == QAbstractSocket::UnconnectedState) {
-        tcpSocket4->connectToHost("localhost", 8080);
+        tcpSocket4->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket4->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server.";
             return;
@@ -1014,7 +1015,7 @@ void ExamRoomDetail::handleSendAnswer(int examQuestionId, int answerId)
     qDebug() << "Sending send answer request: " << dataString;
 
     if (tcpSocket5->state() == QAbstractSocket::UnconnectedState) {
-        tcpSocket5->connectToHost("localhost", 8080);
+        tcpSocket5->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket5->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server.";
             return;
@@ -1083,7 +1084,7 @@ void ExamRoomDetail::handleSubmitExam(){
     qDebug() << "Sending submit exam request: " << dataString;
 
     if (tcpSocket6->state() == QAbstractSocket::UnconnectedState) {
-        tcpSocket6->connectToHost("localhost", 8080);
+        tcpSocket6->connectToHost(IPADDRESS, 8080);
         if (!tcpSocket6->waitForConnected(3000)) {
             qDebug() << "Failed to connect to server.";
             return;

@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include "config.h"
 
 CreateQuestion::CreateQuestion(QWidget *parent) :
     QWidget(parent),
@@ -264,7 +265,7 @@ void CreateQuestion::handleCreateQuestion() {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL ADD_QUESTION\n%1").arg(QString(jsonData));
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();

@@ -7,7 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-
+#include "config.h"
 CreateExamRoom::CreateExamRoom(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CreateExamRoom),
@@ -100,7 +100,7 @@ void CreateExamRoom::handleCreateExamRoom() {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL CREATE_ROOM\n%1").arg(QString(jsonData));
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();

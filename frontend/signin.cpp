@@ -1,6 +1,7 @@
 // frontend/sources/signin.cpp
 #include "signin.h"
 #include "ui_signin.h"
+#include "config.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
@@ -24,7 +25,11 @@ Signin::Signin(QWidget *parent)
         emit showSignup();
     });
 
-    // tcpSocket->connectToHost("localhost", 8080);
+    connect(ui->signupButton, &QPushButton::clicked, [this]() {
+        emit showSignup();
+    });
+
+    // tcpSocket->connectToHost("", 8080);
     // if (!tcpSocket->waitForConnected(3000)) {
     //     qDebug() << "Không thể kết nối tới server trong constructor.";
     // }
@@ -49,7 +54,7 @@ void Signin::on_signinButton_clicked() {
 
     QString dataString = QString("CONTROL LOGIN\n%1").arg(QString(jsonData));
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();
@@ -70,7 +75,7 @@ void Signin::getProfile() {
 
     QString dataString = QString("CONTROL GET_PROFILE_BY_ID\n%1").arg(QString(jsonData));
 
-    tcpSocket2->connectToHost("localhost", 8080);
+    tcpSocket2->connectToHost(IPADDRESS, 8080);
     if (tcpSocket2->waitForConnected()) {
         tcpSocket2->write(dataString.toUtf8());
         tcpSocket2->flush();

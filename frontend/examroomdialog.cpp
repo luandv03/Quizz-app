@@ -14,6 +14,7 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QThread>
 #include <QMessageBox>
+#include "config.h"
 
 ExamRoomDialog::ExamRoomDialog(QWidget *parent) :
     QWidget(parent),
@@ -151,7 +152,7 @@ void ExamRoomDialog::handleGetQuestionBank(int roomId){
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL GET_ROOM_QUESTION\n%1").arg(QString(jsonData));
 
-    tcpSocket->connectToHost("localhost", 8080);
+    tcpSocket->connectToHost(IPADDRESS, 8080);
     if (tcpSocket->waitForConnected()) {
         tcpSocket->write(dataString.toUtf8());
         tcpSocket->flush();
@@ -219,7 +220,7 @@ void ExamRoomDialog::handleGetUserInRoom(int roomId) {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL GET_USER_IN_ROOM\n%1").arg(QString(jsonData));
 
-    tcpSocket1->connectToHost("localhost", 8080);
+    tcpSocket1->connectToHost(IPADDRESS, 8080);
     if (tcpSocket1->waitForConnected()) {
         tcpSocket1->write(dataString.toUtf8());
         tcpSocket1->flush();
@@ -295,7 +296,7 @@ void ExamRoomDialog::handleGetExamResult(int roomId) {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL GET_EXAM_RESULT_OF_ROOM\n%1").arg(QString(jsonData));
 
-    tcpSocket2->connectToHost("localhost", 8080);
+    tcpSocket2->connectToHost(IPADDRESS, 8080);
     if (tcpSocket2->waitForConnected()) {
         tcpSocket2->write(dataString.toUtf8());
         tcpSocket2->flush();
@@ -375,7 +376,7 @@ void ExamRoomDialog::handleStartExam() {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL START_EXAM\n%1").arg(QString(jsonData));
 
-    tcpSocket3->connectToHost("localhost", 8080);
+    tcpSocket3->connectToHost(IPADDRESS, 8080);
     if (tcpSocket3->waitForConnected()) {
         tcpSocket3->write(dataString.toUtf8());
         tcpSocket3->flush();
@@ -424,7 +425,7 @@ void ExamRoomDialog::handleEndExam() {
     // Construct the data string in the specified format
     QString dataString = QString("CONTROL END_EXAM\n%1").arg(QString(jsonData));
 
-    tcpSocket4->connectToHost("localhost", 8080);
+    tcpSocket4->connectToHost(IPADDRESS, 8080);
     if (tcpSocket4->waitForConnected()) {
         tcpSocket4->write(dataString.toUtf8());
         tcpSocket4->flush();
