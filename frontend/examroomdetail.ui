@@ -1069,7 +1069,7 @@
          <string>Submitted answers</string>
         </property>
        </widget>
-       <widget class="QLabel" name="answeredQuestionsLabel_2">
+       <widget class="QLabel" name="answeredQuestionsLabel">
         <property name="geometry">
          <rect>
           <x>160</x>

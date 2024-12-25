@@ -834,7 +834,7 @@ void ExamRoomDetail::handleGetExamRoomResultByUserResponse() {
                     // ui->examIdLabel->setText(QString::number(examId));
                     ui->scoreLabel->setText(QString::number(score));
                     ui->totalQuestionsLabel->setText(QString::number(totalQuestions));
-                    ui->answeredQuestionsLabel_2->setText(QString::number(answeredQuestions));
+                    ui->answeredQuestionsLabel->setText(QString::number(answeredQuestions));
                     ui->correctAnswersLabel->setText(QString::number(correctAnswers));
                 } else {
                     qDebug() << "No exam results found.";
