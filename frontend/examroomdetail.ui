@@ -434,7 +434,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>ĐInh Văn Luận</string>
+         <string>Dương Văn Giới</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
@@ -460,7 +460,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>luan.dv215083@sis.hust.edu.vn</string>
+         <string>gioi.dv215041@sis.hust.edu.vn</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_9">
@@ -956,7 +956,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Ngô Văn Thức</string>
+         <string>Dương Văn Giới</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
@@ -982,7 +982,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>luan.dv215083@sis.hust.edu.vn</string>
+         <string>gioi.dv215041@sis.hust.edu.vn</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_9">
